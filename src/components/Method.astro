@@ -1,28 +1,3 @@
----
-const steps = [
-	{
-		n: '01',
-		title: 'Diagnóstico',
-		body: 'Levantamos riesgo, operación y brechas. Salimos con cifra, no con un catálogo.',
-	},
-	{
-		n: '02',
-		title: 'Diseño',
-		body: 'Arquitectura justificada: qué entra, qué no, y por qué cada capa existe.',
-	},
-	{
-		n: '03',
-		title: 'Implementación',
-		body: 'Instalación e integración con criterio de continuidad. El sistema tiene que operar desde el día uno.',
-	},
-	{
-		n: '04',
-		title: 'Acompañamiento',
-		body: 'Soporte, mejora y operación para que la inversión no se degrade con el tiempo.',
-	},
-];
----
-
 <section id="metodo" class="border-t border-white/5 bg-navy-950 py-20 sm:py-28">
 	<div class="mx-auto w-full max-w-6xl px-5 sm:px-8">
 		<div class="max-w-2xl">
@@ -38,61 +13,80 @@ const steps = [
 				class="pointer-events-none absolute inset-0 z-0 h-full w-full overflow-visible"
 				aria-hidden="true"
 			>
-				<defs>
-					<filter id="method-line-glow" x="-50%" y="-50%" width="200%" height="200%">
-						<feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="blur"></feGaussianBlur>
-						<feMerge>
-							<feMergeNode in="blur"></feMergeNode>
-							<feMergeNode in="SourceGraphic"></feMergeNode>
-						</feMerge>
-					</filter>
-				</defs>
 				<line
 					data-method-line-track
-					class="method-line-track text-navy-700"
+					class="text-navy-700"
 					stroke="currentColor"
 					stroke-width="2"
-					stroke-dasharray="5 7"
 					stroke-linecap="round"
 				>
 				</line>
 				<line
 					data-method-line
-					class="method-line-draw text-accent"
+					class="text-accent"
 					stroke="currentColor"
-					stroke-width="3"
+					stroke-width="2.5"
 					stroke-linecap="round"
-					filter="url(#method-line-glow)"
 				>
 				</line>
-				<circle
-					data-method-head
-					class="method-line-head"
-					r="6"
-					filter="url(#method-line-glow)"
-				>
-				</circle>
 			</svg>
 			<ol class="relative z-10 grid gap-10 lg:grid-cols-4 lg:gap-6">
-				{
-					steps.map((step) => (
-						<li class="relative flex gap-4 lg:flex-col lg:items-center lg:text-center" data-method-step>
-							<span class="method-dot-wrap relative z-10 inline-flex h-12 w-12 shrink-0 items-center justify-center">
-								<span class="method-dot-ring" aria-hidden="true"></span>
-								<span
-									data-method-dot
-									class="relative z-10 inline-flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-navy-900 font-display text-sm font-semibold text-accent"
-								>
-									{step.n}
-								</span>
-							</span>
-							<div>
-								<h3 class="font-display text-xl font-semibold">{step.title}</h3>
-								<p class="mt-2 text-sm leading-relaxed text-muted">{step.body}</p>
-							</div>
-						</li>
-					))
-				}
+				<li class="relative flex gap-4 lg:flex-col lg:items-center lg:text-center" data-method-step>
+					<span
+						data-method-dot
+						class="relative z-10 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-navy-900 font-display text-sm font-semibold text-accent"
+					>
+						01
+					</span>
+					<div>
+						<h3 class="font-display text-xl font-semibold">Diagnóstico</h3>
+						<p class="mt-2 text-sm leading-relaxed text-muted">
+							Levantamos riesgo, operación y brechas. Salimos con cifra, no con un catálogo.
+						</p>
+					</div>
+				</li>
+				<li class="relative flex gap-4 lg:flex-col lg:items-center lg:text-center" data-method-step>
+					<span
+						data-method-dot
+						class="relative z-10 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-navy-900 font-display text-sm font-semibold text-accent"
+					>
+						02
+					</span>
+					<div>
+						<h3 class="font-display text-xl font-semibold">Diseño</h3>
+						<p class="mt-2 text-sm leading-relaxed text-muted">
+							Arquitectura justificada: qué entra, qué no, y por qué cada capa existe.
+						</p>
+					</div>
+				</li>
+				<li class="relative flex gap-4 lg:flex-col lg:items-center lg:text-center" data-method-step>
+					<span
+						data-method-dot
+						class="relative z-10 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-navy-900 font-display text-sm font-semibold text-accent"
+					>
+						03
+					</span>
+					<div>
+						<h3 class="font-display text-xl font-semibold">Implementación</h3>
+						<p class="mt-2 text-sm leading-relaxed text-muted">
+							Instalación e integración con criterio de continuidad. El sistema tiene que operar desde el día uno.
+						</p>
+					</div>
+				</li>
+				<li class="relative flex gap-4 lg:flex-col lg:items-center lg:text-center" data-method-step>
+					<span
+						data-method-dot
+						class="relative z-10 inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-navy-900 font-display text-sm font-semibold text-accent"
+					>
+						04
+					</span>
+					<div>
+						<h3 class="font-display text-xl font-semibold">Acompañamiento</h3>
+						<p class="mt-2 text-sm leading-relaxed text-muted">
+							Soporte, mejora y operación para que la inversión no se degrade con el tiempo.
+						</p>
+					</div>
+				</li>
 			</ol>
 		</div>
 	</div>

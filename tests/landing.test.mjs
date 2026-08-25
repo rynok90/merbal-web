@@ -66,6 +66,11 @@ test('home stays focused: hero tone without process, catalog, or contact dump', 
 	assert.match(hero, /Expertise en campo/);
 	assert.match(hero, /Productos/);
 	assert.match(hero, /que operan/);
+	assert.match(
+		hero,
+		/Software y plataformas\s+propias — más desarrollo a la medida — para resolver problemas reales y automatizar procesos de\s+operación/,
+	);
+	assert.doesNotMatch(hero, /no dependa de un catálogo/);
 	assert.match(pillars, /href="\/seguridad-electronica"/);
 	assert.match(pillars, /href="\/infraestructura-de-red"/);
 	assert.match(pillars, /href="\/software"/);

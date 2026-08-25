@@ -2,7 +2,7 @@
 	import gsap from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { isHeaderScrolled } from '../lib/header-scroll';
-	import { applyMethodProgress, methodHeadPoint, methodStrokeOffset } from '../lib/method-progress';
+	import { applyMethodProgress, methodStrokeOffset } from '../lib/method-progress';
 
 	gsap.registerPlugin(ScrollTrigger);
 	document.documentElement.dataset.motion = 'on';
@@ -51,86 +51,71 @@
 				},
 			});
 		}
-	}
 
-	const method = document.getElementById('metodo');
-	if (method) {
-		const steps = [...method.querySelectorAll<HTMLElement>('[data-method-step]')];
-		const line = method.querySelector<SVGLineElement>('[data-method-line]');
-		const track = method.querySelector<SVGLineElement>('[data-method-line-track]');
-		const head = method.querySelector<SVGCircleElement>('[data-method-head]');
-		const stage = method.querySelector<HTMLElement>('[data-method-stage]');
+		const method = document.getElementById('metodo');
+		if (method) {
+			const steps = [...method.querySelectorAll<HTMLElement>('[data-method-step]')];
+			const line = method.querySelector<SVGLineElement>('[data-method-line]');
+			const track = method.querySelector<SVGLineElement>('[data-method-line-track]');
+			const stage = method.querySelector<HTMLElement>('[data-method-stage]');
 
-		method.dataset.flow = 'on';
-		let lastProgress = reduce ? 1 : 0;
+			method.dataset.flow = 'on';
+			applyMethodProgress(steps, 0);
 
-		function paint(progress: number) {
-			lastProgress = progress;
-			applyMethodProgress(steps, progress);
-			if (!line) return;
-			const len = Number(line.dataset.length || 0);
-			line.setAttribute('stroke-dashoffset', String(methodStrokeOffset(progress, len)));
-			if (!head) return;
-			const x1 = Number(line.getAttribute('x1'));
-			const y1 = Number(line.getAttribute('y1'));
-			const x2 = Number(line.getAttribute('x2'));
-			const y2 = Number(line.getAttribute('y2'));
-			if (![x1, y1, x2, y2].every(Number.isFinite)) return;
-			const point = methodHeadPoint(progress, x1, y1, x2, y2);
-			head.setAttribute('cx', String(point.x));
-			head.setAttribute('cy', String(point.y));
-		}
-
-		function layoutMethodLine(): number {
-			if (!line || !track || !stage || steps.length < 2) return 0;
-			const first = steps[0]?.querySelector('[data-method-dot]');
-			const last = steps[steps.length - 1]?.querySelector('[data-method-dot]');
-			if (!(first instanceof HTMLElement) || !(last instanceof HTMLElement)) return 0;
-			const stageBox = stage.getBoundingClientRect();
-			const a = first.getBoundingClientRect();
-			const b = last.getBoundingClientRect();
-			const x1 = a.left + a.width / 2 - stageBox.left;
-			const y1 = a.top + a.height / 2 - stageBox.top;
-			const x2 = b.left + b.width / 2 - stageBox.left;
-			const y2 = b.top + b.height / 2 - stageBox.top;
-			for (const node of [line, track]) {
-				node.setAttribute('x1', String(x1));
-				node.setAttribute('y1', String(y1));
-				node.setAttribute('x2', String(x2));
-				node.setAttribute('y2', String(y2));
+			function layoutMethodLine(): number {
+				if (!line || !track || !stage || steps.length < 2) return 0;
+				const first = steps[0]?.querySelector('[data-method-dot]');
+				const last = steps[steps.length - 1]?.querySelector('[data-method-dot]');
+				if (!(first instanceof HTMLElement) || !(last instanceof HTMLElement)) return 0;
+				const stageBox = stage.getBoundingClientRect();
+				const a = first.getBoundingClientRect();
+				const b = last.getBoundingClientRect();
+				const x1 = a.left + a.width / 2 - stageBox.left;
+				const y1 = a.top + a.height / 2 - stageBox.top;
+				const x2 = b.left + b.width / 2 - stageBox.left;
+				const y2 = b.top + b.height / 2 - stageBox.top;
+				for (const node of [line, track]) {
+					node.setAttribute('x1', String(x1));
+					node.setAttribute('y1', String(y1));
+					node.setAttribute('x2', String(x2));
+					node.setAttribute('y2', String(y2));
+				}
+				const length = Math.hypot(x2 - x1, y2 - y1);
+				line.setAttribute('stroke-dasharray', String(length));
+				line.setAttribute('stroke-dashoffset', String(length));
+				line.dataset.length = String(length);
+				return length;
 			}
-			const length = Math.hypot(x2 - x1, y2 - y1);
-			line.setAttribute('stroke-dasharray', String(length));
-			line.dataset.length = String(length);
-			paint(lastProgress);
-			return length;
-		}
 
-		layoutMethodLine();
+			let length = layoutMethodLine();
 
-		if (!reduce) {
 			ScrollTrigger.create({
 				trigger: method,
-				start: 'top 72%',
-				end: 'bottom 38%',
-				scrub: 0.55,
+				start: 'top 70%',
+				end: 'bottom 45%',
+				scrub: 0.45,
 				invalidateOnRefresh: true,
 				onRefresh() {
-					layoutMethodLine();
+					length = layoutMethodLine();
 				},
 				onUpdate(self) {
-					paint(self.progress);
+					if (!line) return;
+					const len = Number(line.dataset.length || length);
+					line.setAttribute('stroke-dashoffset', String(methodStrokeOffset(self.progress, len)));
+					applyMethodProgress(steps, self.progress);
 				},
 			});
 
 			window.addEventListener('resize', () => {
-				layoutMethodLine();
+				length = layoutMethodLine();
 				ScrollTrigger.refresh();
 			});
-		} else {
-			window.addEventListener('resize', () => {
-				layoutMethodLine();
-			});
 		}
+	} else {
+		const method = document.getElementById('metodo');
+		const steps = method ? [...method.querySelectorAll('[data-method-step]')] : [];
+		applyMethodProgress(steps, 1);
+		const line = method?.querySelector<SVGLineElement>('[data-method-line]');
+		if (line) line.setAttribute('stroke-dashoffset', '0');
 	}
 </script>
