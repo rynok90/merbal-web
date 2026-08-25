@@ -1,0 +1,96 @@
+---
+import { CONTACT_EMAIL } from '../lib/mailto';
+---
+
+<section class="border-t border-white/5 bg-navy-950 py-20 sm:py-28">
+	<div class="mx-auto grid w-full max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+		<div data-reveal>
+			<p class="mb-3 font-display text-xs font-medium uppercase tracking-[0.22em] text-accent">Contacto</p>
+			<h2 class="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+				Hablemos de tu operación.
+			</h2>
+			<p class="mt-4 text-base text-text-soft sm:text-lg">
+				Cuéntanos el sitio, el riesgo o el sistema que quieres poner en orden. Un especialista te
+				responde.
+			</p>
+			<a
+				href={`mailto:${CONTACT_EMAIL}`}
+				class="mt-8 inline-flex items-center gap-2 text-sm text-accent transition-colors hover:text-accent-2"
+			>
+				{CONTACT_EMAIL}
+			</a>
+		</div>
+
+		<form
+			id="contact-form"
+			class="rounded-2xl border border-white/10 bg-navy-900 p-6 sm:p-8"
+			action={`mailto:${CONTACT_EMAIL}`}
+			method="post"
+			enctype="text/plain"
+			data-reveal
+		>
+			<div class="grid gap-5 sm:grid-cols-2">
+				<label class="grid gap-2 text-sm text-text-soft sm:col-span-1">
+					Nombre
+					<input
+						id="nombre"
+						type="text"
+						name="nombre"
+						autocomplete="name"
+						required
+						class="rounded-lg border border-white/10 bg-navy-950 px-3.5 py-2.5 text-text outline-none transition focus:border-accent"
+					/>
+				</label>
+				<label class="grid gap-2 text-sm text-text-soft sm:col-span-1">
+					Email
+					<input
+						id="email"
+						type="email"
+						name="email"
+						autocomplete="email"
+						required
+						class="rounded-lg border border-white/10 bg-navy-950 px-3.5 py-2.5 text-text outline-none transition focus:border-accent"
+					/>
+				</label>
+				<label class="grid gap-2 text-sm text-text-soft sm:col-span-2">
+					Empresa
+					<input
+						id="empresa"
+						type="text"
+						name="empresa"
+						autocomplete="organization"
+						class="rounded-lg border border-white/10 bg-navy-950 px-3.5 py-2.5 text-text outline-none transition focus:border-accent"
+					/>
+				</label>
+				<label class="grid gap-2 text-sm text-text-soft sm:col-span-2">
+					Mensaje
+					<textarea
+						id="mensaje"
+						name="mensaje"
+						rows="5"
+						required
+						class="resize-y rounded-lg border border-white/10 bg-navy-950 px-3.5 py-2.5 text-text outline-none transition focus:border-accent"
+					></textarea>
+				</label>
+			</div>
+			<button
+				type="submit"
+				class="btn-primary mt-6 inline-flex w-full items-center justify-center rounded-full bg-accent px-6 py-3 font-display text-sm font-semibold text-navy-950 sm:w-auto"
+			>
+				Enviar solicitud
+			</button>
+		</form>
+	</div>
+</section>
+
+<script>
+	import { buildMailtoUrl, payloadFromFormData } from '../lib/mailto';
+
+	const form = document.getElementById('contact-form');
+	form?.addEventListener('submit', (event) => {
+		event.preventDefault();
+		if (!(form instanceof HTMLFormElement)) return;
+		const payload = payloadFromFormData(new FormData(form));
+		window.location.href = buildMailtoUrl(payload);
+	});
+</script>

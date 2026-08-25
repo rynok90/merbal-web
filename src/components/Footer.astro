@@ -1,0 +1,32 @@
+---
+import { CONTACT_EMAIL } from '../lib/mailto';
+import { NAV_LINKS } from '../lib/nav';
+---
+
+<footer class="border-t border-white/5 bg-navy-950">
+	<div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-5 py-10 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
+		<div class="flex items-center gap-2.5">
+			<img src="/images/logo-mark.png" alt="MERBAL" class="h-7 w-7 object-contain" />
+			<div>
+				<p class="font-display text-xs font-semibold tracking-[0.18em] text-text">MERBAL</p>
+				<p class="text-xs text-muted">Technologies</p>
+			</div>
+		</div>
+		<nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
+			{
+				NAV_LINKS.map((link) => (
+					<a href={link.href} class="transition-colors hover:text-text">
+						{link.label}
+					</a>
+				))
+			}
+		</nav>
+		<div class="text-sm text-muted">
+			<a href={`mailto:${CONTACT_EMAIL}`} class="transition-colors hover:text-accent">{CONTACT_EMAIL}</a>
+			<p class="mt-2">
+				<a href="/privacidad" class="transition-colors hover:text-text">Aviso de privacidad</a>
+			</p>
+			<p class="mt-1 text-xs">© 2026 MERBAL Technologies</p>
+		</div>
+	</div>
+</footer>

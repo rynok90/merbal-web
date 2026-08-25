@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ServicePage from '../components/ServicePage.astro';
+---
+
+<Layout
+	title="Seguridad electrónica — MERBAL Technologies"
+	description="Servicio experto de seguridad electrónica: videovigilancia, control de acceso y detección con criterio de retorno."
+>
+	<ServicePage
+		eyebrow="Servicio experto"
+		title="Seguridad electrónica"
+		lead="Diseñamos el perímetro para que sea visible, auditable y listo para actuar. Cada capa se justifica por el riesgo que reduce — no por el catálogo que hay que vender."
+		points={[
+			{
+				title: 'Perímetro visible',
+				body: 'Videovigilancia, control de acceso y detección integrados. El operador ve lo que importa, no un mosaico de cámaras huérfanas.',
+			},
+			{
+				title: 'Auditoría y evidencia',
+				body: 'Registros, retención y trazabilidad pensados para operación y para el día en que hay que demostrar qué pasó.',
+			},
+			{
+				title: 'Listo para actuar',
+				body: 'La señal no termina en una pantalla. Fluye a procedimientos, analíticos y —cuando aplica— a las plataformas que ya operas.',
+			},
+			{
+				title: 'Retorno como criterio',
+				body: 'Medimos exposición e impacto antes de especificar. Si un dispositivo no mueve un indicador, no entra.',
+			},
+		]}
+	/>
+</Layout>

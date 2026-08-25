@@ -1,17 +1,18 @@
 ---
+import CtaBand from '../components/CtaBand.astro';
+import Hero from '../components/Hero.astro';
+import Layout from '../layouts/Layout.astro';
+import Pillars from '../components/Pillars.astro';
 
+const title = 'MERBAL Technologies — Expertise en campo. Productos que operan.';
+const description =
+	'Empresa mexicana: seguridad electrónica, infraestructura de red y una división de software con productos propios.';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title={title} description={description}>
+	<main>
+		<Hero />
+		<Pillars />
+		<CtaBand title="¿Por dónde empezamos?" lead="Un diagnóstico corto. Una arquitectura que se puede defender." />
+	</main>
+</Layout>

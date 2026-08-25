@@ -1,0 +1,43 @@
+---
+import { CONTACT_PATH } from '../lib/nav';
+---
+
+<section class="hero relative overflow-hidden bg-navy-950 pt-[4.25rem]">
+	<div class="hero-tech pointer-events-none absolute inset-0" aria-hidden="true">
+		<div class="hero-tech-grid"></div>
+		<div class="hero-tech-scan"></div>
+		<span class="hero-tech-node hero-tech-node-a"></span>
+		<span class="hero-tech-node hero-tech-node-b"></span>
+		<span class="hero-tech-node hero-tech-node-c"></span>
+	</div>
+
+	<div class="relative mx-auto flex min-h-[calc(100svh-4.25rem)] w-full max-w-6xl flex-col justify-center px-5 py-16 sm:px-8 sm:py-20">
+		<p class="hero-in mb-5 font-display text-xs font-medium uppercase tracking-[0.22em] text-accent sm:text-sm">
+			Empresa mexicana · Seguridad y tecnología
+		</p>
+		<h1
+			class="hero-in max-w-4xl font-display text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-6xl lg:leading-[1.08]"
+		>
+			Expertise en campo. <span class="text-accent">Productos</span> que operan.
+		</h1>
+		<p class="hero-in mt-6 max-w-2xl text-base leading-relaxed text-text-soft sm:text-lg">
+			Seguridad electrónica e infraestructura de red como servicio experto. Software y plataformas
+			propias — más desarrollo a la medida — para que la operación no dependa de un catálogo.
+		</p>
+
+		<div class="hero-in mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+			<a
+				href={CONTACT_PATH}
+				class="btn-primary inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 font-display text-sm font-semibold text-navy-950"
+			>
+				Hablar con un especialista
+			</a>
+			<a
+				href="#pilares"
+				class="btn-secondary inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 font-display text-sm font-medium text-text"
+			>
+				Ver pilares
+			</a>
+		</div>
+	</div>
+</section>

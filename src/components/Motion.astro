@@ -1,0 +1,121 @@
+<script>
+	import gsap from 'gsap';
+	import { ScrollTrigger } from 'gsap/ScrollTrigger';
+	import { isHeaderScrolled } from '../lib/header-scroll';
+	import { applyMethodProgress, methodStrokeOffset } from '../lib/method-progress';
+
+	gsap.registerPlugin(ScrollTrigger);
+	document.documentElement.dataset.motion = 'on';
+
+	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const header = document.getElementById('site-header');
+
+	function syncHeader(scrollY: number) {
+		if (!header) return;
+		header.dataset.scrolled = String(isHeaderScrolled(scrollY));
+	}
+
+	syncHeader(window.scrollY);
+
+	ScrollTrigger.create({
+		start: 0,
+		end: 'max',
+		onUpdate(self) {
+			syncHeader(self.scroll());
+		},
+	});
+
+	if (!reduce) {
+		const heroItems = document.querySelectorAll('.hero-in');
+		if (heroItems.length) {
+			gsap.from(heroItems, {
+				opacity: 0,
+				y: 20,
+				duration: 0.75,
+				stagger: 0.12,
+				ease: 'power3.out',
+			});
+		}
+
+		const revealNodes = gsap.utils.toArray<HTMLElement>('[data-reveal]');
+		if (revealNodes.length) {
+			ScrollTrigger.batch(revealNodes, {
+				start: 'top 90%',
+				once: true,
+				onEnter(batch) {
+					gsap.fromTo(
+						batch,
+						{ opacity: 0, y: 24 },
+						{ opacity: 1, y: 0, duration: 0.7, stagger: 0.1, ease: 'power3.out', overwrite: true },
+					);
+				},
+			});
+		}
+
+		const method = document.getElementById('metodo');
+		if (method) {
+			const steps = [...method.querySelectorAll<HTMLElement>('[data-method-step]')];
+			const line = method.querySelector<SVGLineElement>('[data-method-line]');
+			const track = method.querySelector<SVGLineElement>('[data-method-line-track]');
+			const stage = method.querySelector<HTMLElement>('[data-method-stage]');
+
+			method.dataset.flow = 'on';
+			applyMethodProgress(steps, 0);
+
+			function layoutMethodLine(): number {
+				if (!line || !track || !stage || steps.length < 2) return 0;
+				const first = steps[0]?.querySelector('[data-method-dot]');
+				const last = steps[steps.length - 1]?.querySelector('[data-method-dot]');
+				if (!(first instanceof HTMLElement) || !(last instanceof HTMLElement)) return 0;
+				const stageBox = stage.getBoundingClientRect();
+				const a = first.getBoundingClientRect();
+				const b = last.getBoundingClientRect();
+				const x1 = a.left + a.width / 2 - stageBox.left;
+				const y1 = a.top + a.height / 2 - stageBox.top;
+				const x2 = b.left + b.width / 2 - stageBox.left;
+				const y2 = b.top + b.height / 2 - stageBox.top;
+				for (const node of [line, track]) {
+					node.setAttribute('x1', String(x1));
+					node.setAttribute('y1', String(y1));
+					node.setAttribute('x2', String(x2));
+					node.setAttribute('y2', String(y2));
+				}
+				const length = Math.hypot(x2 - x1, y2 - y1);
+				line.setAttribute('stroke-dasharray', String(length));
+				line.setAttribute('stroke-dashoffset', String(length));
+				line.dataset.length = String(length);
+				return length;
+			}
+
+			let length = layoutMethodLine();
+
+			ScrollTrigger.create({
+				trigger: method,
+				start: 'top 70%',
+				end: 'bottom 45%',
+				scrub: 0.45,
+				invalidateOnRefresh: true,
+				onRefresh() {
+					length = layoutMethodLine();
+				},
+				onUpdate(self) {
+					if (!line) return;
+					const len = Number(line.dataset.length || length);
+					line.setAttribute('stroke-dashoffset', String(methodStrokeOffset(self.progress, len)));
+					applyMethodProgress(steps, self.progress);
+				},
+			});
+
+			window.addEventListener('resize', () => {
+				length = layoutMethodLine();
+				ScrollTrigger.refresh();
+			});
+		}
+	} else {
+		const method = document.getElementById('metodo');
+		const steps = method ? [...method.querySelectorAll('[data-method-step]')] : [];
+		applyMethodProgress(steps, 1);
+		const line = method?.querySelector<SVGLineElement>('[data-method-line]');
+		if (line) line.setAttribute('stroke-dashoffset', '0');
+	}
+</script>
