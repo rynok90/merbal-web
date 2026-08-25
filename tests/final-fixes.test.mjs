@@ -45,7 +45,25 @@ test('método markup aligns four steps and exposes a progress hook', () => {
 	assert.match(method, /lg:grid-cols-4/);
 	assert.match(method, /data-method-line/);
 	assert.match(method, /data-method-step/);
+	assert.match(method, /data-method-head/);
 	assert.match(method, /lg:items-center/);
+	assert.match(method, /['"]01['"]/);
+	assert.match(method, /['"]02['"]/);
+	assert.match(method, /['"]03['"]/);
+	assert.match(method, /['"]04['"]/);
+	assert.doesNotMatch(method, /h-px bg-gradient-to-r/);
+});
+
+test('método CSS uses opacity, accent color, and glow for sequential states', () => {
+	const css = read('src/styles/global.css');
+
+	assert.match(css, /\[data-method-step\]/);
+	assert.match(css, /#metodo\[data-flow=['"]on['"]\] \[data-method-step\]:not\(\.is-active\)[\s\S]*opacity/);
+	assert.match(css, /#metodo\[data-flow=['"]on['"]\] \[data-method-step\]\.is-active[\s\S]*opacity/);
+	assert.match(css, /\[data-method-step\]\.is-active \[data-method-dot\][\s\S]*box-shadow/);
+	assert.match(css, /\[data-method-step\]\.is-active \[data-method-dot\][\s\S]*--color-accent/);
+	assert.match(css, /\[data-method-step\]\.is-current \[data-method-dot\][\s\S]*box-shadow/);
+	assert.match(css, /stroke-dashoffset|\[data-method-line\]/);
 });
 
 test('shipped GSAP motion draws the method line and activates steps', () => {
@@ -54,8 +72,10 @@ test('shipped GSAP motion draws the method line and activates steps', () => {
 	assert.match(motion, /from ['"]gsap['"]/);
 	assert.match(motion, /gsap\/ScrollTrigger/);
 	assert.match(motion, /gsap\.registerPlugin\(ScrollTrigger\)/);
+	assert.match(motion, /ScrollTrigger\.create/);
 	assert.match(motion, /applyMethodProgress/);
 	assert.match(motion, /methodStrokeOffset/);
+	assert.match(motion, /methodHeadPoint/);
 	assert.match(motion, /stroke-dashoffset/);
 	assert.match(motion, /data-method-line/);
 });
