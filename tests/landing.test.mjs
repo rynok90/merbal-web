@@ -76,6 +76,8 @@ test('home stays focused: hero tone without process, catalog, or contact dump', 
 	assert.match(pillars, /href="\/software"/);
 	assert.doesNotMatch(home + hero + pillars, /Cómo trabajamos/);
 	assert.doesNotMatch(home + hero + pillars, /SecureFlow CRM/);
+	assert.doesNotMatch(home + hero + pillars, /secureflow-crm-production\.up\.railway\.app/);
+	assert.doesNotMatch(home + hero + pillars, /secureflow-landing\.netlify\.app/);
 	assert.doesNotMatch(home + hero + pillars, /name="nombre"/);
 	assert.doesNotMatch(home + hero + pillars, /Venta de equipos/i);
 });
@@ -90,12 +92,19 @@ test('software page is a product division with live SecureFlow href', () => {
 	assert.match(page, /División de producto/);
 	assert.match(tree, /Software \/ Plataformas/);
 	assert.match(tree, /SecureFlow CRM/);
-	assert.match(tree, /https:\/\/secureflow-crm-production\.up\.railway\.app/);
+	assert.match(tree, /https:\/\/secureflow-landing\.netlify\.app/);
+	assert.doesNotMatch(tree, /https:\/\/secureflow-crm-production\.up\.railway\.app/);
+	assert.match(platforms, /SECUFLOW_CTA_LABEL/);
+	assert.match(products, /Conocer SecureFlow/);
+	assert.doesNotMatch(platforms, /Abrir SecureFlow/);
+	assert.match(platforms, /target="_blank"/);
+	assert.match(platforms, /rel="noopener noreferrer"/);
 	assert.match(tree, /HayStock/);
 	assert.match(tree, /RutaSegura/);
 	assert.match(platforms, /Próximamente/);
 	assert.match(tree, /Desarrollo de software a la medida/);
 	assert.match(platforms, /liveProductHref/);
+	assert.match(platforms, /customSoftware\.href/);
 });
 
 test('nosotros owns Cómo trabajamos and the four steps', () => {
@@ -110,6 +119,10 @@ test('nosotros owns Cómo trabajamos and the four steps', () => {
 	assert.match(method, /Acompañamiento/);
 	assert.match(method, /data-method-step/);
 	assert.match(method, /id="metodo"/);
+	assert.match(method, />\s*01\s*</);
+	assert.match(method, />\s*02\s*</);
+	assert.match(method, />\s*03\s*</);
+	assert.match(method, />\s*04\s*</);
 });
 
 test('contacto has mailto form fields and the commercial email', () => {

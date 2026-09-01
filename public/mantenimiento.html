@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#09090b" />
+    <meta
+      name="description"
+      content="Página de mantenimiento. El servicio no está disponible por ahora."
+    />
+    <title>Standby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #09090b;
+        --surface: #121214;
+        --elevated: #1a1a1e;
+        --fg: #f4f1ea;
+        --muted: #9a958c;
+        --subtle: #6f6b64;
+        --accent: #d8d2c8;
+        --accent-fg: #09090b;
+        --status: #c45c3e;
+        --border: color-mix(in oklab, var(--fg) 12%, transparent);
+        --shadow-border: 0 0 0 1px color-mix(in oklab, var(--fg) 10%, transparent);
+        --shadow-border-hover: 0 0 0 1px color-mix(in oklab, var(--fg) 18%, transparent);
+        --font-display: "Fraunces", "Iowan Old Style", Palatino, serif;
+        --font-sans: "Manrope", "Segoe UI", system-ui, sans-serif;
+        --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+        --radius-sm: 8px;
+        --radius-md: 12px;
+        --radius-lg: 16px;
+        --radius-2xl: 28px;
+        --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { min-height: 100%; }
+      html {
+        -webkit-font-smoothing: antialiased;
+        background: var(--bg);
+        color: var(--fg);
+      }
+      body {
+        margin: 0;
+        font-family: var(--font-sans);
+        background: var(--bg);
+        color: var(--fg);
+      }
+      button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+      h1 { text-wrap: balance; }
+      p { text-wrap: pretty; }
+      a { color: inherit; text-decoration: none; }
+
+      .scene {
+        position: relative;
+        isolation: isolate;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+      .wash, .grid, .grain {
+        pointer-events: none;
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+      }
+      .wash {
+        inset: -20%;
+        background:
+          radial-gradient(ellipse 70% 55% at 50% 42%, rgb(28 27 24 / 0.55), transparent 62%),
+          radial-gradient(ellipse 50% 40% at 50% 100%, rgb(18 16 14 / 0.7), transparent 70%);
+      }
+      .grid {
+        background-image:
+          linear-gradient(to right, color-mix(in oklab, var(--fg) 5%, transparent) 1px, transparent 1px),
+          linear-gradient(to bottom, color-mix(in oklab, var(--fg) 5%, transparent) 1px, transparent 1px);
+        background-size: 72px 72px;
+        mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, black 20%, transparent 78%);
+        opacity: 0.55;
+      }
+      .grain {
+        z-index: 2;
+        opacity: 0.09;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      }
+      .wrap {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100dvh;
+        width: 100%;
+        max-width: 48rem;
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem;
+      }
+      header, footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .brand { display: flex; align-items: center; gap: 0.75rem; }
+      .mark {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-sm);
+        background: var(--elevated);
+        box-shadow: var(--shadow-border);
+      }
+      .brand-name {
+        margin: 0;
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+      .brand-sub {
+        margin: 0;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--subtle);
+      }
+      .meta {
+        margin: 0;
+        font-size: 0.75rem;
+        color: var(--subtle);
+      }
+      .clock { color: var(--muted); font-variant-numeric: tabular-nums; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0; text-transform: none; }
+      @media (max-width: 639px) { .clock { display: none; } }
+
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2.5rem 0;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
+      }
+
+      .beacon {
+        position: relative;
+        width: 168px;
+        height: 168px;
+      }
+      .ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        border: 1px solid color-mix(in oklab, var(--fg) 16%, transparent);
+        animation: ring 4.8s var(--ease-out) infinite;
+      }
+      .ring:nth-child(2) { animation-delay: 1.6s; }
+      .ring:nth-child(3) { animation-delay: 3.2s; }
+      .tick {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 1px;
+        height: 10px;
+        background: color-mix(in oklab, var(--fg) 38%, transparent);
+        transform-origin: 50% 84px;
+      }
+      .tick.n { transform: translate(-50%, -50%) rotate(0deg); }
+      .tick.e { transform: translate(-50%, -50%) rotate(90deg); }
+      .tick.s { transform: translate(-50%, -50%) rotate(180deg); }
+      .tick.w { transform: translate(-50%, -50%) rotate(270deg); }
+      .core {
+        position: absolute;
+        inset: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: color-mix(in oklab, var(--surface) 88%, var(--fg));
+        box-shadow: var(--shadow-border), 0 0 0 10px color-mix(in oklab, var(--bg) 70%, transparent);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0.375rem 0.75rem;
+        border-radius: 999px;
+        background: var(--elevated);
+        box-shadow: var(--shadow-border);
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: var(--status);
+      }
+      h1 {
+        margin: 0.75rem 0 0;
+        max-width: 16ch;
+        font-family: var(--font-display);
+        font-size: clamp(1.85rem, 1.2rem + 2.4vw, 3.15rem);
+        font-weight: 500;
+        font-style: italic;
+        letter-spacing: -0.03em;
+        line-height: 1.08;
+      }
+      .lead {
+        margin: 0.75rem 0 0;
+        max-width: 28rem;
+        font-size: 0.875rem;
+        line-height: 1.6;
+        color: var(--muted);
+      }
+      .sweep {
+        position: relative;
+        height: 1px;
+        width: min(220px, 55vw);
+        margin-top: 0.75rem;
+        overflow: hidden;
+        background: color-mix(in oklab, var(--fg) 12%, transparent);
+      }
+      .sweep::after {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 38%;
+        background: var(--fg);
+        animation: sweep 2.8s var(--ease-out) infinite;
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: 28rem;
+      }
+      @media (min-width: 640px) {
+        .actions { flex-direction: row; justify-content: center; }
+        .btn { width: auto; }
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        height: 48px;
+        width: 100%;
+        padding: 0 1.5rem;
+        border: 0;
+        border-radius: var(--radius-md);
+        font-family: var(--font-sans);
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition-property: background-color, box-shadow, scale;
+        transition-duration: 150ms;
+        transition-timing-function: ease-out;
+      }
+      .btn:disabled { opacity: 0.5; cursor: default; }
+      .btn:active:not(:disabled) { scale: 0.96; }
+      .btn-primary {
+        background: var(--fg);
+        color: var(--accent-fg);
+        box-shadow: var(--shadow-border);
+      }
+      .btn-primary:hover:not(:disabled) { background: var(--accent); }
+      .btn-ghost {
+        background: transparent;
+        color: var(--fg);
+        box-shadow: var(--shadow-border);
+      }
+      .btn-ghost:hover { background: var(--elevated); box-shadow: var(--shadow-border-hover); }
+      .spin { animation: spin 0.9s linear infinite; }
+
+      .facts {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        width: 100%;
+        max-width: 32rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      @media (min-width: 640px) {
+        .facts { grid-template-columns: repeat(3, 1fr); gap: 0.75rem; }
+      }
+      .facts li {
+        text-align: left;
+        padding: 0.875rem 1rem;
+        border-radius: var(--radius-lg);
+        background: var(--surface);
+        box-shadow: var(--shadow-border);
+      }
+      .facts p { margin: 0; }
+      .facts .k {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--subtle);
+      }
+      .facts .v {
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      footer {
+        flex-wrap: wrap;
+        border-top: 1px solid var(--border);
+        padding-top: 1.25rem;
+      }
+      .meta span {
+        margin-left: 0.5rem;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+      }
+      @media (min-width: 640px) { .meta.right { text-align: right; } }
+
+      .enter {
+        opacity: 0;
+        transform: translateY(12px);
+        filter: blur(4px);
+        animation: enter 700ms var(--ease-out) forwards;
+      }
+      .enter:nth-child(1) { animation-delay: 40ms; }
+      .enter:nth-child(2) { animation-delay: 140ms; }
+      .enter:nth-child(3) { animation-delay: 240ms; }
+      .enter:nth-child(4) { animation-delay: 340ms; }
+
+      @keyframes ring {
+        0% { transform: scale(0.72); opacity: 0.55; }
+        80% { opacity: 0; }
+        100% { transform: scale(1.28); opacity: 0; }
+      }
+      @keyframes sweep {
+        0% { transform: translateX(-120%); }
+        100% { transform: translateX(320%); }
+      }
+      @keyframes enter {
+        to { opacity: 1; transform: none; filter: none; }
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ring, .sweep::after, .enter, .spin { animation: none !important; }
+        .enter { opacity: 1; transform: none; filter: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <!--
+      STANDALONE — copia este archivo a cualquier proyecto.
+      Cambia solo el objeto CONFIG de abajo. No hace falta build.
+    -->
+    <div class="scene">
+      <div class="wash" aria-hidden="true"></div>
+      <div class="grid" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+      <div class="wrap">
+        <header>
+          <div class="brand">
+            <span class="mark" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="5" width="4" height="14" rx="1.2"></rect>
+                <rect x="14" y="5" width="4" height="14" rx="1.2"></rect>
+              </svg>
+            </span>
+            <div>
+              <p class="brand-name" id="brand">North</p>
+              <p class="brand-sub">Sistema en pausa</p>
+            </div>
+          </div>
+          <time class="clock" id="clock"></time>
+        </header>
+
+        <main>
+          <div class="stack">
+            <div class="enter">
+              <div class="beacon" aria-hidden="true">
+                <span class="ring"></span>
+                <span class="ring"></span>
+                <span class="ring"></span>
+                <span class="tick n"></span>
+                <span class="tick e"></span>
+                <span class="tick s"></span>
+                <span class="tick w"></span>
+                <div class="core">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <rect x="6" y="5" width="4" height="14" rx="1.2"></rect>
+                    <rect x="14" y="5" width="4" height="14" rx="1.2"></rect>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="enter">
+              <p class="badge">
+                <span class="dot" aria-hidden="true"></span>
+                <span id="statusLabel">En mantenimiento</span>
+                <span style="color: var(--subtle)">·</span>
+                <span id="statusCode">503</span>
+              </p>
+              <h1 id="title">Volvemos en un momento</h1>
+              <p class="lead" id="message"></p>
+              <div class="sweep" aria-hidden="true"></div>
+            </div>
+
+            <div class="enter actions">
+              <button class="btn btn-primary" id="retry" type="button">
+                <svg id="retryIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                  <path d="M21 3v5h-5"/>
+                  <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                  <path d="M8 16H3v5"/>
+                </svg>
+                <span id="retryLabel">Reintentar conexión</span>
+              </button>
+              <a class="btn btn-ghost" id="support" href="mailto:hola@north.studio">Escribir a soporte</a>
+            </div>
+
+            <ul class="enter facts" id="facts"></ul>
+          </div>
+        </main>
+
+        <footer>
+          <p class="meta">En esta página<span id="elapsed">00:00:00</span></p>
+          <p class="meta right">Última verificación<span id="checked"></span></p>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      /* ── Personaliza esto al reutilizar la página ── */
+      const CONFIG = {
+        brand: "MERBAL",
+        statusCode: "503",
+        statusLabel: "En mantenimiento",
+        title: "Volvemos en un momento",
+        message:
+          "Estamos haciendo una mejora breve. Tu informacion sigue a salvo y el sitio se reanudara en cuanto terminemos.",
+        retryLabel: "Reintentar conexion",
+        retryBusyLabel: "Comprobando…",
+        supportLabel: "Escribir a MERBAL",
+        supportHref: "mailto:merbal.tech.comercial@gmail.com",
+        facts: [
+          { label: "Servicios", value: "Pausados" },
+          { label: "Datos", value: "Protegidos" },
+          { label: "Restauracion", value: "En curso" },
+        ],
+      };
+
+      const clockFmt = new Intl.DateTimeFormat("es-MX", {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+      const timeFmt = new Intl.DateTimeFormat("es-MX", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+
+      const pad = (n) => String(n).padStart(2, "0");
+      const formatElapsed = (t) => {
+        const h = Math.floor(t / 3600);
+        const m = Math.floor((t % 3600) / 60);
+        const s = t % 60;
+        return `${pad(h)}:${pad(m)}:${pad(s)}`;
+      };
+
+      document.getElementById("brand").textContent = CONFIG.brand;
+      document.getElementById("statusLabel").textContent = CONFIG.statusLabel;
+      document.getElementById("statusCode").textContent = CONFIG.statusCode;
+      document.getElementById("title").textContent = CONFIG.title;
+      document.getElementById("message").textContent = CONFIG.message;
+      document.getElementById("retryLabel").textContent = CONFIG.retryLabel;
+      const support = document.getElementById("support");
+      support.textContent = CONFIG.supportLabel;
+      support.href = CONFIG.supportHref;
+      document.title = `${CONFIG.brand} · ${CONFIG.statusLabel}`;
+
+      document.getElementById("facts").innerHTML = CONFIG.facts
+        .map(
+          (f) =>
+            `<li><p class="k">${f.label}</p><p class="v">${f.value}</p></li>`,
+        )
+        .join("");
+
+      const clock = document.getElementById("clock");
+      const checked = document.getElementById("checked");
+      const elapsedEl = document.getElementById("elapsed");
+      const started = Date.now();
+
+      const tick = () => {
+        const now = new Date();
+        const headerLabel = clockFmt.format(now);
+        const timeLabel = timeFmt.format(now);
+        clock.textContent = headerLabel;
+        clock.dateTime = now.toISOString();
+        checked.textContent = timeLabel;
+        elapsedEl.textContent = formatElapsed(Math.floor((Date.now() - started) / 1000));
+      };
+      tick();
+      setInterval(tick, 1000);
+
+      const retry = document.getElementById("retry");
+      retry.addEventListener("click", () => {
+        if (retry.disabled) return;
+        retry.disabled = true;
+        retry.setAttribute("aria-busy", "true");
+        document.getElementById("retryLabel").textContent = CONFIG.retryBusyLabel;
+        document.getElementById("retryIcon").classList.add("spin");
+        setTimeout(() => location.reload(), 1100);
+      });
+    </script>
+  </body>
+</html>

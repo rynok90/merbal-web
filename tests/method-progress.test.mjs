@@ -1,11 +1,16 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { test } from 'node:test';
+import { fileURLToPath } from 'node:url';
 import {
 	applyMethodProgress,
 	isMethodStepActive,
 	methodLineScale,
 	methodStrokeOffset,
 } from '../src/lib/method-progress.ts';
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 test('methodLineScale clamps scroll progress to 0–1', () => {
 	assert.equal(methodLineScale(-1), 0);
@@ -54,4 +59,27 @@ test('methodStrokeOffset draws the line from full hidden to fully drawn', () => 
 	assert.equal(methodStrokeOffset(0.5, 200), 100);
 	assert.equal(methodStrokeOffset(1, 200), 0);
 	assert.equal(methodStrokeOffset(-1, 200), 200);
+});
+
+test('Método section still exposes 01–04 with GSAP ScrollTrigger wiring', () => {
+	const method = readFileSync(join(root, 'src/components/Method.astro'), 'utf8');
+	const motion = readFileSync(join(root, 'src/components/Motion.astro'), 'utf8');
+
+	assert.match(method, /id="metodo"/);
+	assert.match(method, />\s*01\s*</);
+	assert.match(method, />\s*02\s*</);
+	assert.match(method, />\s*03\s*</);
+	assert.match(method, />\s*04\s*</);
+	assert.match(method, /Diagnóstico/);
+	assert.match(method, /Diseño/);
+	assert.match(method, /Implementación/);
+	assert.match(method, /Acompañamiento/);
+	assert.match(method, /lg:grid-cols-4/);
+
+	assert.match(motion, /from ['"]gsap['"]/);
+	assert.match(motion, /gsap\/ScrollTrigger/);
+	assert.match(motion, /gsap\.registerPlugin\(ScrollTrigger\)/);
+	assert.match(motion, /methodStrokeOffset/);
+	assert.match(motion, /applyMethodProgress/);
+	assert.match(motion, /stroke-dashoffset/);
 });

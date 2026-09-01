@@ -150,7 +150,8 @@
 			linear-gradient(to bottom, color-mix(in oklab, var(--color-accent) 16%, transparent) 1px, transparent 1px);
 		background-size: 3.25rem 3.25rem;
 		opacity: 0.28;
-		transform: perspective(560px) rotateX(62deg);
+		transform: perspective(560px) rotateX(calc(62deg + var(--hero-tilt-x, 0deg)))
+			rotateY(var(--hero-tilt-y, 0deg)) translate3d(var(--hero-shift-x, 0px), var(--hero-shift-y, 0px), 0);
 		transform-origin: 50% 0%;
 		mask-image: linear-gradient(to bottom, transparent, black 22%, black 58%, transparent);
 		animation: hero-tech-pan 42s linear infinite;
@@ -178,6 +179,7 @@
 		background-color: var(--color-accent-2);
 		box-shadow: 0 0 12px color-mix(in oklab, var(--color-accent) 70%, transparent);
 		opacity: 0.55;
+		translate: var(--hero-follow-x, 0px) var(--hero-follow-y, 0px);
 		animation: hero-tech-pulse 5.5s ease-in-out infinite;
 	}
 

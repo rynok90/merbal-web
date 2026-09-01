@@ -2,12 +2,25 @@
 	import gsap from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { isHeaderScrolled } from '../lib/header-scroll';
+	import {
+		HERO_FOLLOW_LAG,
+		HERO_FOLLOW_RANGE,
+		HERO_LERP,
+		HERO_MOBILE_QUERY,
+		delayedFollow,
+		heroPointerNorm,
+		heroScrollOffset,
+		heroTiltFromPointer,
+		lerp,
+		shouldSkipHeroDepth,
+	} from '../lib/hero-depth';
 	import { applyMethodProgress, methodStrokeOffset } from '../lib/method-progress';
 
 	gsap.registerPlugin(ScrollTrigger);
 	document.documentElement.dataset.motion = 'on';
 
 	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const isMobile = window.matchMedia(HERO_MOBILE_QUERY).matches;
 	const header = document.getElementById('site-header');
 
 	function syncHeader(scrollY: number) {
@@ -16,6 +29,56 @@
 	}
 
 	syncHeader(window.scrollY);
+
+	if (!shouldSkipHeroDepth({ reducedMotion: reduce, isMobile })) {
+		const hero = document.querySelector<HTMLElement>('.hero');
+		const grid = document.querySelector<HTMLElement>('.hero-tech-grid');
+		const nodes = [...document.querySelectorAll<HTMLElement>('.hero-tech-node')];
+
+		if (hero && grid) {
+			const depthHero = hero;
+			const depthGrid = grid;
+			const targetTilt = { rx: 0, ry: 0 };
+			const tilt = { rx: 0, ry: 0 };
+			let shiftY = 0;
+			const pointer = { x: 0, y: 0 };
+			const follows = nodes.map(() => ({ x: 0, y: 0 }));
+
+			depthHero.addEventListener('mousemove', (event) => {
+				const rect = depthHero.getBoundingClientRect();
+				const { nx, ny } = heroPointerNorm(event.clientX, event.clientY, rect);
+				const next = heroTiltFromPointer(nx, ny);
+				targetTilt.rx = next.rx;
+				targetTilt.ry = next.ry;
+				pointer.x = nx * HERO_FOLLOW_RANGE;
+				pointer.y = ny * HERO_FOLLOW_RANGE;
+			});
+
+			function tickHeroDepth() {
+				tilt.rx = lerp(tilt.rx, targetTilt.rx, HERO_LERP);
+				tilt.ry = lerp(tilt.ry, targetTilt.ry, HERO_LERP);
+				shiftY = lerp(shiftY, heroScrollOffset(window.scrollY), HERO_LERP);
+				depthGrid.style.setProperty('--hero-tilt-x', `${tilt.rx}deg`);
+				depthGrid.style.setProperty('--hero-tilt-y', `${tilt.ry}deg`);
+				depthGrid.style.setProperty('--hero-shift-y', `${shiftY}px`);
+
+				for (let i = 0; i < nodes.length; i++) {
+					const node = nodes[i];
+					const current = follows[i];
+					if (!node || !current) continue;
+					const lag = HERO_FOLLOW_LAG * (1 - i * 0.22);
+					const next = delayedFollow(current.x, current.y, pointer.x, pointer.y, lag);
+					follows[i] = next;
+					node.style.setProperty('--hero-follow-x', `${next.x}px`);
+					node.style.setProperty('--hero-follow-y', `${next.y}px`);
+				}
+
+				requestAnimationFrame(tickHeroDepth);
+			}
+
+			requestAnimationFrame(tickHeroDepth);
+		}
+	}
 
 	ScrollTrigger.create({
 		start: 0,

@@ -12,7 +12,7 @@ export const products: Product[] = [
 		name: 'SecureFlow CRM',
 		description:
 			'Gestión de clientes y operaciones para empresas de seguridad e integración.',
-		href: 'https://secureflow-crm-production.up.railway.app',
+		href: 'https://secureflow-landing.netlify.app',
 		status: 'live',
 	},
 	{
@@ -30,6 +30,8 @@ export const products: Product[] = [
 ];
 
 export const SECUFLOW_CRM_URL = products[0]?.href ?? '';
+
+export const SECUFLOW_CTA_LABEL = 'Conocer SecureFlow';
 
 export const customSoftware = {
 	name: 'Desarrollo de software a la medida',

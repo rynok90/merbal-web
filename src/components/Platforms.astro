@@ -1,5 +1,5 @@
 ---
-import { customSoftware, liveProductHref, products } from '../lib/products';
+import { customSoftware, liveProductHref, products, SECUFLOW_CTA_LABEL } from '../lib/products';
 
 const featured = products[0];
 const upcoming = products.slice(1);
@@ -44,7 +44,7 @@ const featuredHref = featured ? liveProductHref(featured) : null;
 									rel="noopener noreferrer"
 									class="btn-primary inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 font-display text-sm font-semibold text-navy-950"
 								>
-									Abrir {featured.name}
+									{SECUFLOW_CTA_LABEL}
 									<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
 										<path d="M7 17 17 7M9 7h8v8" stroke-linecap="round" stroke-linejoin="round"></path>
 									</svg>
