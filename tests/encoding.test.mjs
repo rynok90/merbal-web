@@ -27,18 +27,18 @@ const MOJIBAKE = [
 	'Ã',
 ];
 
-function astroFiles(dir, acc = []) {
+function sourceFiles(dir, acc = []) {
 	for (const entry of readdirSync(dir, { withFileTypes: true })) {
 		const path = join(dir, entry.name);
-		if (entry.isDirectory()) astroFiles(path, acc);
-		else if (entry.name.endsWith('.astro')) acc.push(path);
+		if (entry.isDirectory()) sourceFiles(path, acc);
+		else if (/\.(astro|ts|mjs)$/.test(entry.name)) acc.push(path);
 	}
 	return acc;
 }
 
-test('every src .astro file is valid Spanish Unicode without mojibake', () => {
-	const files = astroFiles(src);
-	assert.ok(files.length > 0, 'expected src/**/*.astro files');
+test('every src source file is valid Spanish Unicode without mojibake', () => {
+	const files = sourceFiles(src);
+	assert.ok(files.length > 0, 'expected src source files');
 
 	for (const file of files) {
 		const text = readFileSync(file, 'utf8');
@@ -47,6 +47,12 @@ test('every src .astro file is valid Spanish Unicode without mojibake', () => {
 		}
 		assert.equal(text.includes('\uFFFD'), false, `${file} contains replacement character`);
 	}
+
+	const catalog = readFileSync(join(src, 'lib/products.ts'), 'utf8');
+	assert.match(catalog, /ANUVÉ/);
+	assert.match(catalog, /bitácora/);
+	assert.match(catalog, /diseño/);
+	assert.doesNotMatch(catalog, /ANUVE[^É]|Ã‰|Ã¡|Ã©/);
 });
 
 test('method headings use correct Spanish spellings', () => {

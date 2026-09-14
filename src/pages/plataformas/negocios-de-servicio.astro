@@ -1,0 +1,39 @@
+---
+import CtaBand from '../../components/CtaBand.astro';
+import Layout from '../../layouts/Layout.astro';
+import ProductFicha from '../../components/ProductFicha.astro';
+import { SERVICE_VERTICAL, serviceBusinessProducts } from '../../lib/products';
+---
+
+<Layout
+	title="Negocios de servicio — Plataformas MERBAL"
+	description="Plataformas para PyME de servicio al público. ANUVÉ: agenda, catálogo y overlay para nail bars."
+>
+	<main>
+		<section class="relative overflow-hidden bg-navy-950 pt-[4.25rem]">
+			<div
+				class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_-10%,rgba(43,140,255,0.16),transparent_58%)]"
+			>
+			</div>
+			<div class="relative mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
+				<p class="hero-in mb-4 font-display text-xs font-medium uppercase tracking-[0.22em] text-accent">
+					Plataformas
+				</p>
+				<h1 class="hero-in max-w-3xl font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+					{SERVICE_VERTICAL.name}
+				</h1>
+				<p class="hero-in mt-6 max-w-2xl text-base leading-relaxed text-text-soft sm:text-lg">
+					{SERVICE_VERTICAL.audience} Agenda, catálogo y la experiencia frente a la clienta.
+				</p>
+			</div>
+		</section>
+
+		<section class="border-t border-white/5 bg-navy-900 py-16 sm:py-24">
+			<div class="mx-auto grid w-full max-w-6xl gap-5 px-5 sm:px-8">
+				{serviceBusinessProducts.map((product) => <ProductFicha product={product} />)}
+			</div>
+		</section>
+
+		<CtaBand title="¿Esta vertical te toca?" lead="Pide una demo o una asesoría. Un especialista responde." />
+	</main>
+</Layout>

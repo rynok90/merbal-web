@@ -1,5 +1,5 @@
 ---
-import { CONTACT_PATH, isActivePath, NAV_LINKS } from '../lib/nav';
+import { CONTACT_PATH, HEADER_CTA_LABEL, HEADER_NAV, isActivePath } from '../lib/nav';
 
 const path = Astro.url.pathname;
 ---
@@ -16,17 +16,51 @@ const path = Astro.url.pathname;
 			<span class="font-display text-[0.8rem] font-semibold tracking-[0.2em]">MERBAL</span>
 		</a>
 
-		<nav class="hidden items-center gap-6 lg:flex" aria-label="Principal">
+		<nav class="hidden items-center gap-5 xl:gap-6 lg:flex" aria-label="Principal">
 			{
-				NAV_LINKS.map((link) => (
-					<a
-						href={link.href}
-						class:list={['nav-link text-sm', isActivePath(path, link.href) ? 'is-active text-text' : 'text-muted']}
-						aria-current={isActivePath(path, link.href) ? 'page' : undefined}
-					>
-						{link.label}
-					</a>
-				))
+				HEADER_NAV.map((link) =>
+					link.children ? (
+						<div class="nav-item-dropdown relative">
+							<a
+								href={link.href}
+								class:list={[
+									'nav-link text-sm',
+									isActivePath(path, link.href) ? 'is-active text-text' : 'text-muted',
+								]}
+								aria-current={isActivePath(path, link.href) ? 'page' : undefined}
+								aria-haspopup="true"
+							>
+								{link.label}
+							</a>
+							<div class="nav-dropdown" role="menu">
+								{
+									link.children.map((child) => (
+										<a
+											href={child.href}
+											class:list={[
+												'block rounded-lg px-3 py-2 text-sm transition-colors',
+												isActivePath(path, child.href)
+													? 'bg-navy-800 text-text'
+													: 'text-text-soft hover:bg-navy-800 hover:text-text',
+											]}
+											role="menuitem"
+										>
+											{child.label}
+										</a>
+									))
+								}
+							</div>
+						</div>
+					) : (
+						<a
+							href={link.href}
+							class:list={['nav-link text-sm', isActivePath(path, link.href) ? 'is-active text-text' : 'text-muted']}
+							aria-current={isActivePath(path, link.href) ? 'page' : undefined}
+						>
+							{link.label}
+						</a>
+					),
+				)
 			}
 		</nav>
 
@@ -35,7 +69,7 @@ const path = Astro.url.pathname;
 				href={CONTACT_PATH}
 				class="btn-primary hidden rounded-full bg-accent px-4 py-2 font-display text-sm font-semibold text-navy-950 sm:inline-flex"
 			>
-				Solicitar asesoría
+				{HEADER_CTA_LABEL}
 			</a>
 			<button
 				id="nav-toggle"
@@ -60,24 +94,40 @@ const path = Astro.url.pathname;
 	>
 		<nav class="flex flex-col gap-1" aria-label="Móvil">
 			{
-				NAV_LINKS.map((link) => (
-					<a
-						href={link.href}
-						class:list={[
-							'rounded-lg px-3 py-2.5 text-sm transition-colors',
-							isActivePath(path, link.href) ? 'bg-navy-800 text-text' : 'text-text-soft hover:bg-navy-800 hover:text-text',
-						]}
-						aria-current={isActivePath(path, link.href) ? 'page' : undefined}
-					>
-						{link.label}
-					</a>
+				HEADER_NAV.map((link) => (
+					<>
+						<a
+							href={link.href}
+							class:list={[
+								'rounded-lg px-3 py-2.5 text-sm transition-colors',
+								isActivePath(path, link.href) ? 'bg-navy-800 text-text' : 'text-text-soft hover:bg-navy-800 hover:text-text',
+							]}
+							aria-current={isActivePath(path, link.href) ? 'page' : undefined}
+						>
+							{link.label}
+						</a>
+						{link.children?.map((child) => (
+							<a
+								href={child.href}
+								class:list={[
+									'rounded-lg py-2.5 pr-3 pl-6 text-sm transition-colors',
+									isActivePath(path, child.href)
+										? 'bg-navy-800 text-text'
+										: 'text-muted hover:bg-navy-800 hover:text-text',
+								]}
+								aria-current={isActivePath(path, child.href) ? 'page' : undefined}
+							>
+								{child.label}
+							</a>
+						))}
+					</>
 				))
 			}
 			<a
 				href={CONTACT_PATH}
 				class="btn-primary mt-2 rounded-full bg-accent px-4 py-2.5 text-center font-display text-sm font-semibold text-navy-950"
 			>
-				Solicitar asesoría
+				{HEADER_CTA_LABEL}
 			</a>
 		</nav>
 	</div>

@@ -13,23 +13,19 @@ function read(rel) {
 const BANNED =
 	'SecureFlow CRM ya opera. HayStock y RutaSegura vienen. El desarrollo a la medida cubre lo que el producto no alcanza.';
 
-test('software evergreen copy replaced the banned product-status sentence', () => {
+test('plataformas hub replaced the banned product-status sentence', () => {
 	const platforms = read('src/components/Platforms.astro');
-	const page = read('src/pages/software.astro');
+	const page = read('src/pages/plataformas/index.astro');
 	const products = read('src/lib/products.ts');
 	const tree = page + platforms + products;
 
 	assert.doesNotMatch(tree, /SecureFlow CRM ya opera/);
 	assert.ok(!tree.includes(BANNED));
-	assert.match(
-		platforms,
-		/Productos propios y desarrollo a la medida para resolver problemas reales y automatizar procesos de operación/,
-	);
-	assert.doesNotMatch(platforms, /catálogo/);
+	assert.match(platforms, /Dos verticales/);
 	assert.match(tree, /SecureFlow CRM/);
-	assert.match(tree, /HayStock/);
-	assert.match(tree, /RutaSegura/);
-	assert.match(platforms, /Próximamente/);
+	assert.match(tree, /ANUVÉ/);
+	assert.doesNotMatch(page + platforms, /HayStock/);
+	assert.doesNotMatch(page + platforms, /RutaSegura/);
 	assert.match(tree, /Desarrollo de software a la medida/);
 });
 

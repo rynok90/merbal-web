@@ -1,19 +1,15 @@
 ---
 import CtaBand from './CtaBand.astro';
 
-interface Point {
-	title: string;
-	body: string;
-}
-
 interface Props {
 	eyebrow: string;
 	title: string;
 	lead: string;
-	points: Point[];
+	capacity: string;
+	audience: string;
 }
 
-const { eyebrow, title, lead, points } = Astro.props;
+const { eyebrow, title, lead, capacity, audience } = Astro.props;
 ---
 
 <main>
@@ -37,16 +33,16 @@ const { eyebrow, title, lead, points } = Astro.props;
 
 	<section class="border-t border-white/5 bg-navy-900 py-16 sm:py-24">
 		<div class="mx-auto grid w-full max-w-6xl gap-5 px-5 sm:px-8 md:grid-cols-2">
-			{
-				points.map((point) => (
-					<article class="card-hover rounded-2xl border border-white/10 bg-navy-950 p-6 sm:p-8" data-reveal>
-						<h2 class="font-display text-xl font-semibold">{point.title}</h2>
-						<p class="mt-3 text-sm leading-relaxed text-muted">{point.body}</p>
-					</article>
-				))
-			}
+			<article class="card-hover rounded-2xl border border-white/10 bg-navy-950 p-6 sm:p-8" data-reveal>
+				<h2 class="font-display text-xl font-semibold">Capacidad</h2>
+				<p class="mt-3 text-sm leading-relaxed text-muted">{capacity}</p>
+			</article>
+			<article class="card-hover rounded-2xl border border-white/10 bg-navy-950 p-6 sm:p-8" data-reveal>
+				<h2 class="font-display text-xl font-semibold">Para quién</h2>
+				<p class="mt-3 text-sm leading-relaxed text-muted">{audience}</p>
+			</article>
 		</div>
 	</section>
 
-	<CtaBand />
+	<CtaBand title="¿Esta práctica te toca?" lead="Pide una demo o una asesoría. Un especialista responde." />
 </main>

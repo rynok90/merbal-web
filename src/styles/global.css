@@ -92,6 +92,33 @@
 		transform: scaleX(1);
 	}
 
+	.nav-dropdown {
+		position: absolute;
+		top: calc(100% + 0.65rem);
+		left: 0;
+		z-index: 60;
+		min-width: 16rem;
+		padding: 0.4rem;
+		border: 1px solid rgb(255 255 255 / 0.1);
+		border-radius: 0.9rem;
+		background-color: var(--color-navy-900);
+		box-shadow: 0 18px 40px rgb(0 0 0 / 0.35);
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(0.35rem);
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease,
+			visibility 0.2s ease;
+	}
+
+	.nav-item-dropdown:hover .nav-dropdown,
+	.nav-item-dropdown:focus-within .nav-dropdown {
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
+	}
+
 	.btn-primary {
 		transition:
 			transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),

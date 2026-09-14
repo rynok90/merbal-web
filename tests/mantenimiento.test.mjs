@@ -31,7 +31,7 @@ test('maintenance CONFIG and document.title formula are MERBAL-branded', () => {
 	);
 	assert.equal(configString(html, 'retryLabel'), 'Reintentar conexion');
 	assert.equal(configString(html, 'supportLabel'), 'Escribir a MERBAL');
-	assert.equal(configString(html, 'supportHref'), 'mailto:merbal.tech.comercial@gmail.com');
+	assert.equal(configString(html, 'supportHref'), 'mailto:soporte@merbal.lat');
 
 	assert.match(html, /label:\s*"Servicios",\s*value:\s*"Pausados"/);
 	assert.match(html, /label:\s*"Datos",\s*value:\s*"Protegidos"/);

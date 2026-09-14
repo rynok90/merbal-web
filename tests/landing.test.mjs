@@ -14,16 +14,19 @@ const ROUTES = [
 	['src/pages/index.astro', '/'],
 	['src/pages/seguridad-electronica.astro', '/seguridad-electronica'],
 	['src/pages/infraestructura-de-red.astro', '/infraestructura-de-red'],
-	['src/pages/software.astro', '/software'],
+	['src/pages/plataformas/index.astro', '/plataformas'],
+	['src/pages/plataformas/operacion-de-sitios.astro', '/plataformas/operacion-de-sitios'],
+	['src/pages/plataformas/negocios-de-servicio.astro', '/plataformas/negocios-de-servicio'],
 	['src/pages/nosotros.astro', '/nosotros'],
 	['src/pages/contacto.astro', '/contacto'],
 ];
 
-test('six Astro routes exist as distinct pages', () => {
+test('Astro routes exist as distinct pages including plataformas verticals', () => {
 	for (const [file] of ROUTES) {
 		assert.equal(existsSync(join(root, file)), true, `missing ${file}`);
 		assert.match(read(file), /layouts\/Layout\.astro/);
 	}
+	assert.equal(existsSync(join(root, 'src/pages/software.astro')), false);
 });
 
 test('Header uses real page paths, not only in-page anchors', () => {
@@ -31,7 +34,7 @@ test('Header uses real page paths, not only in-page anchors', () => {
 	const nav = read('src/lib/nav.ts');
 	const footer = read('src/components/Footer.astro');
 
-	assert.match(header, /NAV_LINKS/);
+	assert.match(header, /HEADER_NAV/);
 	assert.match(header, /CONTACT_PATH/);
 	assert.doesNotMatch(header, /href="#inicio"/);
 	assert.doesNotMatch(header, /href="#servicios"/);
@@ -39,23 +42,25 @@ test('Header uses real page paths, not only in-page anchors', () => {
 	assert.doesNotMatch(header, /href="#contacto"/);
 
 	for (const href of [
-		"'/'",
 		"'/seguridad-electronica'",
 		"'/infraestructura-de-red'",
-		"'/software'",
-		"'/nosotros'",
+		"'/plataformas'",
+		"'/plataformas/operacion-de-sitios'",
+		"'/plataformas/negocios-de-servicio'",
 		"'/contacto'",
 	]) {
 		assert.ok(nav.includes(href), `nav missing ${href}`);
 	}
 
-	assert.match(footer, /NAV_LINKS/);
+	assert.match(footer, /FOOTER_LINKS/);
+	assert.match(nav, /\/nosotros/);
 });
 
-test('home stays focused: hero tone without process, catalog, or contact dump', () => {
+test('home has three equal doors, intact lema, and no loose products', () => {
 	const home = read('src/pages/index.astro');
 	const hero = read('src/components/Hero.astro');
 	const pillars = read('src/components/Pillars.astro');
+	const surface = home + hero + pillars;
 
 	assert.match(home, /<Hero/);
 	assert.match(home, /<Pillars/);
@@ -66,78 +71,47 @@ test('home stays focused: hero tone without process, catalog, or contact dump', 
 	assert.match(hero, /Expertise en campo/);
 	assert.match(hero, /Productos/);
 	assert.match(hero, /que operan/);
-	assert.match(
-		hero,
-		/Software y plataformas\s+propias — más desarrollo a la medida — para resolver problemas reales y automatizar procesos de\s+operación/,
-	);
-	assert.doesNotMatch(hero, /no dependa de un catálogo/);
+	assert.match(hero, /Tres divisiones/);
+	assert.match(hero, /campo/);
+	assert.match(hero, /plataformas/i);
+	assert.doesNotMatch(surface, /hacemos de todo/i);
+	assert.doesNotMatch(surface, /Software \/ Plataformas/);
+	assert.doesNotMatch(surface, /MERBAL productos/);
+	assert.doesNotMatch(surface, /\bSoftware\b/);
 	assert.match(pillars, /href="\/seguridad-electronica"/);
 	assert.match(pillars, /href="\/infraestructura-de-red"/);
-	assert.match(pillars, /href="\/software"/);
-	assert.doesNotMatch(home + hero + pillars, /Cómo trabajamos/);
-	assert.doesNotMatch(home + hero + pillars, /SecureFlow CRM/);
-	assert.doesNotMatch(home + hero + pillars, /secureflow-crm-production\.up\.railway\.app/);
-	assert.doesNotMatch(home + hero + pillars, /secureflow-landing\.netlify\.app/);
-	assert.doesNotMatch(home + hero + pillars, /name="nombre"/);
-	assert.doesNotMatch(home + hero + pillars, /Venta de equipos/i);
+	assert.match(pillars, /href="\/plataformas"/);
+	assert.match(pillars, />Seguridad electrónica</);
+	assert.match(pillars, />Infraestructura de red</);
+	assert.match(pillars, />Plataformas</);
+	assert.doesNotMatch(pillars, /href="\/software"/);
+	assert.doesNotMatch(surface, /Cómo trabajamos/);
+	assert.doesNotMatch(surface, /SecureFlow/);
+	assert.doesNotMatch(surface, /Access Paperless/);
+	assert.doesNotMatch(surface, /ANUVÉ/);
+	assert.doesNotMatch(surface, /ActivoObra/);
+	assert.doesNotMatch(surface, /HayStock/);
+	assert.doesNotMatch(surface, /RutaSegura/);
+	assert.doesNotMatch(surface, /secureflow-crm-production\.up\.railway\.app/);
+	assert.doesNotMatch(surface, /secureflow-landing\.netlify\.app/);
+	assert.doesNotMatch(surface, /name="nombre"/);
+	assert.doesNotMatch(surface, /Venta de equipos/i);
 });
 
-test('software page is a product division with live SecureFlow href', () => {
-	const page = read('src/pages/software.astro');
-	const platforms = read('src/components/Platforms.astro');
-	const products = read('src/lib/products.ts');
-	const tree = page + platforms + products;
-
-	assert.match(page, /<Platforms/);
-	assert.match(page, /División de producto/);
-	assert.match(tree, /Software \/ Plataformas/);
-	assert.match(tree, /SecureFlow CRM/);
-	assert.match(tree, /Access Paperless/);
-	assert.match(tree, /ANUVÉ/);
-	assert.match(tree, /https:\/\/secureflow-landing\.netlify\.app/);
-	assert.doesNotMatch(tree, /https:\/\/secureflow-crm-production\.up\.railway\.app/);
-	assert.match(platforms, /product\.status === 'live'/);
-	assert.match(platforms, /product\.status === 'soon'/);
-	assert.doesNotMatch(platforms, /products\[0\]/);
-	assert.doesNotMatch(platforms, /slice\(1\)/);
-	assert.match(platforms, /productCtaLabel\(product\)/);
-	assert.doesNotMatch(platforms, /SECUFLOW_CTA_LABEL/);
-	assert.match(products, /productCtaLabel/);
-	assert.match(products, /Conocer \$\{/);
-	assert.doesNotMatch(platforms, /Abrir SecureFlow/);
-	assert.match(platforms, /target="_blank"/);
-	assert.match(platforms, /rel="noopener noreferrer"/);
-	assert.match(tree, /HayStock/);
-	assert.match(tree, /RutaSegura/);
-	assert.match(platforms, /md:grid-cols-2/);
-	assert.match(platforms, /Próximamente/);
-	assert.match(tree, /Desarrollo de software a la medida/);
-	assert.match(platforms, /liveProductHref/);
-	assert.match(platforms, /customSoftware\.href/);
-
-	const upcomingStart = platforms.indexOf('upcoming.map');
-	assert.ok(upcomingStart >= 0, 'upcoming products must be mapped from the soon set');
-	const upcomingEnd = platforms.indexOf('customSoftware', upcomingStart);
-	const upcomingBlock = platforms.slice(
-		upcomingStart,
-		upcomingEnd === -1 ? undefined : upcomingEnd,
-	);
-	assert.doesNotMatch(upcomingBlock, /<a[\s>]/);
-	assert.doesNotMatch(upcomingBlock, /btn-primary/);
-	assert.doesNotMatch(upcomingBlock, /productCtaLabel/);
-	assert.match(upcomingBlock, /Próximamente/);
-});
-
-test('Access Paperless and ANUVÉ stay out of the nav', () => {
+test('Access Paperless and product names stay out of the header', () => {
 	const nav = read('src/lib/nav.ts');
 	const header = read('src/components/Header.astro');
-	const chrome = nav + header;
+	const headerNav = nav.slice(0, nav.indexOf('FOOTER_LINKS'));
+	const chrome = headerNav + header;
 
 	assert.doesNotMatch(chrome, /Access Paperless/);
 	assert.doesNotMatch(chrome, /ANUVÉ/);
-	assert.doesNotMatch(chrome, /ANUVE/);
+	assert.doesNotMatch(chrome, /ActivoObra/);
 	assert.doesNotMatch(chrome, /HayStock/);
 	assert.doesNotMatch(chrome, /RutaSegura/);
+	assert.doesNotMatch(header, />Inicio</);
+	assert.doesNotMatch(header, />Software</);
+	assert.doesNotMatch(header, />Nosotros</);
 });
 
 test('nosotros owns Cómo trabajamos and the four steps', () => {
@@ -158,19 +132,27 @@ test('nosotros owns Cómo trabajamos and the four steps', () => {
 	assert.match(method, />\s*04\s*</);
 });
 
-test('contacto has mailto form fields and the commercial email', () => {
+test('contacto posts JSON to the Netlify function, not mailto', () => {
 	const page = read('src/pages/contacto.astro');
 	const contact = read('src/components/Contact.astro');
-	const helper = read('src/lib/mailto.ts');
+	const helper = read('src/lib/contact.ts') + read('src/lib/contact-config.ts');
 
 	assert.match(page, /<Contact/);
-	assert.match(contact, /mailto:/);
-	assert.match(contact, /buildMailtoUrl/);
+	assert.match(contact, /CONTACT_FUNCTION_PATH/);
+	assert.match(helper, /\/\.netlify\/functions\/contact/);
+	assert.doesNotMatch(contact, /buildMailtoUrl/);
+	assert.doesNotMatch(contact, /window\.location\.href/);
+	assert.doesNotMatch(contact, /action=\{?`?mailto:/);
 	assert.match(contact, /name="nombre"/);
 	assert.match(contact, /name="email"/);
 	assert.match(contact, /name="empresa"/);
 	assert.match(contact, /name="mensaje"/);
-	assert.match(helper, /merbal\.tech\.comercial@gmail\.com/);
+	assert.match(contact, /name="division"/);
+	assert.match(contact, /name="vertical"/);
+	assert.match(contact, /name="website"/);
+	assert.match(contact, /CONTACT_EMAIL/);
+	assert.match(read('src/lib/mailto.ts'), /soporte@merbal\.lat/);
+	assert.doesNotMatch(contact, /WhatsApp/i);
 });
 
 test('expert service pages describe the practice and point to contact', () => {
@@ -178,9 +160,7 @@ test('expert service pages describe the practice and point to contact', () => {
 	const red = read('src/pages/infraestructura-de-red.astro');
 
 	assert.match(seguridad, /Seguridad electrónica/);
-	assert.match(seguridad, /retorno/i);
 	assert.match(red, /Infraestructura de red/);
-	assert.match(red, /disponibilidad/i);
 });
 
 test('GSAP + ScrollTrigger are registered in shipped client motion', () => {
@@ -201,7 +181,7 @@ test('GSAP + ScrollTrigger are registered in shipped client motion', () => {
 test('venta de equipos is absent from shipped sources', () => {
 	const files = [
 		'src/pages/index.astro',
-		'src/pages/software.astro',
+		'src/pages/plataformas/index.astro',
 		'src/pages/nosotros.astro',
 		'src/pages/contacto.astro',
 		'src/pages/seguridad-electronica.astro',

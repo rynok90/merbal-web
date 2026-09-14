@@ -1,6 +1,6 @@
 ---
 import { CONTACT_EMAIL } from '../lib/mailto';
-import { NAV_LINKS } from '../lib/nav';
+import { FOOTER_LINKS } from '../lib/nav';
 ---
 
 <footer class="border-t border-white/5 bg-navy-950">
@@ -14,7 +14,7 @@ import { NAV_LINKS } from '../lib/nav';
 		</div>
 		<nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted">
 			{
-				NAV_LINKS.map((link) => (
+				FOOTER_LINKS.map((link) => (
 					<a href={link.href} class="transition-colors hover:text-text">
 						{link.label}
 					</a>
