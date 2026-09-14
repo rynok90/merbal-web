@@ -23,7 +23,7 @@ test('catalog partitions site-ops and service verticals without HayStock or Ruta
 
 	assert.deepEqual(
 		products.map((product) => product.name),
-		['SecureFlow CRM', 'Access Paperless', 'ActivoObra', 'ANUVÉ'],
+		['SecureFlow CRM', 'Access Paperless', 'ActivoObra', 'ANUVÉ', 'Arco Care'],
 	);
 
 	assert.deepEqual(
@@ -59,14 +59,34 @@ test('catalog partitions site-ops and service verticals without HayStock or Ruta
 
 	assert.deepEqual(
 		serviceBusinessProducts.map((product) => product.name),
-		['ANUVÉ'],
+		['ANUVÉ', 'Arco Care'],
 	);
-	const anuve = serviceBusinessProducts[0];
-	assert.equal(anuve.name, 'ANUVÉ');
+	const anuve = serviceBusinessProducts.find((product) => product.name === 'ANUVÉ');
+	assert.ok(anuve);
 	assert.equal(anuve.status, 'soon');
 	assert.equal(anuve.href, null);
 	assert.equal(anuve.vertical, 'negocios-de-servicio');
 	assert.match(anuve.description, /diseño/);
+
+	const arco = serviceBusinessProducts.find((product) => product.name === 'Arco Care');
+	assert.ok(arco);
+	assert.equal(arco.status, 'soon');
+	assert.equal(arco.href, null);
+	assert.equal(arco.vertical, 'negocios-de-servicio');
+	assert.equal(
+		arco.description,
+		'Plataforma para clínicas veterinarias: agenda, expediente y recordatorios.',
+	);
+	assert.equal(
+		arco.problem,
+		'La clínica opera entre WhatsApp, hojas y un software que no habla con el dueño del paciente.',
+	);
+	assert.equal(arco.audience, 'Clínicas veterinarias y PyME de servicio al público.');
+	assert.equal(
+		arco.howItWorks,
+		'Agenda, expediente y recordatorios. El equipo opera; el dueño recibe el seguimiento.',
+	);
+	assert.equal(liveProductHref(arco), null);
 
 	assert.equal(
 		siteOpsProducts.some((product) => product.name === 'ANUVÉ'),
@@ -84,6 +104,7 @@ test('catalog partitions site-ops and service verticals without HayStock or Ruta
 	assert.doesNotMatch(catalog, /Ã‰|Ã¡|Ã©/);
 	assert.doesNotMatch(catalog, /HayStock/);
 	assert.doesNotMatch(catalog, /RutaSegura/);
+	assert.doesNotMatch(catalog, /Fochi/);
 });
 
 test('custom software is a first-class option in the shipped catalog', () => {

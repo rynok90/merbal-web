@@ -45,4 +45,12 @@ test('field pages follow capacidad → para quién → CTA and are not a CCTV ca
 	assert.match(red, /audience=/);
 	assert.doesNotMatch(seguridad + red + service, BRANDS);
 	assert.doesNotMatch(seguridad + red, /Hikvision|Dahua|Axis/);
+	assert.doesNotMatch(seguridad, /perímetro/);
+	assert.match(seguridad, /Industrial, retail, hospital, educación, corporativo, hospitality/);
+	assert.match(seguridad, /cualquier sitio que necesite seguridad electrónica/);
+	assert.match(red, /Industrial, retail, hospital, educación, corporativo, hospitality/);
+	assert.match(red, /cualquier operación que no se puede quedar sin red/);
+	assert.match(red, /con o sin seguridad encima/);
+	assert.match(red, /Sirve a datos, voz, seguridad o plataformas/);
+	assert.doesNotMatch(seguridad + red, /Ã©|Ã¡/);
 });

@@ -25,11 +25,22 @@ test('plataformas hub is two verticals, customSoftware only at the foot, no mixe
 	const tree = hub + platforms;
 
 	assert.match(hub, /<Platforms/);
-	assert.match(platforms, /Operación de sitios/);
-	assert.match(platforms, /Negocios de servicio/);
+	assert.equal(SITE_OPS_VERTICAL.name, 'Operación de sitios');
+	assert.equal(SERVICE_VERTICAL.name, 'Negocios de servicio');
+	assert.match(platforms, /PLATFORM_VERTICALS/);
 	assert.match(platforms, /href=\{vertical\.href\}/);
+	assert.match(platforms, /vertical\.name/);
 	assert.equal(SITE_OPS_VERTICAL.href, '/plataformas/operacion-de-sitios');
 	assert.equal(SERVICE_VERTICAL.href, '/plataformas/negocios-de-servicio');
+	assert.equal(
+		SITE_OPS_VERTICAL.audience,
+		'Si operas un sitio físico — planta, retail, hospital, escuela, corporativo u otro.',
+	);
+	assert.equal(
+		SERVICE_VERTICAL.audience,
+		'Si atiendes clientes de a pie — clínica, salón u otro negocio de servicio.',
+	);
+	assert.match(platforms, /vertical\.audience/);
 	assert.match(platforms, /customSoftware/);
 	assert.match(platforms, /href=\{customSoftware\.href\}/);
 	assert.equal(customSoftware.href, '/contacto');
@@ -39,6 +50,8 @@ test('plataformas hub is two verticals, customSoftware only at the foot, no mixe
 	assert.doesNotMatch(tree, /Access Paperless/);
 	assert.doesNotMatch(tree, /ActivoObra/);
 	assert.doesNotMatch(tree, /ANUVÉ/);
+	assert.doesNotMatch(tree, /Arco Care/);
+	assert.doesNotMatch(tree, /Fochi/);
 });
 
 test('operacion-de-sitios lists SecureFlow, Access Paperless and ActivoObra, never ANUVÉ', () => {
@@ -64,18 +77,22 @@ test('operacion-de-sitios lists SecureFlow, Access Paperless and ActivoObra, nev
 	assert.doesNotMatch(page, /cerradura/i);
 });
 
-test('negocios-de-servicio lists ANUVÉ and never site-ops products', () => {
+test('negocios-de-servicio lists ANUVÉ and Arco Care, never site-ops products', () => {
 	const page = read('src/pages/plataformas/negocios-de-servicio.astro');
 
 	assert.match(page, /serviceBusinessProducts/);
 	assert.doesNotMatch(page, /siteOpsProducts/);
-	assert.equal(serviceBusinessProducts[0].name, 'ANUVÉ');
+	assert.deepEqual(
+		serviceBusinessProducts.map((product) => product.name),
+		['ANUVÉ', 'Arco Care'],
+	);
 	assert.match(page, /ANUVÉ|serviceBusinessProducts/);
 	assert.doesNotMatch(page, /SecureFlow/);
 	assert.doesNotMatch(page, /Access Paperless/);
 	assert.doesNotMatch(page, /ActivoObra/);
 	assert.doesNotMatch(page, /HayStock/);
 	assert.doesNotMatch(page, /RutaSegura/);
+	assert.doesNotMatch(page, /Fochi/);
 });
 
 test('/software 301 redirects to /plataformas', () => {

@@ -17,14 +17,14 @@ export const SITE_OPS_VERTICAL = {
 	slug: 'operacion-de-sitios' as const,
 	href: '/plataformas/operacion-de-sitios',
 	name: 'Operación de sitios',
-	audience: 'Para planta, obra, facilities, hospital y corporativo.',
+	audience: 'Si operas un sitio físico — planta, retail, hospital, escuela, corporativo u otro.',
 };
 
 export const SERVICE_VERTICAL = {
 	slug: 'negocios-de-servicio' as const,
 	href: '/plataformas/negocios-de-servicio',
 	name: 'Negocios de servicio',
-	audience: 'Para PyME de servicio al público.',
+	audience: 'Si atiendes clientes de a pie — clínica, salón u otro negocio de servicio.',
 };
 
 export const PLATFORM_VERTICALS = [SITE_OPS_VERTICAL, SERVICE_VERTICAL] as const;
@@ -40,7 +40,7 @@ export const products: Product[] = [
 		problem:
 			'Clientes, contratos y la operación del sitio se fragmentan entre hojas, chats y un CRM que no entiende el campo.',
 		audience:
-			'Empresas de seguridad, integración y facilities que operan planta, corporativo, hospital u obra.',
+			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
 		howItWorks:
 			'Centraliza clientes y operación del sitio en un tablero que ya corre. Un especialista ve el estado, no un archivo suelto.',
 	},
@@ -54,7 +54,7 @@ export const products: Product[] = [
 		problem:
 			'La bitácora de papel no deja rastro útil: visitantes y contratistas entran y el cuaderno no escala.',
 		audience:
-			'Planta, obra, facilities, hospital y corporativo que reciben gente todos los días.',
+			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
 		howItWorks:
 			'Pase QR para visitantes y contratistas. De la bitácora de papel al registro digital del sitio.',
 	},
@@ -66,7 +66,8 @@ export const products: Product[] = [
 		vertical: 'operacion-de-sitios',
 		problem:
 			'Herramienta, equipo e inventario de sitio se pierden de vista: nadie sabe qué hay, quién lo tiene ni qué falta.',
-		audience: 'Obra, planta y facilities que necesitan visibilidad de activos físicos en el sitio.',
+		audience:
+			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
 		howItWorks:
 			'Control y visibilidad de activos físicos en sitio: qué hay, dónde está y quién lo tiene.',
 	},
@@ -81,6 +82,18 @@ export const products: Product[] = [
 		audience: 'Nail bars y PyME de servicio al público.',
 		howItWorks:
 			'Agenda, catálogo y overlay. La clienta ve el diseño en su mano antes de decidir.',
+	},
+	{
+		name: 'Arco Care',
+		description: 'Plataforma para clínicas veterinarias: agenda, expediente y recordatorios.',
+		href: null,
+		status: 'soon',
+		vertical: 'negocios-de-servicio',
+		problem:
+			'La clínica opera entre WhatsApp, hojas y un software que no habla con el dueño del paciente.',
+		audience: 'Clínicas veterinarias y PyME de servicio al público.',
+		howItWorks:
+			'Agenda, expediente y recordatorios. El equipo opera; el dueño recibe el seguimiento.',
 	},
 ];
 

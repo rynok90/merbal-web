@@ -69,7 +69,8 @@ test('Hero copy and CSS grid stay the motion surface; no hero-layers JPGs', () =
 
 	assert.match(hero, /Expertise en campo/);
 	assert.match(hero, /Hablar con un especialista/);
-	assert.match(hero, /Ver pilares/);
+	assert.match(hero, /Ver divisiones/);
+	assert.doesNotMatch(hero, /Ver pilares/);
 	assert.match(hero, /hero-tech-grid/);
 	assert.match(hero, /hero-tech-node/);
 	assert.doesNotMatch(hero, /hero-layers/);

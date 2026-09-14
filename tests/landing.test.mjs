@@ -75,6 +75,13 @@ test('home has three equal doors, intact lema, and no loose products', () => {
 	assert.match(hero, /campo/);
 	assert.match(hero, /plataformas/i);
 	assert.doesNotMatch(surface, /hacemos de todo/i);
+	assert.doesNotMatch(pillars, /perímetro/);
+	assert.match(hero, /Ver divisiones/);
+	assert.doesNotMatch(hero, /Ver pilares/);
+	assert.match(
+		pillars,
+		/Videovigilancia, control de acceso, detección e integración\. Sistemas que se operan y se auditan/,
+	);
 	assert.doesNotMatch(surface, /Software \/ Plataformas/);
 	assert.doesNotMatch(surface, /MERBAL productos/);
 	assert.doesNotMatch(surface, /\bSoftware\b/);
@@ -92,6 +99,8 @@ test('home has three equal doors, intact lema, and no loose products', () => {
 	assert.doesNotMatch(surface, /ActivoObra/);
 	assert.doesNotMatch(surface, /HayStock/);
 	assert.doesNotMatch(surface, /RutaSegura/);
+	assert.doesNotMatch(surface, /Arco Care/);
+	assert.doesNotMatch(surface, /Fochi/);
 	assert.doesNotMatch(surface, /secureflow-crm-production\.up\.railway\.app/);
 	assert.doesNotMatch(surface, /secureflow-landing\.netlify\.app/);
 	assert.doesNotMatch(surface, /name="nombre"/);
