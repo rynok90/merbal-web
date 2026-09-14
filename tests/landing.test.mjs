@@ -92,19 +92,52 @@ test('software page is a product division with live SecureFlow href', () => {
 	assert.match(page, /División de producto/);
 	assert.match(tree, /Software \/ Plataformas/);
 	assert.match(tree, /SecureFlow CRM/);
+	assert.match(tree, /Access Paperless/);
+	assert.match(tree, /ANUVÉ/);
 	assert.match(tree, /https:\/\/secureflow-landing\.netlify\.app/);
 	assert.doesNotMatch(tree, /https:\/\/secureflow-crm-production\.up\.railway\.app/);
-	assert.match(platforms, /SECUFLOW_CTA_LABEL/);
-	assert.match(products, /Conocer SecureFlow/);
+	assert.match(platforms, /product\.status === 'live'/);
+	assert.match(platforms, /product\.status === 'soon'/);
+	assert.doesNotMatch(platforms, /products\[0\]/);
+	assert.doesNotMatch(platforms, /slice\(1\)/);
+	assert.match(platforms, /productCtaLabel\(product\)/);
+	assert.doesNotMatch(platforms, /SECUFLOW_CTA_LABEL/);
+	assert.match(products, /productCtaLabel/);
+	assert.match(products, /Conocer \$\{/);
 	assert.doesNotMatch(platforms, /Abrir SecureFlow/);
 	assert.match(platforms, /target="_blank"/);
 	assert.match(platforms, /rel="noopener noreferrer"/);
 	assert.match(tree, /HayStock/);
 	assert.match(tree, /RutaSegura/);
+	assert.match(platforms, /md:grid-cols-2/);
 	assert.match(platforms, /Próximamente/);
 	assert.match(tree, /Desarrollo de software a la medida/);
 	assert.match(platforms, /liveProductHref/);
 	assert.match(platforms, /customSoftware\.href/);
+
+	const upcomingStart = platforms.indexOf('upcoming.map');
+	assert.ok(upcomingStart >= 0, 'upcoming products must be mapped from the soon set');
+	const upcomingEnd = platforms.indexOf('customSoftware', upcomingStart);
+	const upcomingBlock = platforms.slice(
+		upcomingStart,
+		upcomingEnd === -1 ? undefined : upcomingEnd,
+	);
+	assert.doesNotMatch(upcomingBlock, /<a[\s>]/);
+	assert.doesNotMatch(upcomingBlock, /btn-primary/);
+	assert.doesNotMatch(upcomingBlock, /productCtaLabel/);
+	assert.match(upcomingBlock, /Próximamente/);
+});
+
+test('Access Paperless and ANUVÉ stay out of the nav', () => {
+	const nav = read('src/lib/nav.ts');
+	const header = read('src/components/Header.astro');
+	const chrome = nav + header;
+
+	assert.doesNotMatch(chrome, /Access Paperless/);
+	assert.doesNotMatch(chrome, /ANUVÉ/);
+	assert.doesNotMatch(chrome, /ANUVE/);
+	assert.doesNotMatch(chrome, /HayStock/);
+	assert.doesNotMatch(chrome, /RutaSegura/);
 });
 
 test('nosotros owns Cómo trabajamos and the four steps', () => {

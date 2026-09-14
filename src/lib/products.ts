@@ -16,6 +16,19 @@ export const products: Product[] = [
 		status: 'live',
 	},
 	{
+		name: 'Access Paperless',
+		description:
+			'Control de visitantes y contratistas con pase QR. De la bitácora de papel al acceso digital.',
+		href: null,
+		status: 'soon',
+	},
+	{
+		name: 'ANUVÉ',
+		description: 'Agenda, catálogo y overlay para nail bars. La clienta ve el diseño en su mano.',
+		href: null,
+		status: 'soon',
+	},
+	{
 		name: 'HayStock',
 		description: 'Bot de inventario por WhatsApp orientado a refaccionarias y comercios.',
 		href: null,
@@ -31,7 +44,12 @@ export const products: Product[] = [
 
 export const SECUFLOW_CRM_URL = products[0]?.href ?? '';
 
-export const SECUFLOW_CTA_LABEL = 'Conocer SecureFlow';
+export function productCtaLabel(product: Product): string {
+	const firstWord = product.name.trim().split(/\s+/)[0] ?? product.name;
+	return `Conocer ${firstWord}`;
+}
+
+export const SECUFLOW_CTA_LABEL = products[0] ? productCtaLabel(products[0]) : '';
 
 export const customSoftware = {
 	name: 'Desarrollo de software a la medida',
