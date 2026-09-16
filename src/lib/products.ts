@@ -48,8 +48,8 @@ export const products: Product[] = [
 		name: 'Access Paperless',
 		description:
 			'Control de visitantes y contratistas con pase QR. De la bitácora de papel al acceso digital.',
-		href: null,
-		status: 'soon',
+		href: 'https://access.merbal.lat/',
+		status: 'live',
 		vertical: 'operacion-de-sitios',
 		problem:
 			'La bitácora de papel no deja rastro útil: visitantes y contratistas entran y el cuaderno no escala.',

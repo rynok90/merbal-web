@@ -46,8 +46,11 @@ test('catalog partitions site-ops and service verticals without HayStock or Ruta
 
 	const access = siteOpsProducts.find((product) => product.name === 'Access Paperless');
 	assert.ok(access);
-	assert.equal(access.status, 'soon');
-	assert.equal(access.href, null);
+	assert.equal(access.status, 'live');
+	assert.equal(access.href, 'https://access.merbal.lat/');
+	assert.equal(liveProductHref(access), 'https://access.merbal.lat/');
+	assert.equal(productCtaLabel(access), 'Conocer Access');
+	assert.doesNotMatch(access.href, /netlify/i);
 	assert.doesNotMatch(access.problem + access.howItWorks + access.description, /cerradura/i);
 	assert.match(access.description, /bitácora/);
 

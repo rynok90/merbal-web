@@ -3,7 +3,11 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { products } from '../src/lib/products.ts';
+import {
+	liveProductHref,
+	productCtaLabel,
+	products,
+} from '../src/lib/products.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -23,6 +27,17 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 	assert.match(ficha, /product\.howItWorks/);
 	assert.match(ficha, /liveProductHref/);
 	assert.match(ficha, /productCtaLabel/);
+	assert.match(ficha, /product\.status === 'soon'/);
+	assert.match(ficha, /Próximamente/);
+	assert.match(ficha, /En operación/);
+	assert.doesNotMatch(ficha, /Access Paperless/);
+
+	const access = products.find((product) => product.name === 'Access Paperless');
+	assert.ok(access);
+	assert.equal(access.status, 'live');
+	assert.equal(liveProductHref(access), 'https://access.merbal.lat/');
+	assert.equal(productCtaLabel(access), 'Conocer Access');
+	assert.doesNotMatch(liveProductHref(access) ?? '', /netlify/i);
 
 	for (const product of products) {
 		assert.ok(product.problem.length > 20, `${product.name} missing problem`);
