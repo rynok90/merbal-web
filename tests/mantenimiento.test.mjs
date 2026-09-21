@@ -47,6 +47,8 @@ test('maintenance CONFIG and document.title formula are MERBAL-branded', () => {
 test('/mantenimiento is reachable and is not nav or home', () => {
 	const redirects = read('public/_redirects');
 	assert.match(redirects, /\/mantenimiento\s+\/mantenimiento\.html/);
+	assert.match(redirects, /\/seguridad-electronica\s+\/mantenimiento\s+302!/);
+	assert.match(redirects, /\/infraestructura-de-red\s+\/mantenimiento\s+302!/);
 
 	const hrefs = NAV_LINKS.map((link) => link.href);
 	assert.equal(hrefs.includes('/mantenimiento'), false);
@@ -59,7 +61,9 @@ test('/mantenimiento is reachable and is not nav or home', () => {
 	const home = read('src/pages/index.astro');
 	const hero = read('src/components/Hero.astro');
 	assert.match(home, /<Hero/);
-	assert.match(hero, /Expertise en campo/);
+	assert.match(hero, /Productos/);
+	assert.match(hero, /que operan/);
+	assert.doesNotMatch(hero, /Expertise en campo/);
 	assert.doesNotMatch(home, /mantenimiento/i);
 	assert.doesNotMatch(home, /Volvemos en un momento/);
 });

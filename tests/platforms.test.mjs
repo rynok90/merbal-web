@@ -25,6 +25,9 @@ test('plataformas hub is two verticals, customSoftware only at the foot, no mixe
 	const tree = hub + platforms;
 
 	assert.match(hub, /<Platforms/);
+	assert.doesNotMatch(tree, /tres divisiones/i);
+	assert.doesNotMatch(tree, /mismo peso/);
+	assert.doesNotMatch(tree, /cerramos la división/);
 	assert.equal(SITE_OPS_VERTICAL.name, 'Operación de sitios');
 	assert.equal(SERVICE_VERTICAL.name, 'Negocios de servicio');
 	assert.match(platforms, /PLATFORM_VERTICALS/);

@@ -84,7 +84,8 @@ test('home Hero has a scoped technological backdrop', () => {
 	const css = read('src/styles/global.css');
 
 	assert.match(hero, /hero-tech/);
-	assert.match(hero, /Empresa mexicana · Seguridad y tecnología/);
+	assert.match(hero, /Empresa mexicana · Plataformas/);
+	assert.doesNotMatch(hero, /Seguridad y tecnología/);
 	assert.match(css, /hero-tech-grid/);
 	assert.match(css, /perspective/);
 	assert.doesNotMatch(hero, /three\.js/i);

@@ -5,8 +5,6 @@ export type NavLink = {
 };
 
 export const HEADER_NAV: NavLink[] = [
-	{ href: '/seguridad-electronica', label: 'Seguridad electrónica' },
-	{ href: '/infraestructura-de-red', label: 'Infraestructura de red' },
 	{
 		href: '/plataformas',
 		label: 'Plataformas',
@@ -19,8 +17,6 @@ export const HEADER_NAV: NavLink[] = [
 ];
 
 export const FOOTER_LINKS: NavLink[] = [
-	{ href: '/seguridad-electronica', label: 'Seguridad electrónica' },
-	{ href: '/infraestructura-de-red', label: 'Infraestructura de red' },
 	{ href: '/plataformas', label: 'Plataformas' },
 	{ href: '/nosotros', label: 'Nosotros' },
 	{ href: '/contacto', label: 'Contacto' },
@@ -34,8 +30,6 @@ export const HEADER_CTA_LABEL = 'Solicitar asesoría';
 
 export const ROUTES = [
 	'/',
-	'/seguridad-electronica',
-	'/infraestructura-de-red',
 	'/plataformas',
 	'/plataformas/operacion-de-sitios',
 	'/plataformas/negocios-de-servicio',

@@ -67,10 +67,13 @@ test('Hero copy and CSS grid stay the motion surface; no hero-layers JPGs', () =
 	const motion = read('src/components/Motion.astro');
 	const css = read('src/styles/global.css');
 
-	assert.match(hero, /Expertise en campo/);
-	assert.match(hero, /Hablar con un especialista/);
-	assert.match(hero, /Ver divisiones/);
+	assert.match(hero, /Productos/);
+	assert.match(hero, /que operan/);
+	assert.match(hero, /Pedir demo/);
+	assert.match(hero, /Ver plataformas/);
+	assert.doesNotMatch(hero, /Expertise en campo/);
 	assert.doesNotMatch(hero, /Ver pilares/);
+	assert.doesNotMatch(hero, /Ver divisiones/);
 	assert.match(hero, /hero-tech-grid/);
 	assert.match(hero, /hero-tech-node/);
 	assert.doesNotMatch(hero, /hero-layers/);

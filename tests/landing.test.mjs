@@ -12,8 +12,6 @@ function read(rel) {
 
 const ROUTES = [
 	['src/pages/index.astro', '/'],
-	['src/pages/seguridad-electronica.astro', '/seguridad-electronica'],
-	['src/pages/infraestructura-de-red.astro', '/infraestructura-de-red'],
 	['src/pages/plataformas/index.astro', '/plataformas'],
 	['src/pages/plataformas/operacion-de-sitios.astro', '/plataformas/operacion-de-sitios'],
 	['src/pages/plataformas/negocios-de-servicio.astro', '/plataformas/negocios-de-servicio'],
@@ -27,6 +25,8 @@ test('Astro routes exist as distinct pages including plataformas verticals', () 
 		assert.match(read(file), /layouts\/Layout\.astro/);
 	}
 	assert.equal(existsSync(join(root, 'src/pages/software.astro')), false);
+	assert.equal(existsSync(join(root, 'src/pages/seguridad-electronica.astro')), false);
+	assert.equal(existsSync(join(root, 'src/pages/infraestructura-de-red.astro')), false);
 });
 
 test('Header uses real page paths, not only in-page anchors', () => {
@@ -42,8 +42,6 @@ test('Header uses real page paths, not only in-page anchors', () => {
 	assert.doesNotMatch(header, /href="#contacto"/);
 
 	for (const href of [
-		"'/seguridad-electronica'",
-		"'/infraestructura-de-red'",
 		"'/plataformas'",
 		"'/plataformas/operacion-de-sitios'",
 		"'/plataformas/negocios-de-servicio'",
@@ -52,11 +50,13 @@ test('Header uses real page paths, not only in-page anchors', () => {
 		assert.ok(nav.includes(href), `nav missing ${href}`);
 	}
 
+	assert.doesNotMatch(nav, /\/seguridad-electronica/);
+	assert.doesNotMatch(nav, /\/infraestructura-de-red/);
 	assert.match(footer, /FOOTER_LINKS/);
 	assert.match(nav, /\/nosotros/);
 });
 
-test('home has three equal doors, intact lema, and no loose products', () => {
+test('home is software-first with two platform doors and no campo cards', () => {
 	const home = read('src/pages/index.astro');
 	const hero = read('src/components/Hero.astro');
 	const pillars = read('src/components/Pillars.astro');
@@ -68,29 +68,32 @@ test('home has three equal doors, intact lema, and no loose products', () => {
 	assert.doesNotMatch(home, /<Platforms/);
 	assert.doesNotMatch(home, /<Contact/);
 	assert.doesNotMatch(home, /<Method/);
-	assert.match(hero, /Expertise en campo/);
+	assert.match(hero, /Empresa mexicana · Plataformas/);
 	assert.match(hero, /Productos/);
 	assert.match(hero, /que operan/);
-	assert.match(hero, /Tres divisiones/);
-	assert.match(hero, /campo/);
-	assert.match(hero, /plataformas/i);
+	assert.match(hero, /Casa de software para operar el sitio y el negocio/);
+	assert.match(hero, /Productos propios y desarrollo a la medida/);
+	assert.match(hero, /Pedir demo/);
+	assert.match(hero, /href=\{CONTACT_PATH\}/);
+	assert.match(hero, /href="\/plataformas"/);
+	assert.match(hero, /Ver plataformas/);
+	assert.doesNotMatch(surface, /Expertise en campo/);
+	assert.doesNotMatch(surface, /Tres divisiones/);
+	assert.doesNotMatch(surface, /mismo peso/);
+	assert.doesNotMatch(surface, /Seguridad y tecnología/);
 	assert.doesNotMatch(surface, /hacemos de todo/i);
+	assert.doesNotMatch(surface, /cerramos la división/);
 	assert.doesNotMatch(pillars, /perímetro/);
-	assert.match(hero, /Ver divisiones/);
 	assert.doesNotMatch(hero, /Ver pilares/);
-	assert.match(
-		pillars,
-		/Videovigilancia, control de acceso, detección e integración\. Sistemas que se operan y se auditan/,
-	);
+	assert.doesNotMatch(hero, /Ver divisiones/);
 	assert.doesNotMatch(surface, /Software \/ Plataformas/);
 	assert.doesNotMatch(surface, /MERBAL productos/);
-	assert.doesNotMatch(surface, /\bSoftware\b/);
-	assert.match(pillars, /href="\/seguridad-electronica"/);
-	assert.match(pillars, /href="\/infraestructura-de-red"/);
-	assert.match(pillars, /href="\/plataformas"/);
-	assert.match(pillars, />Seguridad electrónica</);
-	assert.match(pillars, />Infraestructura de red</);
 	assert.match(pillars, />Plataformas</);
+	assert.match(pillars, /PLATFORM_VERTICALS/);
+	assert.match(pillars, /href=\{vertical\.href\}/);
+	assert.match(pillars, /md:grid-cols-2/);
+	assert.doesNotMatch(pillars, /href="\/seguridad-electronica"/);
+	assert.doesNotMatch(pillars, /href="\/infraestructura-de-red"/);
 	assert.doesNotMatch(pillars, /href="\/software"/);
 	assert.doesNotMatch(surface, /Cómo trabajamos/);
 	assert.doesNotMatch(surface, /SecureFlow/);
@@ -121,11 +124,15 @@ test('Access Paperless and product names stay out of the header', () => {
 	assert.doesNotMatch(header, />Inicio</);
 	assert.doesNotMatch(header, />Software</);
 	assert.doesNotMatch(header, />Nosotros</);
+	assert.doesNotMatch(chrome, /Seguridad electrónica/);
+	assert.doesNotMatch(chrome, /Infraestructura de red/);
 });
 
 test('nosotros owns Cómo trabajamos and the four steps', () => {
 	const page = read('src/pages/nosotros.astro');
 	const method = read('src/components/Method.astro');
+	const about = read('src/components/About.astro');
+	const tree = page + method + about;
 
 	assert.match(page, /<Method/);
 	assert.match(method, /Cómo trabajamos/);
@@ -139,6 +146,10 @@ test('nosotros owns Cómo trabajamos and the four steps', () => {
 	assert.match(method, />\s*02\s*</);
 	assert.match(method, />\s*03\s*</);
 	assert.match(method, />\s*04\s*</);
+	assert.match(tree, /casa de plataformas/);
+	assert.doesNotMatch(tree, /tres divisiones/i);
+	assert.doesNotMatch(tree, /mismo peso/);
+	assert.doesNotMatch(tree, /cerramos la división/);
 });
 
 test('contacto posts JSON to the Netlify function, not mailto', () => {
@@ -164,14 +175,6 @@ test('contacto posts JSON to the Netlify function, not mailto', () => {
 	assert.doesNotMatch(contact, /WhatsApp/i);
 });
 
-test('expert service pages describe the practice and point to contact', () => {
-	const seguridad = read('src/pages/seguridad-electronica.astro');
-	const red = read('src/pages/infraestructura-de-red.astro');
-
-	assert.match(seguridad, /Seguridad electrónica/);
-	assert.match(red, /Infraestructura de red/);
-});
-
 test('GSAP + ScrollTrigger are registered in shipped client motion', () => {
 	const motion = read('src/components/Motion.astro');
 	const css = read('src/styles/global.css');
@@ -193,8 +196,6 @@ test('venta de equipos is absent from shipped sources', () => {
 		'src/pages/plataformas/index.astro',
 		'src/pages/nosotros.astro',
 		'src/pages/contacto.astro',
-		'src/pages/seguridad-electronica.astro',
-		'src/pages/infraestructura-de-red.astro',
 		'src/components/Header.astro',
 		'src/components/Footer.astro',
 		'src/components/Hero.astro',

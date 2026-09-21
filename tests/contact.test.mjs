@@ -10,6 +10,7 @@ import {
 	handleContactRequest,
 	parseContactPayload,
 } from '../src/lib/contact.ts';
+import { DIVISIONS, VERTICALS } from '../src/lib/contact-config.ts';
 import { CONTACT_EMAIL } from '../src/lib/mailto.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -56,11 +57,15 @@ test('contact form posts JSON to the function and has division, vertical and hon
 	assert.match(contact, /name="website"/);
 	assert.match(contact, /DIVISIONS\.map/);
 	assert.match(contact, /VERTICALS\.map/);
-	assert.match(config, /Seguridad electrónica/);
-	assert.match(config, /Infraestructura de red/);
+	assert.deepEqual([...DIVISIONS], ['Plataformas']);
+	assert.deepEqual([...VERTICALS], ['Operación de sitios', 'Negocios de servicio']);
+	assert.doesNotMatch(config, /Seguridad electrónica/);
+	assert.doesNotMatch(config, /Infraestructura de red/);
 	assert.match(config, /Plataformas/);
 	assert.match(config, /Operación de sitios/);
 	assert.match(config, /Negocios de servicio/);
+	assert.doesNotMatch(contact, /Seguridad electrónica/);
+	assert.doesNotMatch(contact, /Infraestructura de red/);
 	assert.match(contact, /Pide una demo o una asesoría/);
 	assert.match(contact, /Inténtalo de nuevo/);
 	assert.doesNotMatch(contact, /WhatsApp/i);
@@ -90,10 +95,23 @@ test('invalid body is 4xx not 500', async () => {
 		nombre: 'Ana',
 		email: 'not-an-email',
 		mensaje: 'Hola',
-		division: 'Seguridad electrónica',
+		division: 'Plataformas',
+		vertical: 'Negocios de servicio',
 	});
 	assert.equal(parsed.ok, false);
 	if (!parsed.ok) assert.equal(parsed.status, 400);
+
+	const campo = parseContactPayload({
+		nombre: 'Ana Pérez',
+		email: 'ana@empresa.mx',
+		mensaje: 'Hola',
+		division: 'Seguridad electrónica',
+	});
+	assert.equal(campo.ok, false);
+	if (!campo.ok) {
+		assert.equal(campo.status, 400);
+		assert.notEqual(campo.status, 500);
+	}
 });
 
 test('rate limiter blocks a second immediate call', async () => {
