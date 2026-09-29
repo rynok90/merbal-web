@@ -22,16 +22,18 @@ test('maintenance CONFIG and document.title formula are MERBAL-branded', () => {
 	const html = read('public/mantenimiento.html');
 
 	assert.equal(configString(html, 'brand'), 'MERBAL');
-	assert.equal(configString(html, 'statusCode'), '503');
-	assert.equal(configString(html, 'statusLabel'), 'En mantenimiento');
-	assert.equal(configString(html, 'title'), 'Volvemos en un momento');
-	assert.equal(
-		configString(html, 'message'),
-		'Estamos haciendo una mejora breve. Tu informacion sigue a salvo y el sitio se reanudara en cuanto terminemos.',
-	);
+	assert.equal(configString(html, 'statusLabel'), 'En pausa');
+	assert.equal(configString(html, 'title'), 'En pausa');
+	assert.equal(configString(html, 'message'), 'Esta plataforma no está disponible por ahora.');
 	assert.equal(configString(html, 'retryLabel'), 'Reintentar conexion');
 	assert.equal(configString(html, 'supportLabel'), 'Escribir a MERBAL');
 	assert.equal(configString(html, 'supportHref'), 'mailto:soporte@merbal.lat');
+
+	assert.match(html, /id="brand">MERBAL</);
+	assert.match(html, /id="statusLabel">En pausa</);
+	assert.match(html, /id="title">En pausa</);
+	assert.match(html, /id="message">Esta plataforma no está disponible por ahora\.</);
+	assert.match(html, /href="mailto:soporte@merbal\.lat"/);
 
 	assert.match(html, /label:\s*"Servicios",\s*value:\s*"Pausados"/);
 	assert.match(html, /label:\s*"Datos",\s*value:\s*"Protegidos"/);
@@ -40,8 +42,12 @@ test('maintenance CONFIG and document.title formula are MERBAL-branded', () => {
 	assert.match(html, /document\.title = `\$\{CONFIG\.brand\} · \$\{CONFIG\.statusLabel\}`/);
 	assert.equal(
 		`${configString(html, 'brand')} · ${configString(html, 'statusLabel')}`,
-		'MERBAL · En mantenimiento',
+		'MERBAL · En pausa',
 	);
+
+	assert.doesNotMatch(html, /North/);
+	assert.doesNotMatch(html, /hola@north\.studio/);
+	assert.doesNotMatch(html, /503/);
 });
 
 test('/mantenimiento is reachable and is not nav or home', () => {

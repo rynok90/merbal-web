@@ -27,9 +27,14 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 	assert.match(ficha, /product\.howItWorks/);
 	assert.match(ficha, /liveProductHref/);
 	assert.match(ficha, /productCtaLabel/);
+	assert.match(ficha, /product\.status === 'live'/);
 	assert.match(ficha, /product\.status === 'soon'/);
-	assert.match(ficha, /Próximamente/);
+	assert.match(ficha, /product\.status === 'paused'/);
 	assert.match(ficha, /En operación/);
+	assert.match(ficha, /Próximamente/);
+	assert.match(ficha, /En pausa/);
+	assert.match(ficha, /href="\/mantenimiento"/);
+	assert.match(ficha, /Avisarme/);
 	assert.doesNotMatch(ficha, /Access Paperless/);
 
 	const access = products.find((product) => product.name === 'Access Paperless');
@@ -38,6 +43,14 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 	assert.equal(liveProductHref(access), 'https://access.merbal.lat/');
 	assert.equal(productCtaLabel(access), 'Conocer Access');
 	assert.doesNotMatch(liveProductHref(access) ?? '', /netlify/i);
+	assert.doesNotMatch(liveProductHref(access) ?? '', /railway/i);
+
+	const secureflow = products.find((product) => product.name === 'SecureFlow CRM');
+	assert.ok(secureflow);
+	assert.equal(secureflow.status, 'paused');
+	assert.equal(liveProductHref(secureflow), null);
+	assert.doesNotMatch(secureflow.href ?? '', /netlify/i);
+	assert.doesNotMatch(secureflow.href ?? '', /railway/i);
 
 	for (const product of products) {
 		assert.ok(product.problem.length > 20, `${product.name} missing problem`);

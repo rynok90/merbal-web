@@ -1,4 +1,4 @@
-export type ProductStatus = 'live' | 'soon';
+export type ProductStatus = 'live' | 'soon' | 'paused';
 
 export type ProductVertical = 'operacion-de-sitios' | 'negocios-de-servicio';
 
@@ -31,20 +31,6 @@ export const PLATFORM_VERTICALS = [SITE_OPS_VERTICAL, SERVICE_VERTICAL] as const
 
 export const products: Product[] = [
 	{
-		name: 'SecureFlow CRM',
-		description:
-			'Gestión de clientes y operaciones para empresas de seguridad e integración.',
-		href: 'https://secureflow-landing.netlify.app',
-		status: 'live',
-		vertical: 'operacion-de-sitios',
-		problem:
-			'Clientes, contratos y la operación del sitio se fragmentan entre hojas, chats y un CRM que no entiende el campo.',
-		audience:
-			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
-		howItWorks:
-			'Centraliza clientes y operación del sitio en un tablero que ya corre. Un especialista ve el estado, no un archivo suelto.',
-	},
-	{
 		name: 'Access Paperless',
 		description:
 			'Control de visitantes y contratistas con pase QR. De la bitácora de papel al acceso digital.',
@@ -59,6 +45,19 @@ export const products: Product[] = [
 			'Pase QR para visitantes y contratistas. De la bitácora de papel al registro digital del sitio.',
 	},
 	{
+		name: 'Access Enterprise',
+		description: 'Capa multi-sitio para 22+ sillas, con políticas de grupo.',
+		href: null,
+		status: 'soon',
+		vertical: 'operacion-de-sitios',
+		problem:
+			'Con varios sitios, cada silla opera como una isla: no hay política de grupo ni visibilidad compartida.',
+		audience:
+			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
+		howItWorks:
+			'Capa multi-sitio para 22+ sillas, con políticas de grupo. Un control sobre varios sitios.',
+	},
+	{
 		name: 'ActivoObra',
 		description: 'Control y visibilidad de activos físicos en sitio.',
 		href: null,
@@ -70,6 +69,20 @@ export const products: Product[] = [
 			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
 		howItWorks:
 			'Control y visibilidad de activos físicos en sitio: qué hay, dónde está y quién lo tiene.',
+	},
+	{
+		name: 'SecureFlow CRM',
+		description:
+			'Gestión de clientes y operaciones para empresas de seguridad e integración.',
+		href: null,
+		status: 'paused',
+		vertical: 'operacion-de-sitios',
+		problem:
+			'Clientes, contratos y la operación del sitio se fragmentan entre hojas, chats y un CRM que no entiende el campo.',
+		audience:
+			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
+		howItWorks:
+			'Centraliza clientes y operación del sitio en un tablero. Hoy la plataforma está en pausa.',
 	},
 	{
 		name: 'ANUVÉ',

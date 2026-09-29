@@ -106,6 +106,8 @@ test('home is software-first with two platform doors and no campo cards', () => 
 	assert.doesNotMatch(surface, /Fochi/);
 	assert.doesNotMatch(surface, /secureflow-crm-production\.up\.railway\.app/);
 	assert.doesNotMatch(surface, /secureflow-landing\.netlify\.app/);
+	assert.doesNotMatch(surface, /Conocer SecureFlow/);
+	assert.doesNotMatch(surface, /railway/i);
 	assert.doesNotMatch(surface, /name="nombre"/);
 	assert.doesNotMatch(surface, /Venta de equipos/i);
 });

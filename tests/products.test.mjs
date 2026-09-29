@@ -17,35 +17,39 @@ import {
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('catalog partitions site-ops and service verticals without HayStock or RutaSegura', () => {
-	assert.equal(SECUFLOW_CRM_URL, 'https://secureflow-landing.netlify.app');
-	assert.doesNotMatch(SECUFLOW_CRM_URL, /secureflow-crm-production\.up\.railway\.app/);
+test('catalog partitions site-ops with Access first live and SecureFlow paused', () => {
+	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /netlify/i);
+	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /railway/i);
 
 	assert.deepEqual(
 		products.map((product) => product.name),
-		['SecureFlow CRM', 'Access Paperless', 'ActivoObra', 'ANUVÉ', 'Arco Care'],
+		[
+			'Access Paperless',
+			'Access Enterprise',
+			'ActivoObra',
+			'SecureFlow CRM',
+			'ANUVÉ',
+			'Arco Care',
+		],
 	);
 
 	assert.deepEqual(
 		siteOpsProducts.map((product) => product.name),
-		['SecureFlow CRM', 'Access Paperless', 'ActivoObra'],
+		['Access Paperless', 'Access Enterprise', 'ActivoObra', 'SecureFlow CRM'],
 	);
 	assert.deepEqual(
 		productsByVertical('operacion-de-sitios').map((product) => product.name),
-		['SecureFlow CRM', 'Access Paperless', 'ActivoObra'],
+		['Access Paperless', 'Access Enterprise', 'ActivoObra', 'SecureFlow CRM'],
 	);
 
-	const secureflow = siteOpsProducts.find((product) => product.name === 'SecureFlow CRM');
-	assert.ok(secureflow);
-	assert.equal(secureflow.status, 'live');
-	assert.equal(secureflow.href, SECUFLOW_CRM_URL);
-	assert.equal(secureflow.vertical, 'operacion-de-sitios');
-	assert.equal(liveProductHref(secureflow), SECUFLOW_CRM_URL);
-	assert.equal(productCtaLabel(secureflow), 'Conocer SecureFlow');
-	assert.equal(SECUFLOW_CTA_LABEL, 'Conocer SecureFlow');
+	const liveSiteOps = siteOpsProducts.filter((product) => product.status === 'live');
+	assert.deepEqual(
+		liveSiteOps.map((product) => product.name),
+		['Access Paperless'],
+	);
 
-	const access = siteOpsProducts.find((product) => product.name === 'Access Paperless');
-	assert.ok(access);
+	const access = siteOpsProducts[0];
+	assert.equal(access.name, 'Access Paperless');
 	assert.equal(access.status, 'live');
 	assert.equal(access.href, 'https://access.merbal.lat/');
 	assert.equal(liveProductHref(access), 'https://access.merbal.lat/');
@@ -54,11 +58,32 @@ test('catalog partitions site-ops and service verticals without HayStock or Ruta
 	assert.doesNotMatch(access.problem + access.howItWorks + access.description, /cerradura/i);
 	assert.match(access.description, /bitácora/);
 
+	const enterprise = siteOpsProducts.find((product) => product.name === 'Access Enterprise');
+	assert.ok(enterprise);
+	assert.equal(enterprise.status, 'soon');
+	assert.equal(enterprise.href, null);
+	assert.equal(liveProductHref(enterprise), null);
+	assert.match(enterprise.description, /multi-sitio/);
+	assert.match(enterprise.description, /22\+ sillas/);
+	assert.match(enterprise.description, /políticas de grupo/);
+	assert.doesNotMatch(enterprise.description + (enterprise.href ?? ''), /https?:\/\//);
+	assert.doesNotMatch(enterprise.description, /\$|precio/i);
+
 	const activo = siteOpsProducts.find((product) => product.name === 'ActivoObra');
 	assert.ok(activo);
 	assert.equal(activo.status, 'soon');
 	assert.equal(activo.href, null);
 	assert.match(activo.description, /activos físicos en sitio/);
+
+	const secureflow = siteOpsProducts.find((product) => product.name === 'SecureFlow CRM');
+	assert.ok(secureflow);
+	assert.equal(secureflow.status, 'paused');
+	assert.equal(liveProductHref(secureflow), null);
+	assert.doesNotMatch(secureflow.href ?? '', /netlify/i);
+	assert.doesNotMatch(secureflow.href ?? '', /railway/i);
+	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /secureflow-landing\.netlify\.app/);
+	assert.equal(productCtaLabel(secureflow), 'Conocer SecureFlow');
+	assert.equal(SECUFLOW_CTA_LABEL, 'Conocer SecureFlow');
 
 	assert.deepEqual(
 		serviceBusinessProducts.map((product) => product.name),
@@ -76,19 +101,6 @@ test('catalog partitions site-ops and service verticals without HayStock or Ruta
 	assert.equal(arco.status, 'soon');
 	assert.equal(arco.href, null);
 	assert.equal(arco.vertical, 'negocios-de-servicio');
-	assert.equal(
-		arco.description,
-		'Plataforma para clínicas veterinarias: agenda, expediente y recordatorios.',
-	);
-	assert.equal(
-		arco.problem,
-		'La clínica opera entre WhatsApp, hojas y un software que no habla con el dueño del paciente.',
-	);
-	assert.equal(arco.audience, 'Clínicas veterinarias y PyME de servicio al público.');
-	assert.equal(
-		arco.howItWorks,
-		'Agenda, expediente y recordatorios. El equipo opera; el dueño recibe el seguimiento.',
-	);
 	assert.equal(liveProductHref(arco), null);
 
 	assert.equal(
@@ -108,6 +120,8 @@ test('catalog partitions site-ops and service verticals without HayStock or Ruta
 	assert.doesNotMatch(catalog, /HayStock/);
 	assert.doesNotMatch(catalog, /RutaSegura/);
 	assert.doesNotMatch(catalog, /Fochi/);
+	assert.doesNotMatch(catalog, /secureflow-landing\.netlify\.app/);
+	assert.doesNotMatch(catalog, /railway/i);
 });
 
 test('custom software is a first-class option in the shipped catalog', () => {

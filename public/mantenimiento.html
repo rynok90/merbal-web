@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#09090b" />
     <meta
       name="description"
-      content="Página de mantenimiento. El servicio no está disponible por ahora."
+      content="Esta plataforma no está disponible por ahora."
     />
-    <title>Standby</title>
+    <title>MERBAL · En pausa</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -389,7 +389,7 @@
               </svg>
             </span>
             <div>
-              <p class="brand-name" id="brand">North</p>
+              <p class="brand-name" id="brand">MERBAL</p>
               <p class="brand-sub">Sistema en pausa</p>
             </div>
           </div>
@@ -419,12 +419,10 @@
             <div class="enter">
               <p class="badge">
                 <span class="dot" aria-hidden="true"></span>
-                <span id="statusLabel">En mantenimiento</span>
-                <span style="color: var(--subtle)">·</span>
-                <span id="statusCode">503</span>
+                <span id="statusLabel">En pausa</span>
               </p>
-              <h1 id="title">Volvemos en un momento</h1>
-              <p class="lead" id="message"></p>
+              <h1 id="title">En pausa</h1>
+              <p class="lead" id="message">Esta plataforma no está disponible por ahora.</p>
               <div class="sweep" aria-hidden="true"></div>
             </div>
 
@@ -438,7 +436,7 @@
                 </svg>
                 <span id="retryLabel">Reintentar conexión</span>
               </button>
-              <a class="btn btn-ghost" id="support" href="mailto:hola@north.studio">Escribir a soporte</a>
+              <a class="btn btn-ghost" id="support" href="mailto:soporte@merbal.lat">Escribir a MERBAL</a>
             </div>
 
             <ul class="enter facts" id="facts"></ul>
@@ -456,11 +454,10 @@
       /* ── Personaliza esto al reutilizar la página ── */
       const CONFIG = {
         brand: "MERBAL",
-        statusCode: "503",
-        statusLabel: "En mantenimiento",
-        title: "Volvemos en un momento",
+        statusLabel: "En pausa",
+        title: "En pausa",
         message:
-          "Estamos haciendo una mejora breve. Tu informacion sigue a salvo y el sitio se reanudara en cuanto terminemos.",
+          "Esta plataforma no está disponible por ahora.",
         retryLabel: "Reintentar conexion",
         retryBusyLabel: "Comprobando…",
         supportLabel: "Escribir a MERBAL",
@@ -498,7 +495,6 @@
 
       document.getElementById("brand").textContent = CONFIG.brand;
       document.getElementById("statusLabel").textContent = CONFIG.statusLabel;
-      document.getElementById("statusCode").textContent = CONFIG.statusCode;
       document.getElementById("title").textContent = CONFIG.title;
       document.getElementById("message").textContent = CONFIG.message;
       document.getElementById("retryLabel").textContent = CONFIG.retryLabel;

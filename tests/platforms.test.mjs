@@ -57,7 +57,7 @@ test('plataformas hub is two verticals, customSoftware only at the foot, no mixe
 	assert.doesNotMatch(tree, /Fochi/);
 });
 
-test('operacion-de-sitios lists SecureFlow, Access Paperless and ActivoObra, never ANUVÉ', () => {
+test('operacion-de-sitios lists Access first live, Enterprise soon, SecureFlow paused', () => {
 	const page = read('src/pages/plataformas/operacion-de-sitios.astro');
 	const ficha = read('src/components/ProductFicha.astro');
 	const tree = page + ficha;
@@ -68,12 +68,26 @@ test('operacion-de-sitios lists SecureFlow, Access Paperless and ActivoObra, nev
 	assert.match(tree, /Para quién/);
 	assert.match(tree, /Cómo opera/);
 	assert.match(ficha, /productCtaLabel/);
-	assert.match(ficha, /target="_blank"/);
+	assert.match(ficha, /liveProductHref/);
+	assert.match(ficha, /En pausa/);
+	assert.match(ficha, /Próximamente/);
+	assert.match(ficha, /En operación/);
 
 	const names = siteOpsProducts.map((product) => product.name);
-	assert.deepEqual(names, ['SecureFlow CRM', 'Access Paperless', 'ActivoObra']);
-	assert.equal(productCtaLabel(siteOpsProducts[0]), 'Conocer SecureFlow');
-	assert.equal(siteOpsProducts[0].href, SECUFLOW_CRM_URL);
+	assert.deepEqual(names, [
+		'Access Paperless',
+		'Access Enterprise',
+		'ActivoObra',
+		'SecureFlow CRM',
+	]);
+	assert.equal(siteOpsProducts[0].status, 'live');
+	assert.equal(productCtaLabel(siteOpsProducts[0]), 'Conocer Access');
+	assert.equal(siteOpsProducts[1].name, 'Access Enterprise');
+	assert.equal(siteOpsProducts[1].status, 'soon');
+	assert.equal(siteOpsProducts[3].name, 'SecureFlow CRM');
+	assert.equal(siteOpsProducts[3].status, 'paused');
+	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /netlify/i);
+	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /railway/i);
 	assert.doesNotMatch(page, /ANUVÉ/);
 	assert.doesNotMatch(page, /HayStock/);
 	assert.doesNotMatch(page, /RutaSegura/);
