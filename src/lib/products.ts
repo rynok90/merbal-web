@@ -46,16 +46,16 @@ export const products: Product[] = [
 	},
 	{
 		name: 'Access Enterprise',
-		description: 'Capa multi-sitio para 22+ sillas, con políticas de grupo.',
+		description: 'Control de plantilla propia en predio, ruta y obra.',
 		href: null,
 		status: 'soon',
 		vertical: 'operacion-de-sitios',
 		problem:
-			'Con varios sitios, cada silla opera como una isla: no hay política de grupo ni visibilidad compartida.',
+			'La lista de papel no dice quién subió al camión, quién faltó ni quién no iba. El reloj de pared no cubre la ruta ni el predio sin señal.',
 		audience:
-			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
+			'Campo, empaque, obra, patio y cuadrilla de sitio. También el grupo que ya controla visitantes con Access Paperless y necesita el módulo de plantilla.',
 		howItWorks:
-			'Capa multi-sitio para 22+ sillas, con políticas de grupo. Un control sobre varios sitios.',
+			'Lectura en el punto: QR o buscar por nombre y confirmar con foto. Tablero de cubiertos y faltantes por ruta y sitio. A la noche, RH tiene el Excel. Este módulo no acredita contratistas ni visitas.',
 	},
 	{
 		name: 'ActivoObra',

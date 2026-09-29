@@ -45,6 +45,35 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 	assert.doesNotMatch(liveProductHref(access) ?? '', /netlify/i);
 	assert.doesNotMatch(liveProductHref(access) ?? '', /railway/i);
 
+	const enterprise = products.find((product) => product.name === 'Access Enterprise');
+	assert.ok(enterprise);
+	assert.equal(enterprise.status, 'soon');
+	assert.equal(enterprise.href, null);
+	assert.equal(liveProductHref(enterprise), null);
+	assert.equal(enterprise.description, 'Control de plantilla propia en predio, ruta y obra.');
+	assert.equal(
+		enterprise.problem,
+		'La lista de papel no dice quién subió al camión, quién faltó ni quién no iba. El reloj de pared no cubre la ruta ni el predio sin señal.',
+	);
+	assert.equal(
+		enterprise.audience,
+		'Campo, empaque, obra, patio y cuadrilla de sitio. También el grupo que ya controla visitantes con Access Paperless y necesita el módulo de plantilla.',
+	);
+	assert.equal(
+		enterprise.howItWorks,
+		'Lectura en el punto: QR o buscar por nombre y confirmar con foto. Tablero de cubiertos y faltantes por ruta y sitio. A la noche, RH tiene el Excel. Este módulo no acredita contratistas ni visitas.',
+	);
+	const enterpriseCopy = [
+		enterprise.description,
+		enterprise.problem,
+		enterprise.audience,
+		enterprise.howItWorks,
+	].join('\n');
+	assert.doesNotMatch(enterpriseCopy, /sillas/);
+	assert.doesNotMatch(enterpriseCopy, /22\+/);
+	assert.doesNotMatch(enterpriseCopy, /multi-sitio/);
+	assert.doesNotMatch(enterpriseCopy, /políticas de grupo/);
+
 	const secureflow = products.find((product) => product.name === 'SecureFlow CRM');
 	assert.ok(secureflow);
 	assert.equal(secureflow.status, 'paused');
