@@ -1,9 +1,21 @@
 ---
 import { PLATFORM_VERTICALS } from '../lib/products';
+
+const icons: Record<(typeof PLATFORM_VERTICALS)[number]['slug'], string> = {
+	'operacion-de-sitios':
+		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 20V8l8-4 8 4v12" stroke-linejoin="round"/><path d="M9 20v-6h6v6M4 20h16" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+	'negocios-de-servicio':
+		'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="8" cy="9" r="2.4"/><circle cx="16" cy="9" r="2.4"/><path d="M4.2 18.5c.5-2.3 2.2-3.6 3.8-3.6s3.3 1.3 3.8 3.6M12.2 18.5c.5-2.3 2.2-3.6 3.8-3.6s3.3 1.3 3.8 3.6" stroke-linecap="round"/></svg>',
+};
 ---
 
-<section id="pilares" class="border-t border-white/5 bg-navy-900 py-20 sm:py-24">
-	<div class="mx-auto w-full max-w-6xl px-5 sm:px-8">
+<section id="pilares" class="relative overflow-x-clip border-t border-white/5 bg-navy-950 py-20 sm:py-24">
+	<div
+		class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_42%_at_12%_0%,rgba(20,184,166,0.16),transparent_62%),radial-gradient(ellipse_45%_40%_at_88%_100%,rgba(43,140,255,0.14),transparent_64%)]"
+		aria-hidden="true"
+	>
+	</div>
+	<div class="relative mx-auto w-full max-w-6xl px-5 sm:px-8">
 		<div class="max-w-2xl" data-reveal>
 			<p class="mb-3 font-display text-xs font-medium uppercase tracking-[0.22em] text-accent">Plataformas</p>
 			<h2 class="font-display text-3xl font-semibold tracking-tight sm:text-4xl">Plataformas</h2>
@@ -15,15 +27,20 @@ import { PLATFORM_VERTICALS } from '../lib/products';
 		<ul class="mt-12 grid gap-5 md:grid-cols-2">
 			{
 				PLATFORM_VERTICALS.map((vertical) => (
-					<li data-reveal>
-						<a
-							href={vertical.href}
-							class="card-hover group flex h-full flex-col rounded-2xl border border-white/10 bg-navy-950 p-7 sm:p-8"
-						>
-							<h3 class="font-display text-2xl font-semibold">{vertical.name}</h3>
-							<p class="mt-3 flex-1 text-sm leading-relaxed text-muted">{vertical.audience}</p>
-							<span class="mt-5 font-display text-sm font-medium text-accent group-hover:text-accent-2">
-								Ver {vertical.name.toLowerCase()} →
+					<li class="min-w-0" data-reveal>
+						<a href={vertical.href} class="platform-card home-platform-card group block h-full">
+							<span class="platform-card-layer" aria-hidden="true"></span>
+							<span class="platform-card-layer platform-card-layer-2" aria-hidden="true"></span>
+							<span class="platform-card-body home-platform-body">
+								<span
+									class:list={['platform-icon', vertical.slug === 'negocios-de-servicio' && 'platform-icon-teal']}
+									set:html={icons[vertical.slug]}
+								/>
+								<h3 class="font-display text-2xl font-semibold">{vertical.name}</h3>
+								<p class="flex-1 text-sm leading-relaxed text-muted">{vertical.audience}</p>
+								<span class="mt-2 font-display text-sm font-medium text-accent group-hover:text-accent-2">
+									Ver {vertical.name.toLowerCase()} →
+								</span>
 							</span>
 						</a>
 					</li>
