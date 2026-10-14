@@ -7,9 +7,18 @@ export const PRISM_NODE_TEAL = '#14B8A6';
 export const PRISM_HOVER_RADIUS = 72;
 export const PRISM_LINE_LOOP_MS = 3200;
 export const PRISM_IDLE_SPEED = { x: 0.47, y: 0.73, z: 0.29 } as const;
-export const PRISM_DESKTOP_NODE_COUNT = 32;
-export const PRISM_MOBILE_NODE_COUNT = 16;
+export const PRISM_DESKTOP_NODE_COUNT = 120;
+export const PRISM_MOBILE_NODE_COUNT = 96;
 export const PRISM_MOBILE_MAX_WIDTH = 768;
+/** Bright point at each neuron. Small next to the spacing between nodes. */
+export const PRISM_NODE_CORE_RADIUS = 0.014;
+/** Soft halo. Larger than the core, still a glow rather than a solid sphere. */
+export const PRISM_NODE_GLOW_RADIUS = 0.058;
+export const PRISM_NODE_GLOW_OPACITY = 0.18;
+/** Hairline axon, plus a wider faint halo so the weave reads inside the glass. */
+export const PRISM_LINK_RADIUS = 0.0032;
+export const PRISM_LINK_GLOW_RADIUS = 0.012;
+export const PRISM_LINK_GLOW_OPACITY = 0.22;
 export const PRISM_FLOAT_AMPLITUDE = 0.08;
 export const PRISM_FLOAT_SPEED = 0.9;
 export const PRISM_PULSE_CYCLE_MS = 4800;
@@ -18,8 +27,8 @@ export const PRISM_NODE_COLORS = [PRISM_BLUE, PRISM_BLUE_SOFT, PRISM_NODE_TEAL] 
 /** Glass cube edge length. Node positions are in this same space. */
 export const PRISM_CUBE_SIZE = 1.72;
 export const PRISM_CUBE_HALF = PRISM_CUBE_SIZE / 2;
-/** Positive gap between every node and the nearest cube face. */
-export const PRISM_NODE_INSET = 0.34;
+/** Positive gap between every node center and the nearest cube face. */
+export const PRISM_NODE_INSET = 0.11;
 
 export type Vec3 = { x: number; y: number; z: number };
 export type PrismEdge = { a: number; b: number; internal: boolean };
@@ -160,7 +169,20 @@ function unitHash(index: number, salt: number): number {
 	return raw - Math.floor(raw);
 }
 
-/** Desktop stays in the 25–40 band. Narrow viewports use fewer nodes. */
+/** Low-discrepancy coordinate in [0, 1). Fills the volume instead of clumping on a plane. */
+function halton(index: number, base: number): number {
+	let result = 0;
+	let fraction = 1 / base;
+	let cursor = index + 1;
+	while (cursor > 0) {
+		result += fraction * (cursor % base);
+		cursor = Math.floor(cursor / base);
+		fraction /= base;
+	}
+	return result;
+}
+
+/** Both wide and narrow viewports stay inside the dense 80–150 band. */
 export function prismNodeCount(viewportWidth: number): number {
 	const width = Number.isFinite(viewportWidth) ? viewportWidth : 0;
 	return width < PRISM_MOBILE_MAX_WIDTH ? PRISM_MOBILE_NODE_COUNT : PRISM_DESKTOP_NODE_COUNT;
@@ -177,10 +199,13 @@ export function prismNodes(viewportWidth: number): PrismNode[] {
 	const reach = prismNodeReach();
 	const nodes: PrismNode[] = [];
 	for (let index = 0; index < count; index += 1) {
+		const x = Math.min(reach, Math.max(-reach, (halton(index, 2) - 0.5) * 2 * reach));
+		const y = Math.min(reach, Math.max(-reach, (halton(index, 3) - 0.5) * 2 * reach));
+		const z = Math.min(reach, Math.max(-reach, (halton(index, 5) - 0.5) * 2 * reach));
 		nodes.push({
-			x: (unitHash(index, 1) - 0.5) * 2 * reach,
-			y: (unitHash(index, 2) - 0.5) * 2 * reach,
-			z: (unitHash(index, 3) - 0.5) * 2 * reach,
+			x,
+			y,
+			z,
 			color: PRISM_NODE_COLORS[index % PRISM_NODE_COLORS.length] ?? PRISM_BLUE,
 		});
 	}
@@ -191,24 +216,46 @@ function nodeDistance(a: Vec3, b: Vec3): number {
 	return Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
 }
 
-/** Each node joins its two nearest neighbours. The client draws these as thin lines. */
+/**
+ * Woven axons: a short local link plus a longer bridge, not the two-nearest graph.
+ * The client draws these as thin glowing lines.
+ */
 export function prismLinks(nodes: readonly PrismNode[]): PrismLink[] {
-	const links: PrismLink[] = [];
-	const seen = new Set<string>();
-	for (let index = 0; index < nodes.length; index += 1) {
-		const nearest = nodes
-			.map((node, other) => ({
-				other,
-				distance: other === index ? Number.POSITIVE_INFINITY : nodeDistance(nodes[index]!, node),
+	const count = nodes.length;
+	if (count < 2) return [];
+	const ranked = nodes.map((node, index) =>
+		nodes
+			.map((other, otherIndex) => ({
+				otherIndex,
+				distance: otherIndex === index ? Number.POSITIVE_INFINITY : nodeDistance(node, other),
 			}))
 			.sort((left, right) => left.distance - right.distance)
-			.slice(0, 2);
-		for (const pick of nearest) {
-			if (!Number.isFinite(pick.distance)) continue;
-			const key = index < pick.other ? `${index}-${pick.other}` : `${pick.other}-${index}`;
-			if (seen.has(key)) continue;
-			seen.add(key);
-			links.push({ a: Math.min(index, pick.other), b: Math.max(index, pick.other) });
+			.map((entry) => entry.otherIndex),
+	);
+
+	const links: PrismLink[] = [];
+	const seen = new Set<string>();
+	const add = (left: number, right: number) => {
+		if (left === right || left < 0 || right < 0 || left >= count || right >= count) return;
+		const a = Math.min(left, right);
+		const b = Math.max(left, right);
+		const key = `${a}-${b}`;
+		if (seen.has(key)) return;
+		seen.add(key);
+		links.push({ a, b });
+	};
+
+	for (let index = 0; index < count; index += 1) {
+		const order = ranked[index] ?? [];
+		const nearest = order[0];
+		if (nearest !== undefined) add(index, nearest);
+		const farStart = Math.max(4, Math.floor(count * 0.22));
+		const farBand = order.slice(farStart);
+		const far = farBand[Math.floor(unitHash(index, 4) * farBand.length)];
+		if (far !== undefined) add(index, far);
+		if (unitHash(index, 5) > 0.42) {
+			const mid = order[2 + Math.floor(unitHash(index, 6) * 3)];
+			if (mid !== undefined) add(index, mid);
 		}
 	}
 	return links;
@@ -216,6 +263,30 @@ export function prismLinks(nodes: readonly PrismNode[]): PrismLink[] {
 
 export function prismLinkColor(index: number): string {
 	return index % 2 === 0 ? PRISM_BLUE : PRISM_NODE_TEAL;
+}
+
+/** Bowed midpoint so an axon curves through the volume instead of running straight. */
+export function prismAxonControl(a: Vec3, b: Vec3, index: number): Vec3 {
+	const dx = b.x - a.x;
+	const dy = b.y - a.y;
+	const dz = b.z - a.z;
+	const span = Math.hypot(dx, dy, dz) || 1;
+	let ox = unitHash(index, 9) - 0.5;
+	let oy = unitHash(index, 10) - 0.5;
+	let oz = unitHash(index, 11) - 0.5;
+	const along = (ox * dx + oy * dy + oz * dz) / (span * span);
+	ox -= dx * along;
+	oy -= dy * along;
+	oz -= dz * along;
+	const mag = Math.hypot(ox, oy, oz) || 1;
+	const bend = span * (0.28 + unitHash(index, 12) * 0.5);
+	const reach = prismNodeReach();
+	const clamp = (value: number) => Math.min(reach, Math.max(-reach, value));
+	return {
+		x: clamp((a.x + b.x) / 2 + (ox / mag) * bend),
+		y: clamp((a.y + b.y) / 2 + (oy / mag) * bend),
+		z: clamp((a.z + b.z) / 2 + (oz / mag) * bend),
+	};
 }
 
 /** Slight vertical bob. Time only. */

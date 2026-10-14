@@ -10,6 +10,12 @@ import {
 	PRISM_BLUE_SOFT,
 	PRISM_CUBE_HALF,
 	PRISM_DESKTOP_NODE_COUNT,
+	PRISM_LINK_GLOW_OPACITY,
+	PRISM_LINK_GLOW_RADIUS,
+	PRISM_LINK_RADIUS,
+	PRISM_NODE_CORE_RADIUS,
+	PRISM_NODE_GLOW_OPACITY,
+	PRISM_NODE_GLOW_RADIUS,
 	PRISM_NODE_INSET,
 	PRISM_FLOAT_SPEED,
 	PRISM_HOVER_RADIUS,
@@ -25,6 +31,7 @@ import {
 	idleRotation,
 	internalDashOffset,
 	internalLinePhase,
+	prismAxonControl,
 	prismFloat,
 	prismHoverColor,
 	prismLinkColor,
@@ -118,10 +125,52 @@ test('only lines near the cursor become amber or teal', () => {
 	assert.deepEqual(frame.rotation, idleRotation(500));
 });
 
-test('desktop nodes stay in 25–40, mobile uses fewer, and colors are blue or teal', () => {
-	assert.ok(PRISM_DESKTOP_NODE_COUNT >= 25 && PRISM_DESKTOP_NODE_COUNT <= 40);
-	assert.ok(PRISM_MOBILE_NODE_COUNT < PRISM_DESKTOP_NODE_COUNT);
-	assert.ok(PRISM_MOBILE_NODE_COUNT < 25);
+function axisSpread(nodes, axis) {
+	const mean = nodes.reduce((sum, node) => sum + node[axis], 0) / nodes.length;
+	const variance = nodes.reduce((sum, node) => sum + (node[axis] - mean) ** 2, 0) / nodes.length;
+	return Math.sqrt(variance);
+}
+
+function pairDistance(a, b) {
+	return Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+}
+
+function medianNearestSpacing(nodes) {
+	const distances = nodes.map((node, index) => {
+		let nearest = Number.POSITIVE_INFINITY;
+		for (let other = 0; other < nodes.length; other += 1) {
+			if (other === index) continue;
+			nearest = Math.min(nearest, pairDistance(node, nodes[other]));
+		}
+		return nearest;
+	});
+	distances.sort((left, right) => left - right);
+	return distances[Math.floor(distances.length / 2)];
+}
+
+function twoNearestKeys(nodes) {
+	const keys = new Set();
+	for (let index = 0; index < nodes.length; index += 1) {
+		const nearest = nodes
+			.map((node, other) => ({
+				other,
+				distance: other === index ? Number.POSITIVE_INFINITY : pairDistance(nodes[index], node),
+			}))
+			.sort((left, right) => left.distance - right.distance)
+			.slice(0, 2);
+		for (const pick of nearest) {
+			if (!Number.isFinite(pick.distance)) continue;
+			const a = Math.min(index, pick.other);
+			const b = Math.max(index, pick.other);
+			keys.add(`${a}-${b}`);
+		}
+	}
+	return keys;
+}
+
+test('dense nodes fill the cube on wide and narrow viewports', () => {
+	assert.ok(PRISM_DESKTOP_NODE_COUNT >= 80 && PRISM_DESKTOP_NODE_COUNT <= 150);
+	assert.ok(PRISM_MOBILE_NODE_COUNT >= 80 && PRISM_MOBILE_NODE_COUNT <= 150);
 
 	const desktop = prismNodes(1280);
 	const mobile = prismNodes(390);
@@ -129,30 +178,71 @@ test('desktop nodes stay in 25–40, mobile uses fewer, and colors are blue or t
 	assert.equal(mobile.length, prismNodeCount(390));
 	assert.equal(desktop.length, PRISM_DESKTOP_NODE_COUNT);
 	assert.equal(mobile.length, PRISM_MOBILE_NODE_COUNT);
-	assert.ok(mobile.length < desktop.length);
+	assert.ok(desktop.length >= 80 && desktop.length <= 150);
+	assert.ok(mobile.length >= 80 && mobile.length <= 150);
 
 	const allowed = new Set([PRISM_BLUE, PRISM_BLUE_SOFT, PRISM_NODE_TEAL]);
 	assert.equal(PRISM_BLUE, '#2B8CFF');
 	assert.equal(PRISM_BLUE_SOFT, '#3B82F6');
 	assert.equal(PRISM_NODE_TEAL, '#14B8A6');
 	assert.ok(PRISM_NODE_INSET > 0);
-	for (const node of [...desktop, ...mobile]) {
-		assert.ok(allowed.has(node.color));
-		for (const axis of ['x', 'y', 'z']) {
-			const gap = PRISM_CUBE_HALF - Math.abs(node[axis]);
-			assert.ok(gap + 1e-9 >= PRISM_NODE_INSET, `${axis} gap ${gap} is inside the face margin`);
+	for (const cloud of [desktop, mobile]) {
+		for (const node of cloud) {
+			assert.ok(allowed.has(node.color));
+			for (const axis of ['x', 'y', 'z']) {
+				const gap = PRISM_CUBE_HALF - Math.abs(node[axis]);
+				assert.ok(gap + 1e-9 >= PRISM_NODE_INSET, `${axis} gap ${gap} is inside the face margin`);
+			}
 		}
+		const spreads = ['x', 'y', 'z'].map((axis) => axisSpread(cloud, axis));
+		const widest = Math.max(...spreads);
+		const flattest = Math.min(...spreads);
+		assert.ok(flattest / widest > 0.75, `cloud is flattened: ${spreads.join(', ')}`);
 	}
 	assert.ok(desktop.some((node) => node.color === '#2B8CFF'));
 	assert.ok(desktop.some((node) => node.color === '#3B82F6'));
 	assert.ok(desktop.some((node) => node.color === '#14B8A6'));
 
+	const spacing = medianNearestSpacing(desktop);
+	assert.ok(PRISM_NODE_CORE_RADIUS > 0);
+	assert.ok(PRISM_NODE_CORE_RADIUS < spacing * 0.2, `core ${PRISM_NODE_CORE_RADIUS} is large next to spacing ${spacing}`);
+	assert.ok(PRISM_NODE_GLOW_RADIUS > PRISM_NODE_CORE_RADIUS);
+	assert.ok(PRISM_NODE_GLOW_OPACITY > 0 && PRISM_NODE_GLOW_OPACITY < 0.45);
+	assert.ok(PRISM_LINK_GLOW_RADIUS > PRISM_LINK_RADIUS);
+	assert.ok(PRISM_LINK_RADIUS > 0);
+	assert.ok(PRISM_LINK_GLOW_OPACITY > 0 && PRISM_LINK_GLOW_OPACITY < 0.45);
+
 	const links = prismLinks(desktop);
-	assert.ok(links.length > 0);
-	assert.ok(links.length < desktop.length * 3);
-	assert.ok(links.every((link) => link.a !== link.b && link.a >= 0 && link.b < desktop.length));
+	assert.ok(links.length > desktop.length);
+	assert.ok(
+		links.every((link) => link.a !== link.b && link.a >= 0 && link.b >= 0 && link.b < desktop.length && link.a < desktop.length),
+	);
+	const shipped = links.map((link) => `${link.a}-${link.b}`).sort();
+	const nearestOnly = [...twoNearestKeys(desktop)].sort();
+	assert.notDeepEqual(shipped, nearestOnly);
+	const lengths = links.map((link) => pairDistance(desktop[link.a], desktop[link.b]));
+	const shortest = Math.min(...lengths);
+	const longest = Math.max(...lengths);
+	assert.ok(shortest > 0);
+	assert.ok(longest > shortest * 2.2, `links do not vary: ${shortest} .. ${longest}`);
 	assert.equal(prismLinkColor(0), '#2B8CFF');
 	assert.equal(prismLinkColor(1), '#14B8A6');
+
+	let bowed = 0;
+	for (const [index, link] of links.entries()) {
+		const control = prismAxonControl(desktop[link.a], desktop[link.b], index);
+		for (const axis of ['x', 'y', 'z']) {
+			const gap = PRISM_CUBE_HALF - Math.abs(control[axis]);
+			assert.ok(gap + 1e-9 >= PRISM_NODE_INSET, `axon ${axis} leaves the inset volume`);
+		}
+		const mid = {
+			x: (desktop[link.a].x + desktop[link.b].x) / 2,
+			y: (desktop[link.a].y + desktop[link.b].y) / 2,
+			z: (desktop[link.a].z + desktop[link.b].z) / 2,
+		};
+		if (pairDistance(control, mid) > 0.02) bowed += 1;
+	}
+	assert.ok(bowed > links.length * 0.8, 'axons stay straight like a molecule graph');
 });
 
 test('vertical float, pulse phase, and motion gates stay pure functions of time and visibility', () => {
@@ -211,7 +301,16 @@ test('glass material is clear physical glass with the required optical numbers',
 	material.onBeforeCompile(shader);
 	assert.match(shader.fragmentShader, /min\( 0\.1,/);
 	assert.match(shader.fragmentShader, /glassFresnel/);
-	assert.match(shader.fragmentShader, /mix\( 0\.04, 0\.45, glassFresnel \)/);
+	const fresnel = shader.fragmentShader.match(
+		/material\.transmissionAlpha = mix\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*glassFresnel\s*\)/,
+	);
+	assert.ok(fresnel, 'fresnel alpha is missing');
+	const faceAlpha = Number(fresnel[1]);
+	const rimAlpha = Number(fresnel[2]);
+	assert.ok(faceAlpha < 0.2, 'the face stays see-through');
+	assert.ok(rimAlpha > faceAlpha, 'the rim is stronger than the face');
+	assert.ok(material.clearcoat > 0);
+	assert.ok(material.transmission >= 0.85);
 	assert.doesNotMatch(shader.fragmentShader, /#include <transmission_pars_fragment>/);
 	assert.doesNotMatch(shader.fragmentShader, /#include <transmission_fragment>/);
 	assert.match(material.onBeforeCompile.toString(), /compileGlassFragment/);
@@ -228,6 +327,8 @@ test('hero client calls the shipped prism helpers and boots without module or re
 	assert.match(client, /prismFloat/);
 	assert.match(client, /prismNodes/);
 	assert.match(client, /prismLinks/);
+	assert.match(client, /prismAxonControl/);
+	assert.match(client, /TubeGeometry/);
 	assert.match(client, /prismPulsePhase/);
 	assert.match(client, /prismHoverColor/);
 	assert.match(client, /prismMotionAllowed/);
@@ -238,6 +339,13 @@ test('hero client calls the shipped prism helpers and boots without module or re
 	assert.match(client, /ior:\s*GLASS_IOR/);
 	assert.match(client, /clearcoat:\s*GLASS_CLEARCOAT/);
 	assert.match(client, /PRISM_CUBE_SIZE/);
+	assert.match(client, /PRISM_NODE_CORE_RADIUS/);
+	assert.match(client, /PRISM_NODE_GLOW_RADIUS/);
+	assert.match(client, /PRISM_NODE_GLOW_OPACITY/);
+	assert.match(client, /PRISM_LINK_RADIUS/);
+	assert.match(client, /PRISM_LINK_GLOW_RADIUS/);
+	assert.match(client, /PRISM_LINK_GLOW_OPACITY/);
+	assert.match(client, /new PointLight/);
 	assert.match(client, /alpha:\s*true/);
 	assert.match(client, /scene\.background\s*=\s*null/);
 	assert.match(client, /bootHeroPrism/);

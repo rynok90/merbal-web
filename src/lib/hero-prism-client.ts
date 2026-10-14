@@ -3,7 +3,6 @@ import {
 	BackSide,
 	BoxGeometry,
 	Color,
-	CylinderGeometry,
 	DirectionalLight,
 	EdgesGeometry,
 	Group,
@@ -16,15 +15,24 @@ import {
 	PMREMGenerator,
 	PerspectiveCamera,
 	PointLight,
+	QuadraticBezierCurve3,
 	Scene,
 	SphereGeometry,
 	ShaderChunk,
+	TubeGeometry,
 	SRGBColorSpace,
 	Vector3,
 	WebGLRenderer,
 } from 'three';
 import {
 	PRISM_CUBE_SIZE,
+	prismAxonControl,
+	PRISM_LINK_GLOW_OPACITY,
+	PRISM_LINK_GLOW_RADIUS,
+	PRISM_LINK_RADIUS,
+	PRISM_NODE_CORE_RADIUS,
+	PRISM_NODE_GLOW_OPACITY,
+	PRISM_NODE_GLOW_RADIUS,
 	PRISM_PULSE_CYCLE_MS,
 	idleRotation,
 	prismFloat,
@@ -55,6 +63,7 @@ type NodeView = {
 
 type LinkView = {
 	mesh: Mesh;
+	glow: Mesh;
 	base: string;
 };
 
@@ -78,7 +87,7 @@ export function compileGlassFragment(source: string): string {
 	const fresnelAlpha = [
 		'float glassFacing = saturate( dot( n, v ) );',
 		'float glassFresnel = pow( 1.0 - glassFacing, 5.0 );',
-		'material.transmissionAlpha = mix( 0.04, 0.45, glassFresnel );',
+		'material.transmissionAlpha = mix( 0.04, 0.82, glassFresnel );',
 	].join('\n\t');
 	const pars = patchTransmissionShader(ShaderChunk.transmission_pars_fragment);
 	const fragment = ShaderChunk.transmission_fragment.replace(mixLine, fresnelAlpha);
@@ -98,7 +107,7 @@ export function createGlassMaterial(): MeshPhysicalMaterial {
 		transparent: true,
 		opacity: 1,
 		clearcoat: GLASS_CLEARCOAT,
-		clearcoatRoughness: 0.03,
+		clearcoatRoughness: 0.015,
 		attenuationColor: new Color('#ffffff'),
 		attenuationDistance: Infinity,
 		envMapIntensity: 1,
@@ -201,18 +210,25 @@ export function bootHeroPrism(): void {
 
 	const shell = new LineSegments(
 		new EdgesGeometry(new BoxGeometry(PRISM_CUBE_SIZE, PRISM_CUBE_SIZE, PRISM_CUBE_SIZE)),
-		new LineBasicMaterial({ color: new Color('#d7ecff'), transparent: true, opacity: 0.55 }),
+		new LineBasicMaterial({ color: new Color('#e7f4ff'), transparent: true, opacity: 0.92 }),
 	);
 	rig.add(shell);
 
-	const nodeGeometry = new SphereGeometry(0.046, 16, 16);
-	const glowGeometry = new SphereGeometry(0.09, 12, 12);
+	const interior = new PointLight(0xc8fff4, 0.55, 2.6, 2);
+	interior.position.set(0.12, 0.18, 0.08);
+	rig.add(interior);
+	const interiorFill = new PointLight(0x8ec0ff, 0.28, 3.1, 2);
+	interiorFill.position.set(-0.22, -0.12, 0.16);
+	rig.add(interiorFill);
+
+	const nodeGeometry = new SphereGeometry(PRISM_NODE_CORE_RADIUS, 8, 8);
+	const glowGeometry = new SphereGeometry(PRISM_NODE_GLOW_RADIUS, 10, 10);
 	let nodeViews: NodeView[] = [];
 	let links: PrismLink[] = [];
 	let linkViews: LinkView[] = [];
 
 	const pulse = new Mesh(
-		new SphereGeometry(0.07, 14, 14),
+		new SphereGeometry(PRISM_NODE_CORE_RADIUS * 1.6, 8, 8),
 		new MeshBasicMaterial({ color: new Color('#F5A524') }),
 	);
 	pulse.visible = false;
@@ -230,8 +246,11 @@ export function bootHeroPrism(): void {
 		}
 		for (const view of linkViews) {
 			rig.remove(view.mesh);
+			rig.remove(view.glow);
 			view.mesh.geometry.dispose();
+			view.glow.geometry.dispose();
 			(view.mesh.material as MeshBasicMaterial).dispose();
+			(view.glow.material as MeshBasicMaterial).dispose();
 		}
 
 		const nodes: PrismNode[] = prismNodes(width);
@@ -245,7 +264,7 @@ export function bootHeroPrism(): void {
 				new MeshBasicMaterial({
 					color: new Color(node.color),
 					transparent: true,
-					opacity: 0.45,
+					opacity: PRISM_NODE_GLOW_OPACITY,
 					depthWrite: false,
 				}),
 			);
@@ -259,23 +278,32 @@ export function bootHeroPrism(): void {
 			const a = nodes[link.a];
 			const b = nodes[link.b];
 			const base = prismLinkColor(index);
-			if (!a || !b) {
-				const mesh = new Mesh(new CylinderGeometry(0.008, 0.008, 0.001, 4), new MeshBasicMaterial({ color: base }));
-				rig.add(mesh);
-				return { mesh, base };
-			}
-			const start = new Vector3(a.x, a.y, a.z);
-			const end = new Vector3(b.x, b.y, b.z);
-			const direction = new Vector3().subVectors(end, start);
-			const length = Math.max(0.001, direction.length());
+			const start = new Vector3(a?.x ?? 0, a?.y ?? 0, a?.z ?? 0);
+			const end = new Vector3(b?.x ?? 0, b?.y ?? 0, b?.z ?? 0);
+			const bow = a && b ? prismAxonControl(a, b, index) : { x: 0, y: 0, z: 0 };
+			const curve = new QuadraticBezierCurve3(start, new Vector3(bow.x, bow.y, bow.z), end);
+			const span = start.distanceTo(end);
 			const mesh = new Mesh(
-				new CylinderGeometry(0.008, 0.008, length, 6),
-				new MeshBasicMaterial({ color: new Color(base) }),
+				new TubeGeometry(curve, 7, PRISM_LINK_RADIUS, 4, false),
+				new MeshBasicMaterial({
+					color: new Color(base),
+					transparent: true,
+					opacity: span > 0.62 ? 0.62 : 0.92,
+					depthWrite: false,
+				}),
 			);
-			mesh.position.copy(start).add(end).multiplyScalar(0.5);
-			mesh.quaternion.setFromUnitVectors(new Vector3(0, 1, 0), direction.normalize());
+			const glow = new Mesh(
+				new TubeGeometry(curve, 7, PRISM_LINK_GLOW_RADIUS, 4, false),
+				new MeshBasicMaterial({
+					color: new Color(base),
+					transparent: true,
+					opacity: PRISM_LINK_GLOW_OPACITY * (span > 0.62 ? 0.65 : 1),
+					depthWrite: false,
+				}),
+			);
 			rig.add(mesh);
-			return { mesh, base };
+			rig.add(glow);
+			return { mesh, glow, base };
 		});
 	};
 
@@ -351,6 +379,7 @@ export function bootHeroPrism(): void {
 			if (!a || !b) return;
 			const color = prismHoverColor(linkScreen(a, b, width, height), view.base, cursor);
 			(view.mesh.material as MeshBasicMaterial).color.set(color);
+			(view.glow.material as MeshBasicMaterial).color.set(color);
 		});
 
 		const phase = prismPulsePhase(timeMs);
