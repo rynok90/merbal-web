@@ -17,6 +17,15 @@ import {
 	PRISM_NODE_GLOW_OPACITY,
 	PRISM_NODE_GLOW_RADIUS,
 	PRISM_NODE_INSET,
+	PRISM_INNER_MARGIN,
+	PRISM_INNER_SCALE,
+	PRISM_CAMERA,
+	PRISM_CAMERA_FOV,
+	PRISM_CANVAS_MARGIN,
+	PRISM_DESKTOP_CANVAS,
+	PRISM_NARROW_CANVAS,
+	PRISM_REFLECTION_RADIUS,
+	PRISM_SHADOW_RADIUS,
 	PRISM_FLOAT_SPEED,
 	PRISM_HOVER_RADIUS,
 	PRISM_IDLE_SPEED,
@@ -32,8 +41,19 @@ import {
 	internalDashOffset,
 	internalLinePhase,
 	prismAxonControl,
+	prismCantoEdges,
+	prismCantoCorners,
+	prismCantoPixels,
+	prismCastPose,
+	prismCornersInside,
+	prismProjectedCorners,
 	prismFloat,
 	prismHoverColor,
+	rotateVertex,
+	prismInnerHalf,
+	prismNodeReach,
+	prismOuterHalf,
+	prismProject,
 	prismLinkColor,
 	prismLinks,
 	prismLineColors,
@@ -50,10 +70,14 @@ import {
 	GLASS_ROUGHNESS,
 	GLASS_THICKNESS,
 	GLASS_TRANSMISSION,
+	REFLECTION_OPACITY,
+	SHADOW_OPACITY,
+	createCantoMaterial,
 	createGlassMaterial,
+	createInnerGlassMaterial,
 	patchTransmissionShader,
 } from '../src/lib/hero-prism-client.ts';
-import { ShaderChunk } from 'three';
+import { CircleGeometry, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, Quaternion, ShaderChunk, Vector3 } from 'three';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -282,15 +306,15 @@ test('glass material is clear physical glass with the required optical numbers',
 	const material = createGlassMaterial();
 	assert.equal(material.isMeshPhysicalMaterial, true);
 	assert.equal(material.transmission, GLASS_TRANSMISSION);
-	assert.equal(material.transmission, 0.92);
+	assert.ok(material.transmission >= 0.92 && material.transmission <= 1);
 	assert.equal(material.roughness, GLASS_ROUGHNESS);
-	assert.equal(material.roughness, 0.08);
+	assert.ok(Math.abs(material.roughness - 0.03) < 0.015);
 	assert.equal(material.thickness, GLASS_THICKNESS);
-	assert.equal(material.thickness, 0.8);
+	assert.ok(material.thickness >= 0.6 && material.thickness <= 1);
 	assert.equal(material.ior, GLASS_IOR);
 	assert.equal(material.ior, 1.5);
 	assert.equal(material.clearcoat, GLASS_CLEARCOAT);
-	assert.equal(material.clearcoat, 0.4);
+	assert.ok(material.clearcoat > 0);
 	const chunk = ShaderChunk.transmission_pars_fragment;
 	const patched = patchTransmissionShader(chunk);
 	assert.notEqual(patched, chunk);
@@ -307,8 +331,9 @@ test('glass material is clear physical glass with the required optical numbers',
 	assert.ok(fresnel, 'fresnel alpha is missing');
 	const faceAlpha = Number(fresnel[1]);
 	const rimAlpha = Number(fresnel[2]);
-	assert.ok(faceAlpha < 0.2, 'the face stays see-through');
+	assert.ok(faceAlpha > 0.15 && faceAlpha < 0.24, 'the face stays a translucent veil');
 	assert.ok(rimAlpha > faceAlpha, 'the rim is stronger than the face');
+	assert.ok(rimAlpha > 0.7, 'the rim reads as glass');
 	assert.ok(material.clearcoat > 0);
 	assert.ok(material.transmission >= 0.85);
 	assert.doesNotMatch(shader.fragmentShader, /#include <transmission_pars_fragment>/);
@@ -317,14 +342,182 @@ test('glass material is clear physical glass with the required optical numbers',
 	material.dispose();
 });
 
+test('thick crystal holds a darker inner volume, beveled cantos, and a shared rotating floor', () => {
+	const outer = createGlassMaterial();
+	const inner = createInnerGlassMaterial();
+	assert.ok(PRISM_INNER_SCALE < 1);
+	assert.ok(prismInnerHalf() < PRISM_CUBE_HALF);
+	assert.ok(inner.transmission < outer.transmission);
+	assert.ok(inner.attenuationDistance < 2);
+	assert.ok(inner.color.r + inner.color.g + inner.color.b < outer.color.r + outer.color.g + outer.color.b);
+	const innerShader = {
+		fragmentShader: '#include <transmission_pars_fragment>\n#include <transmission_fragment>\n',
+	};
+	inner.onBeforeCompile(innerShader);
+	const innerFresnel = innerShader.fragmentShader.match(
+		/material\.transmissionAlpha = mix\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*glassFresnel\s*\)/,
+	);
+	assert.ok(innerFresnel, 'inner fresnel alpha is missing');
+	assert.ok(Number(innerFresnel[2]) > Number(innerFresnel[1]));
+	assert.ok(Number(innerFresnel[1]) > 0.08);
+	outer.dispose();
+	inner.dispose();
+
+	const reach = prismNodeReach();
+	const innerHalf = prismInnerHalf();
+	assert.ok(innerHalf - reach >= PRISM_INNER_MARGIN - 1e-9);
+	for (const cloud of [prismNodes(1280), prismNodes(390)]) {
+		for (const node of cloud) {
+			for (const axis of ['x', 'y', 'z']) {
+				const gap = innerHalf - Math.abs(node[axis]);
+				assert.ok(gap + 1e-9 >= PRISM_INNER_MARGIN, `${axis} sits on the inner face`);
+				assert.ok(Math.abs(node[axis]) <= reach + 1e-9);
+			}
+		}
+	}
+
+	const canto = createCantoMaterial();
+	assert.equal(canto.isMeshPhysicalMaterial, true);
+	assert.ok(canto.emissiveIntensity > 0.2);
+	assert.ok(canto.clearcoat >= 1);
+	assert.ok(canto.opacity > 0.9);
+	canto.dispose();
+	assert.equal(prismCantoEdges().length, 12);
+	assert.equal(prismCantoCorners().length, 8);
+	assert.equal(new Set(prismCantoEdges().map((edge) => edge.axis)).size, 3);
+	const desktopPx = prismCantoPixels(PRISM_DESKTOP_CANVAS.width, PRISM_DESKTOP_CANVAS.height);
+	assert.ok(desktopPx >= 3 && desktopPx <= 4, `desktop canto is ${desktopPx} px`);
+	assert.ok(prismOuterHalf() > PRISM_CUBE_HALF);
+
+	const still = prismCastPose(0);
+	const turned = prismCastPose(1600);
+	assert.deepEqual(still.rotation, idleRotation(0));
+	assert.notEqual(still.rotation.x, turned.rotation.x);
+	assert.notEqual(still.rotation.z, turned.rotation.z);
+	assert.equal(still.shadow.x, 0);
+	assert.equal(still.shadow.z, 0);
+	assert.equal(turned.shadow.x, 0);
+	assert.equal(turned.shadow.z, 0);
+	assert.equal(still.reflection.x, 0);
+	assert.equal(still.reflection.z, 0);
+	assert.equal(turned.reflection.x, 0);
+	assert.equal(turned.reflection.z, 0);
+	assert.equal(still.shadow.y, still.rotation.y);
+	assert.equal(turned.shadow.y, turned.rotation.y);
+	assert.deepEqual(still.shadow, still.reflection);
+	assert.deepEqual(turned.shadow, turned.reflection);
+	assert.notEqual(still.shadow.y, turned.shadow.y);
+	assert.equal(still.floorY, turned.floorY);
+	assert.ok(SHADOW_OPACITY > 0.05 && SHADOW_OPACITY < 0.55);
+	assert.ok(REFLECTION_OPACITY > 0.05 && REFLECTION_OPACITY < 0.55);
+
+	let lowestCorner = Infinity;
+	for (let timeMs = 0; timeMs <= 30000; timeMs += 40) {
+		const rotation = idleRotation(timeMs);
+		const floatY = prismFloat(timeMs);
+		const extent = prismOuterHalf();
+		for (const sx of [-1, 1]) {
+			for (const sy of [-1, 1]) {
+				for (const sz of [-1, 1]) {
+					const corner = rotateVertex({ x: sx * extent, y: sy * extent, z: sz * extent }, rotation);
+					lowestCorner = Math.min(lowestCorner, corner.y + floatY);
+				}
+			}
+		}
+	}
+	assert.ok(still.floorY < lowestCorner, `floor ${still.floorY} cuts the cube at ${lowestCorner}`);
+
+	const floor = new Group();
+	const disc = new Mesh(new CircleGeometry(PRISM_SHADOW_RADIUS, 8), new MeshBasicMaterial());
+	disc.rotation.x = -Math.PI / 2;
+	floor.add(disc);
+	floor.rotation.set(turned.shadow.x, turned.shadow.y, turned.shadow.z);
+	floor.position.y = turned.floorY;
+	floor.updateMatrixWorld(true);
+	const normal = new Vector3(0, 0, 1).applyQuaternion(disc.getWorldQuaternion(new Quaternion()));
+	assert.ok(Math.abs(normal.x) < 1e-5 && Math.abs(normal.z) < 1e-5 && normal.y > 0.99);
+	const discWorld = new Vector3();
+	disc.getWorldPosition(discWorld);
+	assert.ok(Math.abs(discWorld.y - turned.floorY) < 1e-5);
+
+	for (const canvas of [PRISM_DESKTOP_CANVAS, PRISM_NARROW_CANVAS]) {
+		for (const radius of [PRISM_SHADOW_RADIUS, PRISM_REFLECTION_RADIUS]) {
+			for (let step = 0; step < 32; step += 1) {
+				const angle = (step / 32) * Math.PI * 2;
+				const point = prismProject(
+					{ x: Math.cos(angle) * radius, y: still.floorY, z: Math.sin(angle) * radius },
+					canvas.width,
+					canvas.height,
+				);
+				const insideX = point.x >= canvas.width * PRISM_CANVAS_MARGIN && point.x <= canvas.width * (1 - PRISM_CANVAS_MARGIN);
+				const insideY = point.y >= canvas.height * PRISM_CANVAS_MARGIN && point.y <= canvas.height * (1 - PRISM_CANVAS_MARGIN);
+				assert.equal(insideX && insideY && point.depth > 0, true);
+			}
+		}
+	}
+
+	const camera = new PerspectiveCamera(
+		PRISM_CAMERA_FOV,
+		PRISM_DESKTOP_CANVAS.width / PRISM_DESKTOP_CANVAS.height,
+		0.1,
+		40,
+	);
+	camera.position.set(PRISM_CAMERA.x, PRISM_CAMERA.y, PRISM_CAMERA.z);
+	camera.lookAt(0, 0, 0);
+	camera.updateMatrixWorld(true);
+	camera.updateProjectionMatrix();
+	const half = prismOuterHalf();
+	const sample = new Vector3(half, -half, half);
+	sample.project(camera);
+	const projected = prismProject(
+		{ x: half, y: -half, z: half },
+		PRISM_DESKTOP_CANVAS.width,
+		PRISM_DESKTOP_CANVAS.height,
+	);
+	assert.ok(Math.abs(projected.x - (sample.x * 0.5 + 0.5) * PRISM_DESKTOP_CANVAS.width) < 0.05);
+	assert.ok(Math.abs(projected.y - (-sample.y * 0.5 + 0.5) * PRISM_DESKTOP_CANVAS.height) < 0.05);
+
+	for (const canvas of [PRISM_DESKTOP_CANVAS, PRISM_NARROW_CANVAS]) {
+		for (let timeMs = 0; timeMs <= 30000; timeMs += 40) {
+			assert.equal(prismCornersInside(canvas.width, canvas.height, timeMs, PRISM_CANVAS_MARGIN), true);
+		}
+		const corners = prismProjectedCorners(canvas.width, canvas.height, 8425);
+		assert.equal(corners.length, 8);
+	}
+});
+
 test('hero client calls the shipped prism helpers and boots without module or require', async () => {
 	const client = read('src/lib/hero-prism-client.ts');
 	const hero = read('src/components/Hero.astro');
 	const layout = read('src/layouts/Layout.astro');
 	const css = read('src/styles/global.css');
 	assert.match(client, /from '\.\/prism\.ts'/);
-	assert.match(client, /idleRotation/);
+	assert.match(client, /prismCastPose/);
 	assert.match(client, /prismFloat/);
+	assert.match(client, /createInnerGlassMaterial/);
+	assert.match(client, /createCantoMaterial/);
+	assert.match(client, /prismCantoEdges/);
+	assert.match(client, /prismCantoCorners/);
+	assert.match(client, /CylinderGeometry/);
+	assert.match(client, /CircleGeometry/);
+	assert.match(client, /PRISM_CAMERA_FOV/);
+	assert.match(client, /PRISM_CAMERA/);
+	assert.match(client, /PRISM_INNER_SCALE/);
+	assert.match(client, /floor\.add\(shadow\)/);
+	assert.match(client, /floor\.add\(reflection\)/);
+	assert.match(client, /floor\.rotation\.set\(pose\.shadow\.x, pose\.shadow\.y, pose\.shadow\.z\)/);
+	assert.match(client, /floor\.position\.y = pose\.floorY/);
+	assert.match(client, /PRISM_SHADOW_RADIUS/);
+	assert.match(client, /PRISM_REFLECTION_RADIUS/);
+	assert.match(client, /opacity:\s*SHADOW_OPACITY/);
+	assert.match(client, /opacity:\s*REFLECTION_OPACITY/);
+	assert.doesNotMatch(client, /rig\.add\(shadow\)/);
+	assert.doesNotMatch(client, /rig\.add\(reflection\)/);
+	assert.match(client, /floorReflectionTexture/);
+	assert.match(client, /floorShadowTexture/);
+	assert.doesNotMatch(client, /EdgesGeometry/);
+	assert.doesNotMatch(client, /LineSegments/);
+	assert.doesNotMatch(client, /LineBasicMaterial/);
 	assert.match(client, /prismNodes/);
 	assert.match(client, /prismLinks/);
 	assert.match(client, /prismAxonControl/);

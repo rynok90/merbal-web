@@ -2,12 +2,13 @@ import {
 	AmbientLight,
 	BackSide,
 	BoxGeometry,
+	CircleGeometry,
 	Color,
+	CylinderGeometry,
+	DataTexture,
 	DirectionalLight,
-	EdgesGeometry,
+	DoubleSide,
 	Group,
-	LineBasicMaterial,
-	LineSegments,
 	Mesh,
 	MeshBasicMaterial,
 	MeshPhysicalMaterial,
@@ -16,6 +17,7 @@ import {
 	PerspectiveCamera,
 	PointLight,
 	QuadraticBezierCurve3,
+	RGBAFormat,
 	Scene,
 	SphereGeometry,
 	ShaderChunk,
@@ -25,8 +27,18 @@ import {
 	WebGLRenderer,
 } from 'three';
 import {
+	PRISM_CAMERA,
+	PRISM_CAMERA_FOV,
+	PRISM_CANTO_DIAMETER,
+	PRISM_CANTO_RADIUS,
 	PRISM_CUBE_SIZE,
+	PRISM_INNER_SCALE,
+	PRISM_REFLECTION_RADIUS,
+	PRISM_SHADOW_RADIUS,
 	prismAxonControl,
+	prismCantoCorners,
+	prismCantoEdges,
+	prismCastPose,
 	PRISM_LINK_GLOW_OPACITY,
 	PRISM_LINK_GLOW_RADIUS,
 	PRISM_LINK_RADIUS,
@@ -34,7 +46,6 @@ import {
 	PRISM_NODE_GLOW_OPACITY,
 	PRISM_NODE_GLOW_RADIUS,
 	PRISM_PULSE_CYCLE_MS,
-	idleRotation,
 	prismFloat,
 	prismHoverColor,
 	prismLinkColor,
@@ -47,11 +58,14 @@ import {
 	type PrismNode,
 } from './prism.ts';
 
-export const GLASS_TRANSMISSION = 0.92;
-export const GLASS_ROUGHNESS = 0.08;
-export const GLASS_THICKNESS = 0.8;
+export const GLASS_TRANSMISSION = 0.94;
+export const GLASS_ROUGHNESS = 0.03;
+export const GLASS_THICKNESS = 0.9;
 export const GLASS_IOR = 1.5;
-export const GLASS_CLEARCOAT = 0.4;
+export const GLASS_CLEARCOAT = 0.55;
+/** Faint enough to read as a puddle on the navy, not a plate on the glass. */
+export const SHADOW_OPACITY = 0.48;
+export const REFLECTION_OPACITY = 0.36;
 
 type HoverCursor = { x: number; y: number } | null;
 
@@ -86,8 +100,8 @@ export function compileGlassFragment(source: string): string {
 		'material.transmissionAlpha = mix( material.transmissionAlpha, transmitted.a, material.transmission );';
 	const fresnelAlpha = [
 		'float glassFacing = saturate( dot( n, v ) );',
-		'float glassFresnel = pow( 1.0 - glassFacing, 5.0 );',
-		'material.transmissionAlpha = mix( 0.04, 0.82, glassFresnel );',
+		'float glassFresnel = pow( 1.0 - glassFacing, 4.0 );',
+		'material.transmissionAlpha = mix( 0.2, 0.9, glassFresnel );',
 	].join('\n\t');
 	const pars = patchTransmissionShader(ShaderChunk.transmission_pars_fragment);
 	const fragment = ShaderChunk.transmission_fragment.replace(mixLine, fresnelAlpha);
@@ -98,7 +112,7 @@ export function compileGlassFragment(source: string): string {
 
 export function createGlassMaterial(): MeshPhysicalMaterial {
 	const material = new MeshPhysicalMaterial({
-		color: new Color('#ffffff'),
+		color: new Color('#f4f8ff'),
 		metalness: 0,
 		roughness: GLASS_ROUGHNESS,
 		transmission: GLASS_TRANSMISSION,
@@ -118,6 +132,107 @@ export function createGlassMaterial(): MeshPhysicalMaterial {
 		shader.fragmentShader = compileGlassFragment(shader.fragmentShader);
 	};
 	return material;
+}
+
+/** Darker glass nested inside the clear outer cube. The network lives in this volume. */
+export function compileInnerFragment(source: string): string {
+	const mixLine =
+		'material.transmissionAlpha = mix( material.transmissionAlpha, transmitted.a, material.transmission );';
+	const fresnelAlpha = [
+		'float glassFacing = saturate( dot( n, v ) );',
+		'float glassFresnel = pow( 1.0 - glassFacing, 4.0 );',
+		'material.transmissionAlpha = mix( 0.09, 0.36, glassFresnel );',
+	].join('\n\t');
+	const pars = patchTransmissionShader(ShaderChunk.transmission_pars_fragment);
+	const fragment = ShaderChunk.transmission_fragment.replace(mixLine, fresnelAlpha);
+	return source
+		.replace('#include <transmission_pars_fragment>', pars)
+		.replace('#include <transmission_fragment>', fragment);
+}
+
+export function createInnerGlassMaterial(): MeshPhysicalMaterial {
+	const material = new MeshPhysicalMaterial({
+		color: new Color('#143454'),
+		metalness: 0,
+		roughness: 0.12,
+		transmission: 0.78,
+		thickness: 0.55,
+		ior: GLASS_IOR,
+		transparent: true,
+		opacity: 1,
+		clearcoat: 0.35,
+		attenuationColor: new Color('#0a1830'),
+		attenuationDistance: 1.6,
+	});
+	material.depthWrite = false;
+	material.onBeforeCompile = (shader) => {
+		shader.fragmentShader = compileInnerFragment(shader.fragmentShader);
+	};
+	return material;
+}
+
+/** White-blue bars. Emissive so the canto stays visible when a face turns away from the key light. */
+export function createCantoMaterial(): MeshPhysicalMaterial {
+	const material = new MeshPhysicalMaterial({
+		color: new Color('#f3f9ff'),
+		emissive: new Color('#b9dcff'),
+		emissiveIntensity: 1.8,
+		metalness: 0,
+		roughness: 0.18,
+		clearcoat: 1,
+		transparent: true,
+		opacity: 0.96,
+	});
+	material.depthWrite = true;
+	return material;
+}
+
+/** Soft white-blue disc. Built as pixels so the floor reflection does not need a 2D canvas. */
+export function floorReflectionTexture(): DataTexture {
+	const size = 64;
+	const data = new Uint8Array(size * size * 4);
+	const center = (size - 1) / 2;
+	for (let y = 0; y < size; y += 1) {
+		for (let x = 0; x < size; x += 1) {
+			const dx = (x - center) / center;
+			const dy = (y - center) / center;
+			const radius = Math.min(1, Math.hypot(dx, dy));
+			const alpha = (1 - radius) ** 2;
+			const index = (y * size + x) * 4;
+			data[index] = 198;
+			data[index + 1] = 220;
+			data[index + 2] = 255;
+			data[index + 3] = Math.round(alpha * 255);
+		}
+	}
+	const texture = new DataTexture(data, size, size, RGBAFormat);
+	texture.colorSpace = SRGBColorSpace;
+	texture.needsUpdate = true;
+	return texture;
+}
+
+/** Soft dark disc. Radial alpha so the shadow fades instead of reading as a plate. */
+export function floorShadowTexture(): DataTexture {
+	const size = 64;
+	const data = new Uint8Array(size * size * 4);
+	const center = (size - 1) / 2;
+	for (let y = 0; y < size; y += 1) {
+		for (let x = 0; x < size; x += 1) {
+			const dx = (x - center) / center;
+			const dy = (y - center) / center;
+			const radius = Math.min(1, Math.hypot(dx, dy));
+			const alpha = (1 - radius) ** 2;
+			const index = (y * size + x) * 4;
+			data[index] = 4;
+			data[index + 1] = 8;
+			data[index + 2] = 16;
+			data[index + 3] = Math.round(alpha * 255);
+		}
+	}
+	const texture = new DataTexture(data, size, size, RGBAFormat);
+	texture.colorSpace = SRGBColorSpace;
+	texture.needsUpdate = true;
+	return texture;
 }
 
 function studioEnvironment(renderer: WebGLRenderer) {
@@ -193,26 +308,108 @@ export function bootHeroPrism(): void {
 	const sun = new DirectionalLight(0xffffff, 0.35);
 	sun.position.set(2.4, 3.1, 4.2);
 	scene.add(sun);
-	const rim = new DirectionalLight(0x9fd0ff, 0.45);
+	const rim = new DirectionalLight(0x9fd0ff, 0.7);
 	rim.position.set(-2.2, 1.4, -1.5);
 	scene.add(rim);
 
-	const camera = new PerspectiveCamera(32, 1, 0.1, 30);
-	camera.position.set(1.45, 1.05, 4.35);
+	const camera = new PerspectiveCamera(PRISM_CAMERA_FOV, 1, 0.1, 40);
+	camera.position.set(PRISM_CAMERA.x, PRISM_CAMERA.y, PRISM_CAMERA.z);
 	camera.lookAt(0, 0, 0);
 
 	const rig = new Group();
 	scene.add(rig);
 
+	const innerSize = PRISM_CUBE_SIZE * PRISM_INNER_SCALE;
+	const inner = new Mesh(new BoxGeometry(innerSize, innerSize, innerSize), createInnerGlassMaterial());
+	inner.renderOrder = 1;
+	rig.add(inner);
+
 	const glass = new Mesh(new BoxGeometry(PRISM_CUBE_SIZE, PRISM_CUBE_SIZE, PRISM_CUBE_SIZE), createGlassMaterial());
-	glass.renderOrder = 2;
+	glass.renderOrder = 3;
 	rig.add(glass);
 
-	const shell = new LineSegments(
-		new EdgesGeometry(new BoxGeometry(PRISM_CUBE_SIZE, PRISM_CUBE_SIZE, PRISM_CUBE_SIZE)),
-		new LineBasicMaterial({ color: new Color('#e7f4ff'), transparent: true, opacity: 0.92 }),
+	const cantoMaterial = createCantoMaterial();
+	const barLength = PRISM_CUBE_SIZE - PRISM_CANTO_DIAMETER;
+	const barGeometry = new CylinderGeometry(PRISM_CANTO_RADIUS, PRISM_CANTO_RADIUS, barLength, 8);
+	for (const edge of prismCantoEdges()) {
+		const bar = new Mesh(barGeometry, cantoMaterial);
+		bar.position.set(edge.center.x, edge.center.y, edge.center.z);
+		// CylinderGeometry points along +Y. A quarter turn lays it on the edge axis.
+		if (edge.axis === 'x') bar.rotation.z = Math.PI / 2;
+		else if (edge.axis === 'z') bar.rotation.x = Math.PI / 2;
+		bar.renderOrder = 4;
+		rig.add(bar);
+	}
+	const jointGeometry = new SphereGeometry(PRISM_CANTO_RADIUS * 0.92, 10, 8);
+	for (const corner of prismCantoCorners()) {
+		const joint = new Mesh(jointGeometry, cantoMaterial);
+		joint.position.set(corner.x, corner.y, corner.z);
+		joint.renderOrder = 4;
+		rig.add(joint);
+	}
+
+	const innerCanto = new MeshPhysicalMaterial({
+		color: new Color('#d7e9ff'),
+		emissive: new Color('#7eb6ff'),
+		emissiveIntensity: 0.9,
+		metalness: 0,
+		roughness: 0.2,
+		clearcoat: 0.6,
+		transparent: true,
+		opacity: 0.92,
+	});
+	innerCanto.depthWrite = true;
+	const innerRadius = PRISM_CANTO_RADIUS * 0.62;
+	const innerBarGeometry = new CylinderGeometry(innerRadius, innerRadius, innerSize - innerRadius * 2, 8);
+	for (const edge of prismCantoEdges()) {
+		const bar = new Mesh(innerBarGeometry, innerCanto);
+		bar.position.set(edge.center.x * PRISM_INNER_SCALE, edge.center.y * PRISM_INNER_SCALE, edge.center.z * PRISM_INNER_SCALE);
+		if (edge.axis === 'x') bar.rotation.z = Math.PI / 2;
+		else if (edge.axis === 'z') bar.rotation.x = Math.PI / 2;
+		bar.renderOrder = 4;
+		rig.add(bar);
+	}
+	const innerJointGeometry = new SphereGeometry(innerRadius * 0.92, 8, 8);
+	for (const corner of prismCantoCorners()) {
+		const joint = new Mesh(innerJointGeometry, innerCanto);
+		joint.position.set(corner.x * PRISM_INNER_SCALE, corner.y * PRISM_INNER_SCALE, corner.z * PRISM_INNER_SCALE);
+		joint.renderOrder = 4;
+		rig.add(joint);
+	}
+
+	const floor = new Group();
+	scene.add(floor);
+
+	const shadow = new Mesh(
+		new CircleGeometry(PRISM_SHADOW_RADIUS, 40),
+		new MeshBasicMaterial({
+			map: floorShadowTexture(),
+			color: new Color('#ffffff'),
+			transparent: true,
+			opacity: SHADOW_OPACITY,
+			depthWrite: false,
+			side: DoubleSide,
+		}),
 	);
-	rig.add(shell);
+	shadow.rotation.x = -Math.PI / 2;
+	shadow.renderOrder = 0;
+	floor.add(shadow);
+
+	const reflection = new Mesh(
+		new CircleGeometry(PRISM_REFLECTION_RADIUS, 40),
+		new MeshBasicMaterial({
+			map: floorReflectionTexture(),
+			color: new Color('#ffffff'),
+			transparent: true,
+			opacity: REFLECTION_OPACITY,
+			depthWrite: false,
+			side: DoubleSide,
+		}),
+	);
+	reflection.rotation.x = -Math.PI / 2;
+	reflection.position.y = 0.002;
+	reflection.renderOrder = 1;
+	floor.add(reflection);
 
 	const interior = new PointLight(0xc8fff4, 0.55, 2.6, 2);
 	interior.position.set(0.12, 0.18, 0.08);
@@ -361,9 +558,11 @@ export function bootHeroPrism(): void {
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
 
-		const rotation = idleRotation(timeMs);
-		rig.rotation.set(rotation.x, rotation.y, rotation.z);
+		const pose = prismCastPose(timeMs);
+		rig.rotation.set(pose.rotation.x, pose.rotation.y, pose.rotation.z);
 		rig.position.y = prismFloat(timeMs);
+		floor.rotation.set(pose.shadow.x, pose.shadow.y, pose.shadow.z);
+		floor.position.y = pose.floorY;
 		scene.updateMatrixWorld(true);
 
 		nodeViews.forEach((view) => {

@@ -27,8 +27,23 @@ export const PRISM_NODE_COLORS = [PRISM_BLUE, PRISM_BLUE_SOFT, PRISM_NODE_TEAL] 
 /** Glass cube edge length. Node positions are in this same space. */
 export const PRISM_CUBE_SIZE = 1.72;
 export const PRISM_CUBE_HALF = PRISM_CUBE_SIZE / 2;
-/** Positive gap between every node center and the nearest cube face. */
-export const PRISM_NODE_INSET = 0.11;
+/** Darker cube inside the clear outer glass. Strictly smaller than the outer cube. */
+export const PRISM_INNER_SCALE = 0.74;
+/** Positive gap between every node and the inner volume's faces. */
+export const PRISM_INNER_MARGIN = 0.035;
+/** Positive gap between every node center and the nearest outer cube face. */
+export const PRISM_NODE_INSET =
+	PRISM_CUBE_HALF - (PRISM_CUBE_HALF * PRISM_INNER_SCALE - PRISM_INNER_MARGIN);
+/** Round white-blue bar along each edge. Diameter is tuned to about 3–4 px on the desktop stage. */
+export const PRISM_CANTO_DIAMETER = 0.034;
+export const PRISM_CANTO_RADIUS = PRISM_CANTO_DIAMETER / 2;
+/** Minimum share of the canvas kept clear around every outer corner. */
+export const PRISM_CANVAS_MARGIN = 0.1;
+/** Stage sizes the hero actually paints: desktop column and a 375px phone. */
+export const PRISM_DESKTOP_CANVAS = { width: 498, height: 448 } as const;
+export const PRISM_NARROW_CANVAS = { width: 335, height: 256 } as const;
+export const PRISM_CAMERA_FOV = 30;
+export const PRISM_CAMERA = { x: 1.02, y: 0.86, z: 7.85 } as const;
 
 export type Vec3 = { x: number; y: number; z: number };
 export type PrismEdge = { a: number; b: number; internal: boolean };
@@ -188,9 +203,169 @@ export function prismNodeCount(viewportWidth: number): number {
 	return width < PRISM_MOBILE_MAX_WIDTH ? PRISM_MOBILE_NODE_COUNT : PRISM_DESKTOP_NODE_COUNT;
 }
 
-/** Half-extent the network may occupy: the cube interior, inset from every face. */
+/** Half-extent of the darker inner volume. */
+export function prismInnerHalf(): number {
+	return PRISM_CUBE_HALF * PRISM_INNER_SCALE;
+}
+
+/** Half-extent of the outer glass plus the round canto, so the thick edge stays inside the frame. */
+export function prismOuterHalf(): number {
+	return PRISM_CUBE_HALF + PRISM_CANTO_RADIUS;
+}
+
+/** Half-extent the network may occupy: inside the inner volume, not on its faces. */
 export function prismNodeReach(): number {
-	return PRISM_CUBE_HALF - PRISM_NODE_INSET;
+	return prismInnerHalf() - PRISM_INNER_MARGIN;
+}
+
+/**
+ * World height of the floor discs. Below every outer corner across the idle turn,
+ * so the shadow stays under the cube instead of cutting a face.
+ */
+export const PRISM_FLOOR_Y = -1.6;
+/** Soft contact shadow. Small enough that its rim keeps the 10% canvas margin. */
+export const PRISM_SHADOW_RADIUS = 0.32;
+/** Faint floor sheen, a little wider than the shadow, still inside that margin. */
+export const PRISM_REFLECTION_RADIUS = 0.38;
+
+/**
+ * Cube tumble plus a yaw-only floor pose. Shadow and reflection stay flat:
+ * their X and Z are 0 while the cube's X and Z change, and they share one Y.
+ */
+export function prismCastPose(timeMs: number): {
+	rotation: { x: number; y: number; z: number };
+	shadow: { x: number; y: number; z: number };
+	reflection: { x: number; y: number; z: number };
+	floorY: number;
+} {
+	const rotation = idleRotation(timeMs);
+	const floor = { x: 0, y: rotation.y, z: 0 };
+	return { rotation, shadow: floor, reflection: floor, floorY: PRISM_FLOOR_Y };
+}
+
+function cameraBasis() {
+	const eye = PRISM_CAMERA;
+	const zx = eye.x;
+	const zy = eye.y;
+	const zz = eye.z;
+	const zLen = Math.hypot(zx, zy, zz) || 1;
+	const zAxis = { x: zx / zLen, y: zy / zLen, z: zz / zLen };
+	const up = { x: 0, y: 1, z: 0 };
+	let xx = up.y * zAxis.z - up.z * zAxis.y;
+	let xy = up.z * zAxis.x - up.x * zAxis.z;
+	let xz = up.x * zAxis.y - up.y * zAxis.x;
+	const xLen = Math.hypot(xx, xy, xz) || 1;
+	xx /= xLen;
+	xy /= xLen;
+	xz /= xLen;
+	const yx = zAxis.y * xz - zAxis.z * xy;
+	const yy = zAxis.z * xx - zAxis.x * xz;
+	const yz = zAxis.x * xy - zAxis.y * xx;
+	return { eye, xAxis: { x: xx, y: xy, z: xz }, yAxis: { x: yx, y: yy, z: yz }, zAxis };
+}
+
+/** Project a world point with the same camera the hero cube uses. */
+export function prismProject(
+	point: Vec3,
+	canvasWidth: number,
+	canvasHeight: number,
+): { x: number; y: number; depth: number } {
+	const { eye, xAxis, yAxis, zAxis } = cameraBasis();
+	const dx = point.x - eye.x;
+	const dy = point.y - eye.y;
+	const dz = point.z - eye.z;
+	const cx = dx * xAxis.x + dy * xAxis.y + dz * xAxis.z;
+	const cy = dx * yAxis.x + dy * yAxis.y + dz * yAxis.z;
+	const cz = dx * zAxis.x + dy * zAxis.y + dz * zAxis.z;
+	const aspect = canvasWidth / Math.max(1, canvasHeight);
+	const fy = 1 / Math.tan((PRISM_CAMERA_FOV * Math.PI) / 360);
+	const fx = fy / aspect;
+	const depth = -cz;
+	const ndcX = (cx * fx) / Math.max(1e-6, depth);
+	const ndcY = (cy * fy) / Math.max(1e-6, depth);
+	return {
+		x: (ndcX + 1) * 0.5 * canvasWidth,
+		y: (1 - ndcY) * 0.5 * canvasHeight,
+		depth,
+	};
+}
+
+/** Eight outer corners, including canto thickness, after the idle turn and the vertical float. */
+export function prismProjectedCorners(
+	canvasWidth: number,
+	canvasHeight: number,
+	timeMs: number,
+): { x: number; y: number; depth: number }[] {
+	const rotation = idleRotation(timeMs);
+	const floatY = prismFloat(timeMs);
+	const half = prismOuterHalf();
+	const points: { x: number; y: number; depth: number }[] = [];
+	for (const sx of [-1, 1]) {
+		for (const sy of [-1, 1]) {
+			for (const sz of [-1, 1]) {
+				const turned = rotateVertex({ x: sx * half, y: sy * half, z: sz * half }, rotation);
+				turned.y += floatY;
+				points.push(prismProject(turned, canvasWidth, canvasHeight));
+			}
+		}
+	}
+	return points;
+}
+
+/** True when every outer corner keeps the canvas margin at this instant. */
+export function prismCornersInside(
+	canvasWidth: number,
+	canvasHeight: number,
+	timeMs: number,
+	margin = PRISM_CANVAS_MARGIN,
+): boolean {
+	const minX = canvasWidth * margin;
+	const maxX = canvasWidth * (1 - margin);
+	const minY = canvasHeight * margin;
+	const maxY = canvasHeight * (1 - margin);
+	return prismProjectedCorners(canvasWidth, canvasHeight, timeMs).every(
+		(point) => point.depth > 0 && point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY,
+	);
+}
+
+/** Screen thickness of one canto on a canvas of the given size. */
+export function prismCantoPixels(canvasWidth: number, canvasHeight: number): number {
+	const distance = Math.hypot(PRISM_CAMERA.x, PRISM_CAMERA.y, PRISM_CAMERA.z);
+	const visibleHeight = 2 * Math.tan((PRISM_CAMERA_FOV * Math.PI) / 360) * distance;
+	return (PRISM_CANTO_DIAMETER / visibleHeight) * canvasHeight;
+}
+
+export type PrismCantoEdge = { center: Vec3; axis: 'x' | 'y' | 'z' };
+
+/** Twelve edges of the outer cube. The client draws these as thick beveled bars. */
+export function prismCantoEdges(): PrismCantoEdge[] {
+	const half = PRISM_CUBE_HALF;
+	const edges: PrismCantoEdge[] = [];
+	const axes = ['x', 'y', 'z'] as const;
+	for (const axis of axes) {
+		const others = axes.filter((item) => item !== axis);
+		for (const first of [-1, 1]) {
+			for (const second of [-1, 1]) {
+				const center: Vec3 = { x: 0, y: 0, z: 0 };
+				center[others[0]!] = first * half;
+				center[others[1]!] = second * half;
+				edges.push({ center, axis });
+			}
+		}
+	}
+	return edges;
+}
+
+/** Eight corners where the bars meet. Small spheres bevel those joints. */
+export function prismCantoCorners(): Vec3[] {
+	const half = PRISM_CUBE_HALF;
+	const corners: Vec3[] = [];
+	for (const x of [-half, half]) {
+		for (const y of [-half, half]) {
+			for (const z of [-half, half]) corners.push({ x, y, z });
+		}
+	}
+	return corners;
 }
 
 /** Deterministic nodes floating inside the glass volume, not on the faces. */
