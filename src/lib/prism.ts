@@ -15,6 +15,11 @@ export const PRISM_FLOAT_SPEED = 0.9;
 export const PRISM_PULSE_CYCLE_MS = 4800;
 export const PRISM_PULSE_WINDOW = 0.22;
 export const PRISM_NODE_COLORS = [PRISM_BLUE, PRISM_BLUE_SOFT, PRISM_NODE_TEAL] as const;
+/** Glass cube edge length. Node positions are in this same space. */
+export const PRISM_CUBE_SIZE = 1.72;
+export const PRISM_CUBE_HALF = PRISM_CUBE_SIZE / 2;
+/** Positive gap between every node and the nearest cube face. */
+export const PRISM_NODE_INSET = 0.34;
 
 export type Vec3 = { x: number; y: number; z: number };
 export type PrismEdge = { a: number; b: number; internal: boolean };
@@ -161,15 +166,21 @@ export function prismNodeCount(viewportWidth: number): number {
 	return width < PRISM_MOBILE_MAX_WIDTH ? PRISM_MOBILE_NODE_COUNT : PRISM_DESKTOP_NODE_COUNT;
 }
 
-/** Deterministic nodes packed inside the glass cube. */
+/** Half-extent the network may occupy: the cube interior, inset from every face. */
+export function prismNodeReach(): number {
+	return PRISM_CUBE_HALF - PRISM_NODE_INSET;
+}
+
+/** Deterministic nodes floating inside the glass volume, not on the faces. */
 export function prismNodes(viewportWidth: number): PrismNode[] {
 	const count = prismNodeCount(viewportWidth);
+	const reach = prismNodeReach();
 	const nodes: PrismNode[] = [];
 	for (let index = 0; index < count; index += 1) {
 		nodes.push({
-			x: (unitHash(index, 1) - 0.5) * 1.28,
-			y: (unitHash(index, 2) - 0.5) * 1.28,
-			z: (unitHash(index, 3) - 0.5) * 1.28,
+			x: (unitHash(index, 1) - 0.5) * 2 * reach,
+			y: (unitHash(index, 2) - 0.5) * 2 * reach,
+			z: (unitHash(index, 3) - 0.5) * 2 * reach,
 			color: PRISM_NODE_COLORS[index % PRISM_NODE_COLORS.length] ?? PRISM_BLUE,
 		});
 	}

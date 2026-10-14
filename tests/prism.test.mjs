@@ -8,7 +8,9 @@ import {
 	PRISM_AMBER,
 	PRISM_BLUE,
 	PRISM_BLUE_SOFT,
+	PRISM_CUBE_HALF,
 	PRISM_DESKTOP_NODE_COUNT,
+	PRISM_NODE_INSET,
 	PRISM_FLOAT_SPEED,
 	PRISM_HOVER_RADIUS,
 	PRISM_IDLE_SPEED,
@@ -35,7 +37,16 @@ import {
 	prismPulsePhase,
 	projectPrism,
 } from '../src/lib/prism.ts';
-import { GLASS_ROUGHNESS, GLASS_TRANSMISSION, createGlassMaterial } from '../src/lib/hero-prism-client.ts';
+import {
+	GLASS_CLEARCOAT,
+	GLASS_IOR,
+	GLASS_ROUGHNESS,
+	GLASS_THICKNESS,
+	GLASS_TRANSMISSION,
+	createGlassMaterial,
+	patchTransmissionShader,
+} from '../src/lib/hero-prism-client.ts';
+import { ShaderChunk } from 'three';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -124,9 +135,13 @@ test('desktop nodes stay in 25–40, mobile uses fewer, and colors are blue or t
 	assert.equal(PRISM_BLUE, '#2B8CFF');
 	assert.equal(PRISM_BLUE_SOFT, '#3B82F6');
 	assert.equal(PRISM_NODE_TEAL, '#14B8A6');
-	for (const node of desktop) {
+	assert.ok(PRISM_NODE_INSET > 0);
+	for (const node of [...desktop, ...mobile]) {
 		assert.ok(allowed.has(node.color));
-		assert.ok(Math.abs(node.x) < 0.8 && Math.abs(node.y) < 0.8 && Math.abs(node.z) < 0.8);
+		for (const axis of ['x', 'y', 'z']) {
+			const gap = PRISM_CUBE_HALF - Math.abs(node[axis]);
+			assert.ok(gap + 1e-9 >= PRISM_NODE_INSET, `${axis} gap ${gap} is inside the face margin`);
+		}
 	}
 	assert.ok(desktop.some((node) => node.color === '#2B8CFF'));
 	assert.ok(desktop.some((node) => node.color === '#3B82F6'));
@@ -173,13 +188,33 @@ test('nearest nodes and lines turn amber and far marks keep blue or teal', () =>
 	assert.notEqual(prismHoverColor({ x: 400, y: 0 }, '#14B8A6', { x: 0, y: 0 }), PRISM_AMBER);
 });
 
-test('glass material is physical, highly transmissive, and lightly rough', () => {
+test('glass material is clear physical glass with the required optical numbers', () => {
 	const material = createGlassMaterial();
 	assert.equal(material.isMeshPhysicalMaterial, true);
 	assert.equal(material.transmission, GLASS_TRANSMISSION);
-	assert.ok(Math.abs(material.transmission - 0.9) < 0.05);
+	assert.equal(material.transmission, 0.92);
 	assert.equal(material.roughness, GLASS_ROUGHNESS);
-	assert.ok(material.roughness < 0.15);
+	assert.equal(material.roughness, 0.08);
+	assert.equal(material.thickness, GLASS_THICKNESS);
+	assert.equal(material.thickness, 0.8);
+	assert.equal(material.ior, GLASS_IOR);
+	assert.equal(material.ior, 1.5);
+	assert.equal(material.clearcoat, GLASS_CLEARCOAT);
+	assert.equal(material.clearcoat, 0.4);
+	const chunk = ShaderChunk.transmission_pars_fragment;
+	const patched = patchTransmissionShader(chunk);
+	assert.notEqual(patched, chunk);
+	assert.match(patched, /min\( 0\.1,/);
+	const shader = {
+		fragmentShader: '#include <transmission_pars_fragment>\n#include <transmission_fragment>\n',
+	};
+	material.onBeforeCompile(shader);
+	assert.match(shader.fragmentShader, /min\( 0\.1,/);
+	assert.match(shader.fragmentShader, /glassFresnel/);
+	assert.match(shader.fragmentShader, /mix\( 0\.04, 0\.45, glassFresnel \)/);
+	assert.doesNotMatch(shader.fragmentShader, /#include <transmission_pars_fragment>/);
+	assert.doesNotMatch(shader.fragmentShader, /#include <transmission_fragment>/);
+	assert.match(material.onBeforeCompile.toString(), /compileGlassFragment/);
 	material.dispose();
 });
 
@@ -198,6 +233,11 @@ test('hero client calls the shipped prism helpers and boots without module or re
 	assert.match(client, /prismMotionAllowed/);
 	assert.match(client, /MeshPhysicalMaterial/);
 	assert.match(client, /transmission:\s*GLASS_TRANSMISSION/);
+	assert.match(client, /roughness:\s*GLASS_ROUGHNESS/);
+	assert.match(client, /thickness:\s*GLASS_THICKNESS/);
+	assert.match(client, /ior:\s*GLASS_IOR/);
+	assert.match(client, /clearcoat:\s*GLASS_CLEARCOAT/);
+	assert.match(client, /PRISM_CUBE_SIZE/);
 	assert.match(client, /alpha:\s*true/);
 	assert.match(client, /scene\.background\s*=\s*null/);
 	assert.match(client, /bootHeroPrism/);

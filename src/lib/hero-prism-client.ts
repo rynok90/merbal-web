@@ -18,11 +18,13 @@ import {
 	PointLight,
 	Scene,
 	SphereGeometry,
+	ShaderChunk,
 	SRGBColorSpace,
 	Vector3,
 	WebGLRenderer,
 } from 'three';
 import {
+	PRISM_CUBE_SIZE,
 	PRISM_PULSE_CYCLE_MS,
 	idleRotation,
 	prismFloat,
@@ -37,8 +39,11 @@ import {
 	type PrismNode,
 } from './prism.ts';
 
-export const GLASS_TRANSMISSION = 0.9;
-export const GLASS_ROUGHNESS = 0.04;
+export const GLASS_TRANSMISSION = 0.92;
+export const GLASS_ROUGHNESS = 0.08;
+export const GLASS_THICKNESS = 0.8;
+export const GLASS_IOR = 1.5;
+export const GLASS_CLEARCOAT = 0.4;
 
 type HoverCursor = { x: number; y: number } | null;
 
@@ -53,39 +58,73 @@ type LinkView = {
 	base: string;
 };
 
+/**
+ * A transparent canvas makes the transmission pass clear to white at alpha 0.5.
+ * That sample becomes a milky slab. Cap the refraction alpha, then composite the
+ * cube with a fresnel curve so faces stay clear and the rim still reads as glass.
+ * Includes expand after onBeforeCompile, so the patched chunks are inlined.
+ */
+export function patchTransmissionShader(source: string): string {
+	const alphaReturn =
+		'return vec4( ( 1.0 - F ) * attenuatedColor, 1.0 - ( 1.0 - transmittedLight.a ) * transmittanceFactor );';
+	const patchedReturn =
+		'return vec4( ( 1.0 - F ) * attenuatedColor, min( 0.1, 1.0 - ( 1.0 - transmittedLight.a ) * transmittanceFactor ) );';
+	return source.replace(alphaReturn, patchedReturn);
+}
+
+export function compileGlassFragment(source: string): string {
+	const mixLine =
+		'material.transmissionAlpha = mix( material.transmissionAlpha, transmitted.a, material.transmission );';
+	const fresnelAlpha = [
+		'float glassFacing = saturate( dot( n, v ) );',
+		'float glassFresnel = pow( 1.0 - glassFacing, 5.0 );',
+		'material.transmissionAlpha = mix( 0.04, 0.45, glassFresnel );',
+	].join('\n\t');
+	const pars = patchTransmissionShader(ShaderChunk.transmission_pars_fragment);
+	const fragment = ShaderChunk.transmission_fragment.replace(mixLine, fresnelAlpha);
+	return source
+		.replace('#include <transmission_pars_fragment>', pars)
+		.replace('#include <transmission_fragment>', fragment);
+}
+
 export function createGlassMaterial(): MeshPhysicalMaterial {
-	return new MeshPhysicalMaterial({
+	const material = new MeshPhysicalMaterial({
 		color: new Color('#ffffff'),
 		metalness: 0,
 		roughness: GLASS_ROUGHNESS,
 		transmission: GLASS_TRANSMISSION,
-		thickness: 0.28,
-		ior: 1.5,
+		thickness: GLASS_THICKNESS,
+		ior: GLASS_IOR,
 		transparent: true,
 		opacity: 1,
-		clearcoat: 1,
-		clearcoatRoughness: 0.02,
-		attenuationColor: new Color('#b7d7ff'),
-		attenuationDistance: 3.2,
-		envMapIntensity: 0.65,
+		clearcoat: GLASS_CLEARCOAT,
+		clearcoatRoughness: 0.03,
+		attenuationColor: new Color('#ffffff'),
+		attenuationDistance: Infinity,
+		envMapIntensity: 1,
 		specularIntensity: 1,
 	});
+	material.depthWrite = false;
+	material.onBeforeCompile = (shader) => {
+		shader.fragmentShader = compileGlassFragment(shader.fragmentShader);
+	};
+	return material;
 }
 
 function studioEnvironment(renderer: WebGLRenderer) {
 	const pmrem = new PMREMGenerator(renderer);
 	const studio = new Scene();
 	const room = new Mesh(new BoxGeometry(14, 14, 14), [
-		new MeshBasicMaterial({ color: 0x07111f, side: BackSide }),
-		new MeshBasicMaterial({ color: 0x0a1830, side: BackSide }),
-		new MeshBasicMaterial({ color: 0x123056, side: BackSide }),
-		new MeshBasicMaterial({ color: 0x04080f, side: BackSide }),
-		new MeshBasicMaterial({ color: 0x0f766e, side: BackSide }),
-		new MeshBasicMaterial({ color: 0x1d4ed8, side: BackSide }),
+		new MeshBasicMaterial({ color: 0x071422, side: BackSide }),
+		new MeshBasicMaterial({ color: 0x0a1a2e, side: BackSide }),
+		new MeshBasicMaterial({ color: 0x12304c, side: BackSide }),
+		new MeshBasicMaterial({ color: 0x050b14, side: BackSide }),
+		new MeshBasicMaterial({ color: 0x0c2036, side: BackSide }),
+		new MeshBasicMaterial({ color: 0x081628, side: BackSide }),
 	]);
 	studio.add(room);
-	studio.add(new AmbientLight(0xffffff, 0.35));
-	const key = new DirectionalLight(0xf4fbff, 1.4);
+	studio.add(new AmbientLight(0xdbe7f5, 0.2));
+	const key = new DirectionalLight(0xf7fbff, 0.55);
 	key.position.set(3, 4, 5);
 	studio.add(key);
 	const map = pmrem.fromScene(studio, 0.02).texture;
@@ -141,16 +180,13 @@ export function bootHeroPrism(): void {
 	scene.background = null;
 	scene.environment = studioEnvironment(renderer);
 
-	scene.add(new AmbientLight(0xc5d7ee, 0.28));
-	const sun = new DirectionalLight(0xffffff, 1.15);
+	scene.add(new AmbientLight(0xd5e4f5, 0.12));
+	const sun = new DirectionalLight(0xffffff, 0.35);
 	sun.position.set(2.4, 3.1, 4.2);
 	scene.add(sun);
-	const tealLight = new PointLight(0x14b8a6, 4, 12);
-	tealLight.position.set(-1.7, 0.35, 1.6);
-	scene.add(tealLight);
-	const blueLight = new PointLight(0x2b8cff, 3.5, 12);
-	blueLight.position.set(1.5, -0.4, 1.3);
-	scene.add(blueLight);
+	const rim = new DirectionalLight(0x9fd0ff, 0.45);
+	rim.position.set(-2.2, 1.4, -1.5);
+	scene.add(rim);
 
 	const camera = new PerspectiveCamera(32, 1, 0.1, 30);
 	camera.position.set(1.45, 1.05, 4.35);
@@ -159,13 +195,13 @@ export function bootHeroPrism(): void {
 	const rig = new Group();
 	scene.add(rig);
 
-	const glass = new Mesh(new BoxGeometry(1.72, 1.72, 1.72), createGlassMaterial());
+	const glass = new Mesh(new BoxGeometry(PRISM_CUBE_SIZE, PRISM_CUBE_SIZE, PRISM_CUBE_SIZE), createGlassMaterial());
 	glass.renderOrder = 2;
 	rig.add(glass);
 
 	const shell = new LineSegments(
-		new EdgesGeometry(new BoxGeometry(1.72, 1.72, 1.72)),
-		new LineBasicMaterial({ color: new Color('#e7f4ff'), transparent: true, opacity: 0.88 }),
+		new EdgesGeometry(new BoxGeometry(PRISM_CUBE_SIZE, PRISM_CUBE_SIZE, PRISM_CUBE_SIZE)),
+		new LineBasicMaterial({ color: new Color('#d7ecff'), transparent: true, opacity: 0.55 }),
 	);
 	rig.add(shell);
 
@@ -209,7 +245,7 @@ export function bootHeroPrism(): void {
 				new MeshBasicMaterial({
 					color: new Color(node.color),
 					transparent: true,
-					opacity: 0.22,
+					opacity: 0.45,
 					depthWrite: false,
 				}),
 			);
