@@ -7,7 +7,6 @@ import { PLATFORM_VERTICALS } from '../src/lib/products.ts';
 import {
 	PRISM_AMBER,
 	PRISM_BLUE,
-	PRISM_BLUE_SOFT,
 	PRISM_CUBE_HALF,
 	PRISM_DESKTOP_NODE_COUNT,
 	PRISM_LINK_GLOW_OPACITY,
@@ -32,6 +31,7 @@ import {
 	PRISM_LINE,
 	PRISM_LINE_LOOP_MS,
 	PRISM_MOBILE_NODE_COUNT,
+	PRISM_NODE_ORANGE,
 	PRISM_NODE_TEAL,
 	PRISM_PULSE_CYCLE_MS,
 	PRISM_PULSE_WINDOW,
@@ -87,9 +87,8 @@ function read(rel) {
 
 test('idle rotation advances X, Y, and Z without a pointer argument', () => {
 	assert.equal(idleRotation.length, 1);
-	assert.ok(PRISM_IDLE_SPEED.x > 0);
-	assert.ok(PRISM_IDLE_SPEED.y > 0);
-	assert.ok(PRISM_IDLE_SPEED.z > 0);
+	assert.deepEqual(PRISM_IDLE_SPEED, { x: 0.47, y: 0.73, z: 0.29 });
+	assert.equal(PRISM_CANVAS_MARGIN, 0.1);
 
 	const start = idleRotation(0);
 	const later = idleRotation(1000);
@@ -205,14 +204,43 @@ test('dense nodes fill the cube on wide and narrow viewports', () => {
 	assert.ok(desktop.length >= 80 && desktop.length <= 150);
 	assert.ok(mobile.length >= 80 && mobile.length <= 150);
 
-	const allowed = new Set([PRISM_BLUE, PRISM_BLUE_SOFT, PRISM_NODE_TEAL]);
 	assert.equal(PRISM_BLUE, '#2B8CFF');
-	assert.equal(PRISM_BLUE_SOFT, '#3B82F6');
 	assert.equal(PRISM_NODE_TEAL, '#14B8A6');
+	assert.equal(PRISM_NODE_ORANGE, '#F97316');
 	assert.ok(PRISM_NODE_INSET > 0);
+	const familyOf = (hex) => {
+		const value = Number.parseInt(hex.slice(1), 16);
+		const r = ((value >> 16) & 255) / 255;
+		const g = ((value >> 8) & 255) / 255;
+		const b = (value & 255) / 255;
+		const max = Math.max(r, g, b);
+		const min = Math.min(r, g, b);
+		const delta = max - min;
+		let hue = 0;
+		if (delta !== 0) {
+			if (max === r) hue = ((g - b) / delta) % 6;
+			else if (max === g) hue = (b - r) / delta + 2;
+			else hue = (r - g) / delta + 4;
+			hue = (hue * 60 + 360) % 360;
+		}
+		if (hue >= 190 && hue <= 250) return 'blue';
+		if (hue >= 140 && hue < 190) return 'teal';
+		if (hue >= 10 && hue <= 50) return 'orange';
+		return 'other';
+	};
+	const assertMix = (colors, label) => {
+		const counts = { blue: 0, teal: 0, orange: 0, other: 0 };
+		for (const color of colors) counts[familyOf(color)] += 1;
+		assert.equal(counts.other, 0, `${label} includes an unexpected color`);
+		assert.ok(new Set(colors).size >= 3, `${label} is a single color`);
+		for (const family of ['blue', 'teal', 'orange']) {
+			const share = counts[family] / colors.length;
+			assert.ok(share >= 0.2, `${label} ${family} share is ${share}`);
+		}
+	};
 	for (const cloud of [desktop, mobile]) {
+		assertMix(cloud.map((node) => node.color), `nodes ${cloud.length}`);
 		for (const node of cloud) {
-			assert.ok(allowed.has(node.color));
 			for (const axis of ['x', 'y', 'z']) {
 				const gap = PRISM_CUBE_HALF - Math.abs(node[axis]);
 				assert.ok(gap + 1e-9 >= PRISM_NODE_INSET, `${axis} gap ${gap} is inside the face margin`);
@@ -223,9 +251,6 @@ test('dense nodes fill the cube on wide and narrow viewports', () => {
 		const flattest = Math.min(...spreads);
 		assert.ok(flattest / widest > 0.75, `cloud is flattened: ${spreads.join(', ')}`);
 	}
-	assert.ok(desktop.some((node) => node.color === '#2B8CFF'));
-	assert.ok(desktop.some((node) => node.color === '#3B82F6'));
-	assert.ok(desktop.some((node) => node.color === '#14B8A6'));
 
 	const spacing = medianNearestSpacing(desktop);
 	assert.ok(PRISM_NODE_CORE_RADIUS > 0);
@@ -249,8 +274,17 @@ test('dense nodes fill the cube on wide and narrow viewports', () => {
 	const longest = Math.max(...lengths);
 	assert.ok(shortest > 0);
 	assert.ok(longest > shortest * 2.2, `links do not vary: ${shortest} .. ${longest}`);
-	assert.equal(prismLinkColor(0), '#2B8CFF');
-	assert.equal(prismLinkColor(1), '#14B8A6');
+	assert.equal(prismLinkColor(0), PRISM_BLUE);
+	assert.equal(prismLinkColor(1), PRISM_NODE_TEAL);
+	assert.equal(prismLinkColor(2), PRISM_NODE_ORANGE);
+	assertMix(
+		links.map((_, index) => prismLinkColor(index)),
+		'desktop links',
+	);
+	assertMix(
+		prismLinks(mobile).map((_, index) => prismLinkColor(index)),
+		'mobile links',
+	);
 
 	let bowed = 0;
 	for (const [index, link] of links.entries()) {
@@ -299,6 +333,8 @@ test('nearest nodes and lines turn amber and far marks keep blue or teal', () =>
 	assert.equal(prismHoverColor({ x: 400, y: 20 }, '#3B82F6', { x: 0, y: 0 }), '#3B82F6');
 	assert.equal(prismHoverColor({ x: 400, y: 20 }, '#14B8A6', { x: 0, y: 0 }), PRISM_NODE_TEAL);
 	assert.equal(prismHoverColor({ x: 0, y: 0 }, '#2B8CFF', null), PRISM_BLUE);
+	assert.equal(prismHoverColor({ x: 400, y: 20 }, PRISM_NODE_ORANGE, { x: 0, y: 0 }), PRISM_NODE_ORANGE);
+	assert.equal(prismHoverColor({ x: 4, y: 2 }, PRISM_NODE_ORANGE, { x: 0, y: 0 }), PRISM_AMBER);
 	assert.notEqual(prismHoverColor({ x: 400, y: 0 }, '#14B8A6', { x: 0, y: 0 }), PRISM_AMBER);
 });
 
@@ -306,7 +342,7 @@ test('glass material is clear physical glass with the required optical numbers',
 	const material = createGlassMaterial();
 	assert.equal(material.isMeshPhysicalMaterial, true);
 	assert.equal(material.transmission, GLASS_TRANSMISSION);
-	assert.ok(material.transmission >= 0.92 && material.transmission <= 1);
+	assert.ok(material.transmission > 0.94 && material.transmission <= 1);
 	assert.equal(material.roughness, GLASS_ROUGHNESS);
 	assert.ok(Math.abs(material.roughness - 0.03) < 0.015);
 	assert.equal(material.thickness, GLASS_THICKNESS);
@@ -333,6 +369,7 @@ test('glass material is clear physical glass with the required optical numbers',
 	const rimAlpha = Number(fresnel[2]);
 	assert.ok(faceAlpha > 0.15 && faceAlpha < 0.24, 'the face stays a translucent veil');
 	assert.ok(rimAlpha > faceAlpha, 'the rim is stronger than the face');
+	assert.ok(rimAlpha - faceAlpha > 0.75, 'the fresnel rim stands off the face');
 	assert.ok(rimAlpha > 0.7, 'the rim reads as glass');
 	assert.ok(material.clearcoat > 0);
 	assert.ok(material.transmission >= 0.85);

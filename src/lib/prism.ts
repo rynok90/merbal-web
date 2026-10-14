@@ -4,6 +4,8 @@ export const PRISM_LINE = '#2B8CFF';
 export const PRISM_BLUE = '#2B8CFF';
 export const PRISM_BLUE_SOFT = '#3B82F6';
 export const PRISM_NODE_TEAL = '#14B8A6';
+/** Vivid orange for the idle network. Hover still shifts a nearby mark to PRISM_AMBER. */
+export const PRISM_NODE_ORANGE = '#F97316';
 export const PRISM_HOVER_RADIUS = 72;
 export const PRISM_LINE_LOOP_MS = 3200;
 export const PRISM_IDLE_SPEED = { x: 0.47, y: 0.73, z: 0.29 } as const;
@@ -23,7 +25,7 @@ export const PRISM_FLOAT_AMPLITUDE = 0.08;
 export const PRISM_FLOAT_SPEED = 0.9;
 export const PRISM_PULSE_CYCLE_MS = 4800;
 export const PRISM_PULSE_WINDOW = 0.22;
-export const PRISM_NODE_COLORS = [PRISM_BLUE, PRISM_BLUE_SOFT, PRISM_NODE_TEAL] as const;
+export const PRISM_NODE_COLORS = [PRISM_BLUE, PRISM_NODE_TEAL, PRISM_NODE_ORANGE] as const;
 /** Glass cube edge length. Node positions are in this same space. */
 export const PRISM_CUBE_SIZE = 1.72;
 export const PRISM_CUBE_HALF = PRISM_CUBE_SIZE / 2;
@@ -436,8 +438,10 @@ export function prismLinks(nodes: readonly PrismNode[]): PrismLink[] {
 	return links;
 }
 
+/** Idle axons cycle blue, teal, and orange. The link list itself does not use this. */
 export function prismLinkColor(index: number): string {
-	return index % 2 === 0 ? PRISM_BLUE : PRISM_NODE_TEAL;
+	const slot = Math.abs(Math.trunc(index)) % PRISM_NODE_COLORS.length;
+	return PRISM_NODE_COLORS[slot] ?? PRISM_BLUE;
 }
 
 /** Bowed midpoint so an axon curves through the volume instead of running straight. */

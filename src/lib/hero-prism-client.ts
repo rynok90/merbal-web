@@ -58,7 +58,7 @@ import {
 	type PrismNode,
 } from './prism.ts';
 
-export const GLASS_TRANSMISSION = 0.94;
+export const GLASS_TRANSMISSION = 0.97;
 export const GLASS_ROUGHNESS = 0.03;
 export const GLASS_THICKNESS = 0.9;
 export const GLASS_IOR = 1.5;
@@ -100,8 +100,8 @@ export function compileGlassFragment(source: string): string {
 		'material.transmissionAlpha = mix( material.transmissionAlpha, transmitted.a, material.transmission );';
 	const fresnelAlpha = [
 		'float glassFacing = saturate( dot( n, v ) );',
-		'float glassFresnel = pow( 1.0 - glassFacing, 4.0 );',
-		'material.transmissionAlpha = mix( 0.2, 0.9, glassFresnel );',
+		'float glassFresnel = pow( 1.0 - glassFacing, 5.0 );',
+		'material.transmissionAlpha = mix( 0.2, 1.0, glassFresnel );',
 	].join('\n\t');
 	const pars = patchTransmissionShader(ShaderChunk.transmission_pars_fragment);
 	const fragment = ShaderChunk.transmission_fragment.replace(mixLine, fresnelAlpha);
