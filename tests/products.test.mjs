@@ -7,18 +7,21 @@ import {
 	customSoftware,
 	liveProductHref,
 	productCtaLabel,
+	productStatusLabel,
 	products,
 	productsByVertical,
 	SECUFLOW_CRM_URL,
 	SECUFLOW_CTA_LABEL,
 	serviceBusinessProducts,
+	showcaseCta,
+	showcaseProducts,
 	siteOpsProducts,
 } from '../src/lib/products.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('catalog partitions site-ops with Access first live and SecureFlow paused', () => {
-	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /netlify/i);
+test('catalog partitions site-ops with Access and SecureFlow live', () => {
+	assert.match(SECUFLOW_CRM_URL ?? '', /secureflow-landing\.netlify\.app/);
 	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /railway/i);
 
 	assert.deepEqual(
@@ -26,6 +29,7 @@ test('catalog partitions site-ops with Access first live and SecureFlow paused',
 		[
 			'Access Paperless',
 			'Access Enterprise',
+			'Safe Access',
 			'ActivoObra',
 			'SecureFlow CRM',
 			'ANUVÉ',
@@ -35,17 +39,17 @@ test('catalog partitions site-ops with Access first live and SecureFlow paused',
 
 	assert.deepEqual(
 		siteOpsProducts.map((product) => product.name),
-		['Access Paperless', 'Access Enterprise', 'ActivoObra', 'SecureFlow CRM'],
+		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra', 'SecureFlow CRM'],
 	);
 	assert.deepEqual(
 		productsByVertical('operacion-de-sitios').map((product) => product.name),
-		['Access Paperless', 'Access Enterprise', 'ActivoObra', 'SecureFlow CRM'],
+		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra', 'SecureFlow CRM'],
 	);
 
 	const liveSiteOps = siteOpsProducts.filter((product) => product.status === 'live');
 	assert.deepEqual(
 		liveSiteOps.map((product) => product.name),
-		['Access Paperless'],
+		['Access Paperless', 'SecureFlow CRM'],
 	);
 
 	const access = siteOpsProducts[0];
@@ -98,15 +102,26 @@ test('catalog partitions site-ops with Access first live and SecureFlow paused',
 	assert.equal(activo.href, null);
 	assert.match(activo.description, /activos físicos en sitio/);
 
+	const safe = siteOpsProducts.find((product) => product.name === 'Safe Access');
+	assert.ok(safe);
+	assert.equal(safe.status, 'soon');
+	assert.equal(safe.href, null);
+	assert.equal(liveProductHref(safe), null);
+	assert.equal(showcaseCta(safe).label, 'Avisarme');
+	assert.ok(safe.problem.length > 20);
+	assert.ok(safe.audience.length > 10);
+	assert.ok(safe.howItWorks.length > 10);
+
 	const secureflow = siteOpsProducts.find((product) => product.name === 'SecureFlow CRM');
 	assert.ok(secureflow);
-	assert.equal(secureflow.status, 'paused');
-	assert.equal(liveProductHref(secureflow), null);
-	assert.doesNotMatch(secureflow.href ?? '', /netlify/i);
+	assert.equal(secureflow.status, 'live');
+	assert.equal(secureflow.href, 'https://secureflow-landing.netlify.app');
+	assert.equal(liveProductHref(secureflow), 'https://secureflow-landing.netlify.app');
 	assert.doesNotMatch(secureflow.href ?? '', /railway/i);
-	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /secureflow-landing\.netlify\.app/);
+	assert.match(SECUFLOW_CRM_URL ?? '', /secureflow-landing\.netlify\.app/);
 	assert.equal(productCtaLabel(secureflow), 'Conocer SecureFlow');
 	assert.equal(SECUFLOW_CTA_LABEL, 'Conocer SecureFlow');
+	assert.match(productStatusLabel(secureflow), /En operación/);
 
 	assert.deepEqual(
 		serviceBusinessProducts.map((product) => product.name),
@@ -143,8 +158,37 @@ test('catalog partitions site-ops with Access first live and SecureFlow paused',
 	assert.doesNotMatch(catalog, /HayStock/);
 	assert.doesNotMatch(catalog, /RutaSegura/);
 	assert.doesNotMatch(catalog, /Fochi/);
-	assert.doesNotMatch(catalog, /secureflow-landing\.netlify\.app/);
+	assert.match(catalog, /secureflow-landing\.netlify\.app/);
 	assert.doesNotMatch(catalog, /railway/i);
+	assert.match(catalog, /Safe Access/);
+});
+
+test('showcase order, live hrefs, and Avisarme come from the shipped catalog', () => {
+	const showcase = showcaseProducts();
+	assert.deepEqual(
+		showcase.map((product) => product.name),
+		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra', 'SecureFlow CRM'],
+	);
+
+	const paperless = showcase[0];
+	assert.equal(paperless.status, 'live');
+	assert.equal(productStatusLabel(paperless), 'En operación');
+	assert.equal(showcaseCta(paperless).href, 'https://access.merbal.lat/');
+	assert.equal(showcaseCta(paperless).external, true);
+
+	for (const name of ['Access Enterprise', 'Safe Access', 'ActivoObra']) {
+		const product = showcase.find((item) => item.name === name);
+		assert.ok(product);
+		assert.equal(product.status, 'soon');
+		assert.match(productStatusLabel(product), /Próximamente/);
+		assert.equal(showcaseCta(product).label, 'Avisarme');
+		assert.equal(showcaseCta(product).external, false);
+	}
+
+	const secureflow = showcase[4];
+	assert.equal(secureflow.status, 'live');
+	assert.equal(showcaseCta(secureflow).href, 'https://secureflow-landing.netlify.app');
+	assert.equal(showcaseCta(secureflow).label, 'Conocer SecureFlow');
 });
 
 test('custom software is a first-class option in the shipped catalog', () => {

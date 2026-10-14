@@ -58,6 +58,19 @@ export const products: Product[] = [
 			'Lectura en el punto: QR o buscar por nombre y confirmar con foto. Tablero de cubiertos y faltantes por ruta y sitio. A la noche, RH tiene el Excel. Este módulo no acredita contratistas ni visitas.',
 	},
 	{
+		name: 'Safe Access',
+		description: 'Acceso por zonas para sitios que necesitan un control más estricto que el pase de visita.',
+		href: null,
+		status: 'soon',
+		vertical: 'operacion-de-sitios',
+		problem:
+			'El acceso al sitio se queda en un pase suelto: no queda claro quién puede entrar, a qué zona y hasta cuándo.',
+		audience:
+			'Plantas, corporativos y sitios que ya registran visitas y necesitan permisos por zona.',
+		howItWorks:
+			'Define zonas y permisos, valida la entrada y deja registro de quién pasó. Llega después de Access Paperless.',
+	},
+	{
 		name: 'ActivoObra',
 		description: 'Control y visibilidad de activos físicos en sitio.',
 		href: null,
@@ -74,15 +87,15 @@ export const products: Product[] = [
 		name: 'SecureFlow CRM',
 		description:
 			'Gestión de clientes y operaciones para empresas de seguridad e integración.',
-		href: null,
-		status: 'paused',
+		href: 'https://secureflow-landing.netlify.app',
+		status: 'live',
 		vertical: 'operacion-de-sitios',
 		problem:
 			'Clientes, contratos y la operación del sitio se fragmentan entre hojas, chats y un CRM que no entiende el campo.',
 		audience:
-			'Industrial, retail, hospital, educación, corporativo, hospitality y cualquier sitio que lo necesite.',
+			'Empresas de seguridad e integración que necesitan un tablero de clientes y operación.',
 		howItWorks:
-			'Centraliza clientes y operación del sitio en un tablero. Hoy la plataforma está en pausa.',
+			'Centraliza clientes, contratos y la operación del sitio en un tablero en operación.',
 	},
 	{
 		name: 'ANUVÉ',
@@ -137,4 +150,32 @@ export const customSoftware = {
 
 export function liveProductHref(product: Product): string | null {
 	return product.status === 'live' && product.href ? product.href : null;
+}
+
+export const SHOWCASE_NAMES = [
+	'Access Paperless',
+	'Access Enterprise',
+	'Safe Access',
+	'ActivoObra',
+	'SecureFlow CRM',
+] as const;
+
+export function showcaseProducts(): Product[] {
+	return SHOWCASE_NAMES.map((name) => {
+		const product = products.find((item) => item.name === name);
+		if (!product) throw new Error(`Missing showcase product: ${name}`);
+		return product;
+	});
+}
+
+export function productStatusLabel(product: Product): string {
+	if (product.status === 'live') return 'En operación';
+	if (product.status === 'soon') return 'Próximamente';
+	return 'En pausa';
+}
+
+export function showcaseCta(product: Product): { label: string; href: string; external: boolean } {
+	const href = liveProductHref(product);
+	if (href) return { label: productCtaLabel(product), href, external: true };
+	return { label: 'Avisarme', href: '/contacto', external: false };
 }

@@ -5,8 +5,9 @@
 	--color-navy-900: #0a1628;
 	--color-navy-800: #102038;
 	--color-navy-700: #162a48;
-	--color-accent: #2b8cff;
+	--color-accent: #2B8CFF;
 	--color-accent-2: #5eb0ff;
+	--color-integration: #F5A524;
 	--color-text: #f4f7fb;
 	--color-text-soft: #c5d0de;
 	--color-muted: #8b9bb0;
@@ -85,6 +86,35 @@
 
 	.nav-link:hover {
 		color: var(--color-text);
+	}
+
+	button.nav-link {
+		border: 0;
+		background: transparent;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.nav-link-integration {
+		color: #F5A524;
+	}
+
+	.nav-item-dropdown:has(.nav-link-integration) .nav-dropdown {
+		border-color: color-mix(in oklab, #F5A524 48%, transparent);
+	}
+
+	.badge-integration {
+		display: inline-flex;
+		align-items: center;
+		border: 1px solid color-mix(in oklab, #F5A524 55%, transparent);
+		border-radius: 999px;
+		background: color-mix(in oklab, #F5A524 14%, transparent);
+		padding: 0.2rem 0.55rem;
+		color: #F5A524;
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
 	}
 
 	.nav-link:hover::after,
@@ -227,6 +257,130 @@
 		animation-delay: 2.6s;
 	}
 
+	.hero-prism-stage {
+		width: min(100%, 34rem);
+		max-width: 100%;
+		height: clamp(16rem, 46vw, 28rem);
+		margin-inline: auto;
+	}
+
+	.hero-prism {
+		display: block;
+		width: 100%;
+		height: 100%;
+		max-width: 100%;
+	}
+
+	.platform-grid {
+		align-items: stretch;
+	}
+
+	.platform-card {
+		position: relative;
+		height: 100%;
+		padding: 0 0.8rem 0.8rem 0;
+		transform: perspective(900px) rotateX(0deg) rotateY(0deg);
+		transition:
+			transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+			filter 0.35s ease;
+	}
+
+	.platform-card-layer {
+		position: absolute;
+		z-index: 0;
+		border: 1px solid rgb(255 255 255 / 0.1);
+		border-radius: 1.15rem;
+		background: #102038;
+		inset: 0.55rem 0 0 0.55rem;
+	}
+
+	.platform-card-layer-2 {
+		inset: 1rem 0 0 1rem;
+		opacity: 0.72;
+	}
+
+	.platform-card-body {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		height: 100%;
+		flex-direction: column;
+		border: 1px solid rgb(255 255 255 / 0.1);
+		border-radius: 1.15rem;
+		background: #0a1628;
+	}
+
+	.platform-card-face {
+		display: flex;
+		width: 100%;
+		flex: 1;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.85rem;
+		border: 0;
+		border-radius: 1.15rem 1.15rem 0 0;
+		background: transparent;
+		padding: 1.25rem 1.25rem 0.5rem;
+		color: inherit;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+
+	.platform-card-actions {
+		padding: 0.35rem 1.25rem 1.25rem;
+	}
+
+	.platform-icon {
+		display: inline-flex;
+		width: 2.6rem;
+		height: 2.6rem;
+		flex: none;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid color-mix(in oklab, #2B8CFF 45%, transparent);
+		border-radius: 0.85rem;
+		background: color-mix(in oklab, #2B8CFF 14%, transparent);
+		color: #2B8CFF;
+	}
+
+	.platform-icon svg {
+		width: 1.35rem;
+		height: 1.35rem;
+	}
+
+	.platform-card:hover {
+		transform: perspective(900px) rotateX(4deg) rotateY(-6deg) translateY(-4px);
+		filter: drop-shadow(0 18px 28px rgb(6 13 24 / 0.45)) drop-shadow(0 0 22px color-mix(in oklab, #2B8CFF 55%, transparent));
+	}
+
+	.platform-panel {
+		width: min(36rem, calc(100vw - 1.5rem));
+		max-height: min(85svh, 42rem);
+		margin: auto;
+		overflow: auto;
+		border: 1px solid rgb(255 255 255 / 0.12);
+		border-radius: 1.25rem;
+		background: #0a1628;
+		padding: 1.4rem;
+		color: #f4f7fb;
+	}
+
+	.platform-panel::backdrop {
+		background: rgb(6 13 24 / 0.72);
+	}
+
+	.platform-panel-close {
+		border: 1px solid rgb(255 255 255 / 0.14);
+		border-radius: 999px;
+		background: transparent;
+		padding: 0.4rem 0.8rem;
+		color: #f4f7fb;
+		font: inherit;
+		font-size: 0.8rem;
+		cursor: pointer;
+	}
+
 	[data-method-step] {
 		transition:
 			opacity 0.35s ease,
@@ -354,8 +508,11 @@
 	.site-ambient-grid,
 	.hero-tech-grid,
 	.hero-tech-scan,
-	.hero-tech-node {
+	.hero-tech-node,
+	.platform-card,
+	.platform-card:hover {
 		transform: none;
+		filter: none;
 		transition: none;
 		box-shadow: none;
 		animation: none;

@@ -76,9 +76,9 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 
 	const secureflow = products.find((product) => product.name === 'SecureFlow CRM');
 	assert.ok(secureflow);
-	assert.equal(secureflow.status, 'paused');
-	assert.equal(liveProductHref(secureflow), null);
-	assert.doesNotMatch(secureflow.href ?? '', /netlify/i);
+	assert.equal(secureflow.status, 'live');
+	assert.equal(liveProductHref(secureflow), 'https://secureflow-landing.netlify.app');
+	assert.match(secureflow.href ?? '', /secureflow-landing\.netlify\.app/);
 	assert.doesNotMatch(secureflow.href ?? '', /railway/i);
 
 	for (const product of products) {

@@ -11,32 +11,47 @@ import { CONTACT_PATH } from '../lib/nav';
 		<span class="hero-tech-node hero-tech-node-c"></span>
 	</div>
 
-	<div class="relative mx-auto flex min-h-[calc(100svh-4.25rem)] w-full max-w-6xl flex-col justify-center px-5 py-16 sm:px-8 sm:py-20">
-		<p class="hero-in mb-5 font-display text-xs font-medium uppercase tracking-[0.22em] text-accent sm:text-sm">
-			Empresa mexicana · Plataformas
-		</p>
-		<h1
-			class="hero-in max-w-4xl font-display text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-6xl lg:leading-[1.08]"
-		>
-			<span class="text-accent">Productos</span> que operan.
-		</h1>
-		<p class="hero-in mt-6 max-w-2xl text-base leading-relaxed text-text-soft sm:text-lg">
-			Casa de software para operar el sitio y el negocio. Productos propios y desarrollo a la medida.
-		</p>
+	<div
+		class="relative mx-auto grid min-h-[calc(100svh-4.25rem)] w-full max-w-6xl items-center gap-10 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]"
+	>
+		<div class="min-w-0">
+			<p class="hero-in mb-5 flex flex-wrap items-center gap-2 font-display text-xs font-medium uppercase tracking-[0.22em] text-accent sm:text-sm">
+				<span>Empresa mexicana · Plataformas</span>
+				<span class="badge-integration normal-case tracking-normal">Integración</span>
+			</p>
+			<h1 class="hero-in max-w-4xl font-display text-4xl font-semibold tracking-tight text-text sm:text-5xl lg:text-6xl lg:leading-[1.08]">
+				Desarrollamos el software. Integramos la tecnología.
+			</h1>
+			<p class="hero-in mt-6 max-w-2xl text-base leading-relaxed text-text-soft sm:text-lg">
+				<span class="text-accent whitespace-nowrap">División de software</span>,{' '}
+				<span class="text-integration whitespace-nowrap">Seguridad electrónica</span>{' e '}
+				<span class="text-integration whitespace-nowrap">Infraestructura de red</span>. Productos propios y desarrollo a la medida.
+			</p>
 
-		<div class="hero-in mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-			<a
-				href={CONTACT_PATH}
-				class="btn-primary inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 font-display text-sm font-semibold text-navy-950"
-			>
-				Pedir demo
-			</a>
-			<a
-				href="/plataformas"
-				class="btn-secondary inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 font-display text-sm font-medium text-text"
-			>
-				Ver plataformas
-			</a>
+			<div class="hero-in mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+				<a
+					href={CONTACT_PATH}
+					class="btn-primary inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 font-display text-sm font-semibold text-navy-950"
+				>
+					Pedir demo
+				</a>
+				<a
+					href="/plataformas"
+					class="btn-secondary inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 font-display text-sm font-medium text-text"
+				>
+					Ver plataformas
+				</a>
+			</div>
+		</div>
+
+		<div class="hero-prism-stage min-w-0" data-hero-prism-stage>
+			<canvas class="hero-prism" data-hero-prism width="640" height="520" aria-hidden="true"></canvas>
 		</div>
 	</div>
 </section>
+
+<script>
+	import { bootHeroPrism } from '../lib/hero-prism-client';
+
+	bootHeroPrism();
+</script>

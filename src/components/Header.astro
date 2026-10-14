@@ -21,17 +21,25 @@ const path = Astro.url.pathname;
 				HEADER_NAV.map((link) =>
 					link.children ? (
 						<div class="nav-item-dropdown relative">
-							<a
-								href={link.href}
-								class:list={[
-									'nav-link text-sm',
-									isActivePath(path, link.href) ? 'is-active text-text' : 'text-muted',
-								]}
-								aria-current={isActivePath(path, link.href) ? 'page' : undefined}
-								aria-haspopup="true"
-							>
-								{link.label}
-							</a>
+							{
+								link.href === '#' ? (
+									<button type="button" class="nav-link nav-link-integration text-sm" aria-haspopup="true">
+										{link.label}
+									</button>
+								) : (
+									<a
+										href={link.href}
+										class:list={[
+											'nav-link text-sm',
+											isActivePath(path, link.href) ? 'is-active text-text' : 'text-muted',
+										]}
+										aria-current={isActivePath(path, link.href) ? 'page' : undefined}
+										aria-haspopup="true"
+									>
+										{link.label}
+									</a>
+								)
+							}
 							<div class="nav-dropdown" role="menu">
 								{
 									link.children.map((child) => (
@@ -96,16 +104,22 @@ const path = Astro.url.pathname;
 			{
 				HEADER_NAV.map((link) => (
 					<>
-						<a
-							href={link.href}
-							class:list={[
-								'rounded-lg px-3 py-2.5 text-sm transition-colors',
-								isActivePath(path, link.href) ? 'bg-navy-800 text-text' : 'text-text-soft hover:bg-navy-800 hover:text-text',
-							]}
-							aria-current={isActivePath(path, link.href) ? 'page' : undefined}
-						>
-							{link.label}
-						</a>
+						{
+							link.href === '#' ? (
+								<span class="nav-link-integration rounded-lg px-3 py-2.5 text-sm font-medium">{link.label}</span>
+							) : (
+								<a
+									href={link.href}
+									class:list={[
+										'rounded-lg px-3 py-2.5 text-sm transition-colors',
+										isActivePath(path, link.href) ? 'bg-navy-800 text-text' : 'text-text-soft hover:bg-navy-800 hover:text-text',
+									]}
+									aria-current={isActivePath(path, link.href) ? 'page' : undefined}
+								>
+									{link.label}
+								</a>
+							)
+						}
 						{link.children?.map((child) => (
 							<a
 								href={child.href}

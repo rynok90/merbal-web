@@ -50,8 +50,12 @@ test('Header uses real page paths, not only in-page anchors', () => {
 		assert.ok(nav.includes(href), `nav missing ${href}`);
 	}
 
-	assert.doesNotMatch(nav, /\/seguridad-electronica/);
-	assert.doesNotMatch(nav, /\/infraestructura-de-red/);
+	assert.match(nav, /Integración/);
+	assert.match(nav, /Seguridad electrónica/);
+	assert.match(nav, /Infraestructura de red/);
+	assert.match(nav, /\/seguridad-electronica/);
+	assert.match(nav, /\/infraestructura-de-red/);
+	assert.doesNotMatch(nav, /label: 'Campo'/);
 	assert.match(footer, /FOOTER_LINKS/);
 	assert.match(nav, /\/nosotros/);
 });
@@ -69,10 +73,12 @@ test('home is software-first with two platform doors and no campo cards', () => 
 	assert.doesNotMatch(home, /<Contact/);
 	assert.doesNotMatch(home, /<Method/);
 	assert.match(hero, /Empresa mexicana · Plataformas/);
-	assert.match(hero, /Productos/);
-	assert.match(hero, /que operan/);
-	assert.match(hero, /Casa de software para operar el sitio y el negocio/);
+	assert.match(hero, /Desarrollamos el software\. Integramos la tecnología\./);
+	assert.match(hero, /División de software/);
+	assert.match(hero, /Seguridad electrónica/);
+	assert.match(hero, /Infraestructura de red/);
 	assert.match(hero, /Productos propios y desarrollo a la medida/);
+	assert.doesNotMatch(hero, /que operan/);
 	assert.match(hero, /Pedir demo/);
 	assert.match(hero, /href=\{CONTACT_PATH\}/);
 	assert.match(hero, /href="\/plataformas"/);
@@ -126,8 +132,11 @@ test('Access Paperless and product names stay out of the header', () => {
 	assert.doesNotMatch(header, />Inicio</);
 	assert.doesNotMatch(header, />Software</);
 	assert.doesNotMatch(header, />Nosotros</);
-	assert.doesNotMatch(chrome, /Seguridad electrónica/);
-	assert.doesNotMatch(chrome, /Infraestructura de red/);
+	assert.match(chrome, /Integración/);
+	assert.match(chrome, /Seguridad electrónica/);
+	assert.match(chrome, /Infraestructura de red/);
+	assert.doesNotMatch(chrome, /label: 'Campo'/);
+	assert.doesNotMatch(header, />Campo</);
 });
 
 test('nosotros owns Cómo trabajamos and the four steps', () => {

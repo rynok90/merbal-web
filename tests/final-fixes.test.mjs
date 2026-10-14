@@ -21,7 +21,9 @@ test('plataformas hub replaced the banned product-status sentence', () => {
 
 	assert.doesNotMatch(tree, /SecureFlow CRM ya opera/);
 	assert.ok(!tree.includes(BANNED));
-	assert.match(platforms, /Dos verticales/);
+	assert.match(platforms, /showcaseProducts/);
+	assert.match(platforms, /platform-card/);
+	assert.doesNotMatch(platforms, /Dos verticales/);
 	assert.match(tree, /SecureFlow CRM/);
 	assert.match(tree, /ANUVÉ/);
 	assert.doesNotMatch(page + platforms, /HayStock/);

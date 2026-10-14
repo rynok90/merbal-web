@@ -13,6 +13,14 @@ export const HEADER_NAV: NavLink[] = [
 			{ href: '/plataformas/negocios-de-servicio', label: 'Negocios de servicio' },
 		],
 	},
+	{
+		href: '#',
+		label: 'Integración',
+		children: [
+			{ href: '/seguridad-electronica', label: 'Seguridad electrónica' },
+			{ href: '/infraestructura-de-red', label: 'Infraestructura de red' },
+		],
+	},
 	{ href: '/contacto', label: 'Contacto' },
 ];
 
