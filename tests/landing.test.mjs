@@ -17,6 +17,8 @@ const ROUTES = [
 	['src/pages/plataformas/negocios-de-servicio.astro', '/plataformas/negocios-de-servicio'],
 	['src/pages/nosotros.astro', '/nosotros'],
 	['src/pages/contacto.astro', '/contacto'],
+	['src/pages/seguridad-electronica.astro', '/seguridad-electronica'],
+	['src/pages/infraestructura-de-red.astro', '/infraestructura-de-red'],
 ];
 
 test('Astro routes exist as distinct pages including plataformas verticals', () => {
@@ -25,8 +27,6 @@ test('Astro routes exist as distinct pages including plataformas verticals', () 
 		assert.match(read(file), /layouts\/Layout\.astro/);
 	}
 	assert.equal(existsSync(join(root, 'src/pages/software.astro')), false);
-	assert.equal(existsSync(join(root, 'src/pages/seguridad-electronica.astro')), false);
-	assert.equal(existsSync(join(root, 'src/pages/infraestructura-de-red.astro')), false);
 });
 
 test('Header uses real page paths, not only in-page anchors', () => {

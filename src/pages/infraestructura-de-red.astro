@@ -1,0 +1,24 @@
+---
+import IntegracionPage from '../components/IntegracionPage.astro';
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+	title="Infraestructura de red — MERBAL Technologies"
+	description="La red que sostiene la operación: WiFi, fibra, cableado estructurado, equipo activo y continuidad."
+>
+	<IntegracionPage
+		title="Infraestructura de red"
+		sub="La red que sostiene la operación: WiFi, fibra, cableado estructurado, equipo activo y continuidad."
+		intro="Si cae el enlace, cae la operación. Diseñamos la red para disponibilidad, no para el catálogo del proveedor."
+		layers={[
+			'WiFi empresarial',
+			'Fibra / backbone',
+			'Cableado estructurado (UTP)',
+			'Equipo activo',
+			'UPS / continuidad',
+		]}
+		audience="industrial, retail, hospital, educación, corporativo y cualquier operación que no se puede quedar sin red."
+		method="diagnóstico → diseño → implementación → acompañamiento"
+	/>
+</Layout>

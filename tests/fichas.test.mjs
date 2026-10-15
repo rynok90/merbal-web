@@ -88,9 +88,15 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 	}
 });
 
-test('campo landings are gone; product fichas are not a CCTV catalog', () => {
-	assert.equal(existsSync(join(root, 'src/pages/seguridad-electronica.astro')), false);
-	assert.equal(existsSync(join(root, 'src/pages/infraestructura-de-red.astro')), false);
+test('integración pages exist and product fichas are not a CCTV catalog', () => {
+	assert.equal(existsSync(join(root, 'src/pages/seguridad-electronica.astro')), true);
+	assert.equal(existsSync(join(root, 'src/pages/infraestructura-de-red.astro')), true);
+	const seguridad = read('src/pages/seguridad-electronica.astro');
+	const red = read('src/pages/infraestructura-de-red.astro');
+	assert.doesNotMatch(seguridad, /CCTV/i);
+	assert.doesNotMatch(red, /CCTV/i);
+	assert.doesNotMatch(seguridad, BRANDS);
+	assert.doesNotMatch(red, BRANDS);
 	const ficha = read('src/components/ProductFicha.astro');
 	assert.doesNotMatch(ficha, BRANDS);
 	assert.doesNotMatch(ficha, /Hikvision|Dahua|Axis/);
