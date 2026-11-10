@@ -74,12 +74,10 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 	assert.doesNotMatch(enterpriseCopy, /multi-sitio/);
 	assert.doesNotMatch(enterpriseCopy, /políticas de grupo/);
 
-	const secureflow = products.find((product) => product.name === 'SecureFlow CRM');
-	assert.ok(secureflow);
-	assert.equal(secureflow.status, 'live');
-	assert.equal(liveProductHref(secureflow), 'https://secureflow-landing.netlify.app');
-	assert.match(secureflow.href ?? '', /secureflow-landing\.netlify\.app/);
-	assert.doesNotMatch(secureflow.href ?? '', /railway/i);
+	assert.equal(
+		products.some((product) => /secureflow/i.test(product.name + (product.href ?? ''))),
+		false,
+	);
 
 	for (const product of products) {
 		assert.ok(product.problem.length > 20, `${product.name} missing problem`);

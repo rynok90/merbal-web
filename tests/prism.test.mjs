@@ -621,7 +621,7 @@ test('hero client calls the shipped prism helpers and boots without module or re
 	}
 });
 
-test('home plataformas teaser is two layered cards, not the five-product catalog', () => {
+test('home plataformas teaser is two layered cards, not the product catalog', () => {
 	const pillars = read('src/components/Pillars.astro');
 	const home = read('src/pages/index.astro');
 	const css = read('src/styles/global.css');

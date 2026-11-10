@@ -7,7 +7,6 @@ import {
 	customSoftware,
 	productCtaLabel,
 	productStatusLabel,
-	SECUFLOW_CRM_URL,
 	SERVICE_VERTICAL,
 	SITE_OPS_VERTICAL,
 	serviceBusinessProducts,
@@ -56,12 +55,10 @@ test('plataformas surface renders showcase cards with a detail panel', () => {
 	const showcase = showcaseProducts();
 	assert.deepEqual(
 		showcase.map((product) => product.name),
-		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra', 'SecureFlow CRM'],
+		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra'],
 	);
 	assert.equal(productStatusLabel(showcase[0]), 'En operación');
 	assert.equal(showcaseCta(showcase[0]).href.replace(/\/$/, ''), 'https://access.merbal.lat');
-	assert.equal(showcaseCta(showcase[4]).href, 'https://secureflow-landing.netlify.app');
-	assert.equal(productStatusLabel(showcase[4]), 'En operación');
 	for (const product of showcase) {
 		assert.ok(product.problem.trim().length > 0, `${product.name} problem`);
 		assert.ok(product.audience.trim().length > 0, `${product.name} audience`);
@@ -72,7 +69,7 @@ test('plataformas surface renders showcase cards with a detail panel', () => {
 	assert.equal(SERVICE_VERTICAL.name, 'Negocios de servicio');
 });
 
-test('operacion-de-sitios lists Access first, Safe Access soon, and SecureFlow live', () => {
+test('operacion-de-sitios lists Access first and Safe Access soon', () => {
 	const page = read('src/pages/plataformas/operacion-de-sitios.astro');
 	const ficha = read('src/components/ProductFicha.astro');
 	const tree = page + ficha;
@@ -94,7 +91,6 @@ test('operacion-de-sitios lists Access first, Safe Access soon, and SecureFlow l
 		'Access Enterprise',
 		'Safe Access',
 		'ActivoObra',
-		'SecureFlow CRM',
 	]);
 	assert.equal(siteOpsProducts[0].status, 'live');
 	assert.equal(productCtaLabel(siteOpsProducts[0]), 'Conocer Access');
@@ -103,10 +99,8 @@ test('operacion-de-sitios lists Access first, Safe Access soon, and SecureFlow l
 	assert.equal(siteOpsProducts[2].name, 'Safe Access');
 	assert.equal(siteOpsProducts[2].status, 'soon');
 	assert.equal(showcaseCta(siteOpsProducts[2]).label, 'Avisarme');
-	assert.equal(siteOpsProducts[4].name, 'SecureFlow CRM');
-	assert.equal(siteOpsProducts[4].status, 'live');
-	assert.match(SECUFLOW_CRM_URL ?? '', /secureflow-landing\.netlify\.app/);
-	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /railway/i);
+	assert.equal(siteOpsProducts[3].name, 'ActivoObra');
+	assert.doesNotMatch(page, /secureflow/i);
 	assert.doesNotMatch(page, /ANUVÉ/);
 	assert.doesNotMatch(page, /HayStock/);
 	assert.doesNotMatch(page, /RutaSegura/);
