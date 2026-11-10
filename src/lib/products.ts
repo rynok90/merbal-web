@@ -84,20 +84,6 @@ export const products: Product[] = [
 			'Control y visibilidad de activos físicos en sitio: qué hay, dónde está y quién lo tiene.',
 	},
 	{
-		name: 'SecureFlow CRM',
-		description:
-			'Gestión de clientes y operaciones para empresas de seguridad e integración.',
-		href: 'https://secureflow-landing.netlify.app',
-		status: 'live',
-		vertical: 'operacion-de-sitios',
-		problem:
-			'Clientes, contratos y la operación del sitio se fragmentan entre hojas, chats y un CRM que no entiende el campo.',
-		audience:
-			'Empresas de seguridad e integración que necesitan un tablero de clientes y operación.',
-		howItWorks:
-			'Centraliza clientes, contratos y la operación del sitio en un tablero en operación.',
-	},
-	{
 		name: 'ANUVÉ',
 		description: 'Agenda, catálogo y overlay para nail bars. La clienta ve el diseño en su mano.',
 		href: null,
@@ -130,16 +116,10 @@ export function productsByVertical(vertical: ProductVertical): Product[] {
 export const siteOpsProducts = productsByVertical('operacion-de-sitios');
 export const serviceBusinessProducts = productsByVertical('negocios-de-servicio');
 
-const secureflow = products.find((product) => product.name === 'SecureFlow CRM');
-
-export const SECUFLOW_CRM_URL = secureflow?.href ?? '';
-
 export function productCtaLabel(product: Product): string {
 	const firstWord = product.name.trim().split(/\s+/)[0] ?? product.name;
 	return `Conocer ${firstWord}`;
 }
-
-export const SECUFLOW_CTA_LABEL = secureflow ? productCtaLabel(secureflow) : '';
 
 export const customSoftware = {
 	name: 'Desarrollo de software a la medida',
@@ -157,7 +137,6 @@ export const SHOWCASE_NAMES = [
 	'Access Enterprise',
 	'Safe Access',
 	'ActivoObra',
-	'SecureFlow CRM',
 ] as const;
 
 export function showcaseProducts(): Product[] {

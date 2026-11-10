@@ -10,8 +10,6 @@ import {
 	productStatusLabel,
 	products,
 	productsByVertical,
-	SECUFLOW_CRM_URL,
-	SECUFLOW_CTA_LABEL,
 	serviceBusinessProducts,
 	showcaseCta,
 	showcaseProducts,
@@ -20,10 +18,7 @@ import {
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
-test('catalog partitions site-ops with Access and SecureFlow live', () => {
-	assert.match(SECUFLOW_CRM_URL ?? '', /secureflow-landing\.netlify\.app/);
-	assert.doesNotMatch(SECUFLOW_CRM_URL ?? '', /railway/i);
-
+test('catalog partitions site-ops with Access live', () => {
 	assert.deepEqual(
 		products.map((product) => product.name),
 		[
@@ -31,7 +26,6 @@ test('catalog partitions site-ops with Access and SecureFlow live', () => {
 			'Access Enterprise',
 			'Safe Access',
 			'ActivoObra',
-			'SecureFlow CRM',
 			'ANUVÉ',
 			'Arco Care',
 		],
@@ -39,17 +33,17 @@ test('catalog partitions site-ops with Access and SecureFlow live', () => {
 
 	assert.deepEqual(
 		siteOpsProducts.map((product) => product.name),
-		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra', 'SecureFlow CRM'],
+		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra'],
 	);
 	assert.deepEqual(
 		productsByVertical('operacion-de-sitios').map((product) => product.name),
-		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra', 'SecureFlow CRM'],
+		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra'],
 	);
 
 	const liveSiteOps = siteOpsProducts.filter((product) => product.status === 'live');
 	assert.deepEqual(
 		liveSiteOps.map((product) => product.name),
-		['Access Paperless', 'SecureFlow CRM'],
+		['Access Paperless'],
 	);
 
 	const access = siteOpsProducts[0];
@@ -112,17 +106,6 @@ test('catalog partitions site-ops with Access and SecureFlow live', () => {
 	assert.ok(safe.audience.length > 10);
 	assert.ok(safe.howItWorks.length > 10);
 
-	const secureflow = siteOpsProducts.find((product) => product.name === 'SecureFlow CRM');
-	assert.ok(secureflow);
-	assert.equal(secureflow.status, 'live');
-	assert.equal(secureflow.href, 'https://secureflow-landing.netlify.app');
-	assert.equal(liveProductHref(secureflow), 'https://secureflow-landing.netlify.app');
-	assert.doesNotMatch(secureflow.href ?? '', /railway/i);
-	assert.match(SECUFLOW_CRM_URL ?? '', /secureflow-landing\.netlify\.app/);
-	assert.equal(productCtaLabel(secureflow), 'Conocer SecureFlow');
-	assert.equal(SECUFLOW_CTA_LABEL, 'Conocer SecureFlow');
-	assert.match(productStatusLabel(secureflow), /En operación/);
-
 	assert.deepEqual(
 		serviceBusinessProducts.map((product) => product.name),
 		['ANUVÉ', 'Arco Care'],
@@ -146,7 +129,7 @@ test('catalog partitions site-ops with Access and SecureFlow live', () => {
 		false,
 	);
 	assert.equal(
-		serviceBusinessProducts.some((product) => product.name === 'SecureFlow CRM'),
+		products.some((product) => /secureflow/i.test(product.name)),
 		false,
 	);
 
@@ -158,7 +141,7 @@ test('catalog partitions site-ops with Access and SecureFlow live', () => {
 	assert.doesNotMatch(catalog, /HayStock/);
 	assert.doesNotMatch(catalog, /RutaSegura/);
 	assert.doesNotMatch(catalog, /Fochi/);
-	assert.match(catalog, /secureflow-landing\.netlify\.app/);
+	assert.doesNotMatch(catalog, /secureflow/i);
 	assert.doesNotMatch(catalog, /railway/i);
 	assert.match(catalog, /Safe Access/);
 });
@@ -167,7 +150,7 @@ test('showcase order, live hrefs, and Avisarme come from the shipped catalog', (
 	const showcase = showcaseProducts();
 	assert.deepEqual(
 		showcase.map((product) => product.name),
-		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra', 'SecureFlow CRM'],
+		['Access Paperless', 'Access Enterprise', 'Safe Access', 'ActivoObra'],
 	);
 
 	const paperless = showcase[0];
@@ -184,11 +167,6 @@ test('showcase order, live hrefs, and Avisarme come from the shipped catalog', (
 		assert.equal(showcaseCta(product).label, 'Avisarme');
 		assert.equal(showcaseCta(product).external, false);
 	}
-
-	const secureflow = showcase[4];
-	assert.equal(secureflow.status, 'live');
-	assert.equal(showcaseCta(secureflow).href, 'https://secureflow-landing.netlify.app');
-	assert.equal(showcaseCta(secureflow).label, 'Conocer SecureFlow');
 });
 
 test('custom software is a first-class option in the shipped catalog', () => {
