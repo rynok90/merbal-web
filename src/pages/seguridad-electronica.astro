@@ -1,12 +1,12 @@
 ---
 import IntegracionPage from '../components/IntegracionPage.astro';
 import Layout from '../layouts/Layout.astro';
+import { pageSeo, securityPageService } from '../lib/seo';
+
+const { title, description } = pageSeo('/seguridad-electronica');
 ---
 
-<Layout
-	title="Seguridad electrónica — MERBAL Technologies"
-	description="Video inteligente, control de acceso y detección como sistema, no como catálogo de equipos."
->
+<Layout title={title} description={description} extraGraph={[securityPageService()]}>
 	<IntegracionPage
 		title="Seguridad electrónica"
 		sub="Video inteligente, control de acceso y detección como sistema, no como catálogo de equipos."

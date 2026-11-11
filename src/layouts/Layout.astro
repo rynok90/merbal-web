@@ -2,36 +2,33 @@
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import Motion from '../components/Motion.astro';
+import Seo from '../components/Seo.astro';
+import type { JsonLdNode } from '../lib/seo';
 import '../styles/global.css';
 
 interface Props {
 	title?: string;
 	description?: string;
+	extraGraph?: JsonLdNode[];
 }
 
 const {
-	title = 'MERBAL Technologies',
-	description = 'Tecnología de vanguardia para transformar tu negocio. MERBAL Technologies.',
+	title = 'MERBAL — Desarrollamos el software. Integramos la tecnología.',
+	description = 'Software a la medida y plataformas propias, más seguridad electrónica e infraestructura de red para que tu empresa opere mejor.',
+	extraGraph = [],
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es-MX">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content={description} />
 		<meta name="generator" content={Astro.generator} />
-
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:type" content="website" />
-		<meta property="og:locale" content="es" />
-
+		<Seo title={title} description={description} extraGraph={extraGraph} />
 		<link rel="icon" href="/favicon.ico" sizes="any" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<link rel="apple-touch-icon" href="/favicon-180.png" />
-		<title>{title}</title>
 	</head>
 	<body>
 		<div class="site-ambient" aria-hidden="true">

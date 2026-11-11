@@ -1,5 +1,6 @@
 ---
 import DistributedBrands from './DistributedBrands.astro';
+import Faq from './Faq.astro';
 import IxBlock from './IxBlock.astro';
 import ScreenCarousel from './ScreenCarousel.astro';
 import { CONTACT_FUNCTION_PATH } from '../../lib/contact-config';
@@ -197,7 +198,7 @@ const indexed = SOLUTIONS.map((sol, index) => ({
 				name="seg"
 				kicker="Seguridad electrónica"
 				title="El perímetro, cuando el software no basta."
-				lede="Drones, cámaras, detección y aviso. Se integran cuando el sitio lo pide."
+				lede="Seguridad electrónica para el sitio que necesita cubrir el perímetro: drones, cámaras, detección y aviso. Se integran cuando el software no basta."
 				items={SECURITY_ITEMS}
 				ctaHref="/?solucion=seguridad-electronica#contacto"
 			/>
@@ -207,7 +208,7 @@ const indexed = SOLUTIONS.map((sol, index) => ({
 				name="redb"
 				kicker="Infraestructura de red"
 				title="La red que sostiene al sistema."
-				lede="Cable, fibra, racks y el enlace inalámbrico. Para que el software y el sitio tengan de dónde apoyarse."
+				lede="Infraestructura de red del sitio: cable, fibra, racks y el enlace inalámbrico. Para que el software y el sitio tengan de dónde apoyarse."
 				items={NETWORK_ITEMS}
 				ctaHref="/?solucion=infraestructura-de-red#contacto"
 			/>
@@ -227,6 +228,8 @@ const indexed = SOLUTIONS.map((sol, index) => ({
 			</div>
 		</div>
 	</section>
+
+	<Faq />
 
 	<section class="contacto" id="contacto">
 		<div class="wrap split">

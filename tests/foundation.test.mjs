@@ -39,14 +39,19 @@ test('global.css imports Tailwind and defines the MERBAL @theme', () => {
 
 test('Layout.astro is a reusable MERBAL shell with SEO, fonts, favicon, and slot', () => {
 	const layout = read('src/layouts/Layout.astro');
+	const seo = read('src/components/Seo.astro');
 
+	assert.match(layout, /Seo\.astro/);
 	assert.match(layout, /\btitle\b/);
 	assert.match(layout, /\bdescription\b/);
-	assert.match(layout, /<meta\s+name="description"/);
-	assert.match(layout, /property="og:title"/);
-	assert.match(layout, /property="og:description"/);
-	assert.doesNotMatch(layout, /fonts\.googleapis\.com/);
+	assert.match(layout, /lang="es-MX"/);
+	assert.match(seo, /<meta\s+name="description"/);
+	assert.match(seo, /property="og:title"/);
+	assert.match(seo, /property="og:description"/);
+	assert.match(seo, /property="og:locale" content="es_MX"/);
+	assert.doesNotMatch(layout + seo, /fonts\.googleapis\.com/);
 	assert.match(layout, /favicon\.png/);
+	assert.match(layout, /apple-touch-icon/);
 	assert.match(layout, /global\.css/);
 	assert.match(layout, /<slot\s*\/>/);
 });
@@ -57,7 +62,8 @@ test('index.astro uses Layout and MERBAL branding without the stub homepage', ()
 	assert.match(page, /layouts\/HomeLayout\.astro/);
 	assert.match(page, /<HomeLayout/);
 	assert.doesNotMatch(page, /fonts\.googleapis\.com/);
-	assert.match(page, /MERBAL/);
+	assert.match(page, /PAGE_SEO/);
+	assert.match(read('src/lib/seo.ts'), /MERBAL/);
 	assert.doesNotMatch(page, /Base lista/);
 });
 

@@ -579,8 +579,14 @@ h3 { font-size: 1.25rem; letter-spacing: -0.025em; }
   filter: grayscale(1);
 }
 
-/* nosotros / contacto */
-.nosotros, .contacto { padding: 96px 0; border-top: 1px solid var(--line); }
+/* nosotros / contacto / preguntas */
+.nosotros, .contacto, .faq { padding: 96px 0; border-top: 1px solid var(--line); }
+.faq h2 { max-width: 22rem; }
+.faq-list { margin-top: 36px; max-width: 46rem; }
+.faq-item { padding: 22px 0 20px; border-top: 1px solid var(--line); }
+.faq-item:last-child { border-bottom: 1px solid var(--line); }
+.faq-item h3 { font-size: 1.15rem; margin: 0 0 8px; }
+.faq-item p { color: var(--muted); font-size: 15.5px; margin: 0; max-width: 42rem; }
 .split {
   display: grid;
   grid-template-columns: 1fr 1fr;

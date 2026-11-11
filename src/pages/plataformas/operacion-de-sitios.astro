@@ -3,12 +3,12 @@ import CtaBand from '../../components/CtaBand.astro';
 import Layout from '../../layouts/Layout.astro';
 import ProductFicha from '../../components/ProductFicha.astro';
 import { SITE_OPS_VERTICAL, siteOpsProducts } from '../../lib/products';
+import { pageSeo } from '../../lib/seo';
+
+const { title, description } = pageSeo('/plataformas/operacion-de-sitios');
 ---
 
-<Layout
-	title="Operación de sitios — Plataformas MERBAL"
-	description="Plataformas para quien opera un sitio físico: Access Paperless, Access Enterprise y ActivoObra."
->
+<Layout title={title} description={description}>
 	<main>
 		<section class="relative overflow-hidden bg-navy-950 pt-[4.25rem]">
 			<div

@@ -1,0 +1,38 @@
+# MERBAL
+
+> Desarrollamos el software. Integramos la tecnología.
+
+Software a la medida y plataformas propias, más seguridad electrónica e infraestructura de red para que tu empresa opere mejor.
+
+MERBAL Technologies es una empresa mexicana. Desarrolla software propio y a la medida, e integra la seguridad electrónica y la infraestructura de red. Un solo equipo, de punta a punta, con soporte directo. Contacto: soporte@merbal.lat
+
+## Servicios
+
+- [Software a la medida](https://merbal.lat/#medida): Si tu operación no cabe en una plantilla, la construimos contigo. Un proceso, una integración, un sistema que te queda: entender cómo se trabaja hoy, diseñar, construir con el equipo y acompañar cuando la operación pide un ajuste. Por confidencialidad (NDA) no se muestran los proyectos de clientes.
+- [Seguridad electrónica](https://merbal.lat/seguridad-electronica/): Video inteligente, control de acceso y detección como sistema, no como catálogo de equipos. En el sitio: drones, cámaras, detección y aviso, para el perímetro, cuando el software no basta.
+- [Infraestructura de red](https://merbal.lat/infraestructura-de-red/): La red que sostiene la operación: WiFi, fibra, cableado estructurado, equipo activo y continuidad. En el sitio: cable, fibra, racks y el enlace inalámbrico, para que el software y el sitio tengan de dónde apoyarse.
+
+## Ecosistema Paperless
+
+- [Access](https://access.merbal.lat/access-paperless/): Controla quién entra y quién sale: visitantes y contratistas, con pase QR y caseta. La caseta lee el QR y registra la entrada o la salida. También en https://merbal.lat/#sol-access
+- [Obras](https://access.merbal.lat/obras-paperless/): El sitio, el personal y la app, en el mismo recorrido. Es para quien opera la obra: tablero del día, mapa con geocerca y la app para marcar dentro del radio. También en https://merbal.lat/#sol-obras
+- [Safe Access](https://access.merbal.lat/safe-access/): La casa invita y se entera cuando llega la visita. Pensado para privadas y residenciales: el anfitrión envía el QR y recibe un aviso cuando la visita está en caseta. También en https://merbal.lat/#sol-safe
+- [Ruta](https://access.merbal.lat/#modulos): El recorrido en vivo: tablero, mapa y check-in en el sitio. Sirve para seguir la ruta y las geocercas, y registrar la llegada a cada punto. También en https://merbal.lat/#sol-ruta
+- [Integridad](https://access.merbal.lat/#modulos): Un plus del ecosistema. El registro queda cerrado: si alguien lo cambia después, se nota. Si un registro se altera, ese eslabón se marca y sirve de evidencia en una auditoría o una disputa. También en https://merbal.lat/#sol-inte
+
+## Anuvé
+
+- [Anuvé](https://anuve.merbal.lat/): La agenda, la silla, la tienda y los estilos, para salones y barberías. La agenda del día, la ficha de quien se atiende y la tienda viven en la misma casa. También en https://merbal.lat/#sol-anuve
+
+## Consola empresarial
+
+- [Consola empresarial](https://merbal.lat/#sol-consola): Cotizaciones y bitácora, en el tablero de la operación. Reúne el día, el paso de la lista de cotizaciones a una nueva y la constancia de lo que se hizo. Informes: https://merbal.lat/?solucion=consola-empresarial#contacto
+
+## Guardias
+
+- [Guardias](https://merbal.lat/#sol-guard): Módulo que se contrata solo o como extra de la Consola. Rondil es su aplicación móvil: el guardia recorre los puntos de la ronda y va marcando cada punto en el celular. Informes: https://merbal.lat/?solucion=guardias#contacto
+
+## Contacto
+
+- [Contacto](https://merbal.lat/#contacto): Formulario en el sitio y soporte@merbal.lat. También https://merbal.lat/contacto/
+- [Aviso de privacidad](https://merbal.lat/privacidad/): Datos del formulario de contacto, su finalidad y los derechos ARCO.

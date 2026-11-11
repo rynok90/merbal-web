@@ -1,12 +1,12 @@
 ---
 import IntegracionPage from '../components/IntegracionPage.astro';
 import Layout from '../layouts/Layout.astro';
+import { networkPageService, pageSeo } from '../lib/seo';
+
+const { title, description } = pageSeo('/infraestructura-de-red');
 ---
 
-<Layout
-	title="Infraestructura de red — MERBAL Technologies"
-	description="La red que sostiene la operación: WiFi, fibra, cableado estructurado, equipo activo y continuidad."
->
+<Layout title={title} description={description} extraGraph={[networkPageService()]}>
 	<IntegracionPage
 		title="Infraestructura de red"
 		sub="La red que sostiene la operación: WiFi, fibra, cableado estructurado, equipo activo y continuidad."

@@ -1,12 +1,12 @@
 ---
 import { CONTACT_EMAIL } from '../lib/mailto';
 import Layout from '../layouts/Layout.astro';
+import { pageSeo } from '../lib/seo';
+
+const { title, description } = pageSeo('/privacidad');
 ---
 
-<Layout
-	title="Aviso de privacidad — MERBAL Technologies"
-	description="Aviso de privacidad de MERBAL Technologies. Uso de datos del formulario de contacto."
->
+<Layout title={title} description={description}>
 	<main class="pt-[4.25rem]">
 		<section class="mx-auto max-w-3xl px-5 py-16 sm:px-8 sm:py-24">
 			<p class="mb-4 font-display text-xs font-medium uppercase tracking-[0.22em] text-accent">Legal</p>
