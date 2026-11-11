@@ -14,11 +14,11 @@ MERBAL Technologies es una empresa mexicana. Desarrolla software propio y a la m
 
 ## Ecosistema Paperless
 
-- [Access](https://access.merbal.lat/access-paperless/): Controla quién entra y quién sale, con credencial QR y caseta en el sitio. Es para la planta: personal, visitas y el día a día, con una sola credencial. También en https://merbal.lat/#sol-access
+- [Access](https://access.merbal.lat/access-paperless/): Controla quién entra y quién sale: visitantes y contratistas, con pase QR y caseta. La caseta lee el QR y registra la entrada o la salida. También en https://merbal.lat/#sol-access
 - [Obras](https://access.merbal.lat/obras-paperless/): El sitio, el personal y la app, en el mismo recorrido. Es para quien opera la obra: tablero del día, mapa con geocerca y la app para marcar dentro del radio. También en https://merbal.lat/#sol-obras
 - [Safe Access](https://access.merbal.lat/safe-access/): La casa invita y se entera cuando llega la visita. Pensado para privadas y residenciales: el anfitrión envía el QR y recibe un aviso cuando la visita está en caseta. También en https://merbal.lat/#sol-safe
 - [Ruta](https://access.merbal.lat/#modulos): El recorrido en vivo: tablero, mapa y check-in en el sitio. Sirve para seguir la ruta y las geocercas, y registrar la llegada a cada punto. También en https://merbal.lat/#sol-ruta
-- [Integridad](https://access.merbal.lat/#modulos): Los registros se encadenan y se sellan, para que un cambio se note. Cada registro queda ligado al anterior; si alguien altera uno, la cadena lo hace visible. También en https://merbal.lat/#sol-inte
+- [Integridad](https://access.merbal.lat/#modulos): Un plus del ecosistema. El registro queda cerrado: si alguien lo cambia después, se nota. Si un registro se altera, ese eslabón se marca y sirve de evidencia en una auditoría o una disputa. También en https://merbal.lat/#sol-inte
 
 ## Anuvé
 

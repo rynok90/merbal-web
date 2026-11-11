@@ -18,7 +18,7 @@ export const FAQS: FaqItem[] = [
 	{
 		question: '¿Qué es Access y para quién es?',
 		answer:
-			'Access controla quién entra y quién sale, con credencial QR y caseta en el sitio. La caseta lee el QR y registra la entrada o la salida. Es para la planta: personal, visitas y el día a día, con una sola credencial.',
+			'Access controla quién entra y quién sale: visitantes y contratistas, con pase QR y caseta. La caseta lee el QR y registra la entrada o la salida.',
 	},
 	{
 		question: '¿Qué es Anuvé?',
