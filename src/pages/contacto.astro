@@ -1,12 +1,12 @@
 ---
 import Contact from '../components/Contact.astro';
 import Layout from '../layouts/Layout.astro';
+import { pageSeo } from '../lib/seo';
+
+const { title, description } = pageSeo('/contacto');
 ---
 
-<Layout
-	title="Contacto — MERBAL Technologies"
-	description="Pide una demo o una asesoría. soporte@merbal.lat"
->
+<Layout title={title} description={description}>
 	<main class="pt-[4.25rem]">
 		<Contact />
 	</main>

@@ -3,12 +3,12 @@ import About from '../components/About.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Layout from '../layouts/Layout.astro';
 import Method from '../components/Method.astro';
+import { pageSeo } from '../lib/seo';
+
+const { title, description } = pageSeo('/nosotros');
 ---
 
-<Layout
-	title="Nosotros — MERBAL Technologies"
-	description="Cómo trabajamos: diagnóstico, diseño, implementación y acompañamiento. Empresa mexicana con criterio de ingeniería."
->
+<Layout title={title} description={description}>
 	<main>
 		<section class="relative overflow-hidden bg-navy-950 pt-[4.25rem]">
 			<div

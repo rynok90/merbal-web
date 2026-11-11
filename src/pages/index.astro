@@ -1,12 +1,11 @@
 ---
 import HomePage from '../components/home/HomePage.astro';
 import HomeLayout from '../layouts/HomeLayout.astro';
+import { PAGE_SEO, catalogGraph } from '../lib/seo';
 
-const title = 'MERBAL — Desarrollamos el software. Integramos la tecnología.';
-const description =
-	'Software a la medida y plataformas propias, más seguridad electrónica e infraestructura de red para que tu empresa opere mejor.';
+const { title, description } = PAGE_SEO['/'];
 ---
 
-<HomeLayout title={title} description={description}>
+<HomeLayout title={title} description={description} extraGraph={catalogGraph()}>
 	<HomePage />
 </HomeLayout>

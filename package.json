@@ -10,9 +10,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --test tests/foundation.test.mjs tests/landing.test.mjs tests/mailto.test.mjs tests/products.test.mjs tests/platforms.test.mjs tests/fichas.test.mjs tests/contact.test.mjs tests/header-scroll.test.mjs tests/nav.test.mjs tests/method-progress.test.mjs tests/final-fixes.test.mjs tests/hero-depth.test.mjs tests/prism.test.mjs tests/mantenimiento.test.mjs tests/encoding.test.mjs tests/headers.test.mjs tests/integracion.test.mjs"
+    "test": "node --test tests/foundation.test.mjs tests/landing.test.mjs tests/mailto.test.mjs tests/products.test.mjs tests/platforms.test.mjs tests/fichas.test.mjs tests/contact.test.mjs tests/header-scroll.test.mjs tests/nav.test.mjs tests/method-progress.test.mjs tests/final-fixes.test.mjs tests/hero-depth.test.mjs tests/prism.test.mjs tests/mantenimiento.test.mjs tests/encoding.test.mjs tests/headers.test.mjs tests/integracion.test.mjs tests/seo.test.mjs"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
     "@tailwindcss/vite": "^4.3.3",
     "astro": "^7.2.6",
     "gsap": "^3.15.0",

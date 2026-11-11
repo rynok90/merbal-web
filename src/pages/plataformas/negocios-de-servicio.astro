@@ -3,12 +3,12 @@ import CtaBand from '../../components/CtaBand.astro';
 import Layout from '../../layouts/Layout.astro';
 import ProductFicha from '../../components/ProductFicha.astro';
 import { SERVICE_VERTICAL, serviceBusinessProducts } from '../../lib/products';
+import { pageSeo } from '../../lib/seo';
+
+const { title, description } = pageSeo('/plataformas/negocios-de-servicio');
 ---
 
-<Layout
-	title="Negocios de servicio — Plataformas MERBAL"
-	description="Plataformas para quien atiende clientes de a pie: ANUVÉ y Arco Care."
->
+<Layout title={title} description={description}>
 	<main>
 		<section class="relative overflow-hidden bg-navy-950 pt-[4.25rem]">
 			<div

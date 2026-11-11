@@ -1,10 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Platforms from '../../components/Platforms.astro';
+import { pageSeo } from '../../lib/seo';
 
-const title = 'Plataformas — MERBAL Technologies';
-const description =
-	'Desarrollamos el software. Integramos la tecnología. División de software, Seguridad electrónica e Infraestructura de red.';
+const { title, description } = pageSeo('/plataformas');
 ---
 
 <Layout title={title} description={description}>

@@ -118,7 +118,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Access',
 		kicker: 'Ecosistema Paperless',
 		title: 'Access',
-		phrase: 'Controla quién entra y quién sale, con credencial QR y caseta en el sitio.',
+		phrase:
+			'Controla quién entra y quién sale, con credencial QR y caseta en el sitio. Es para la planta: personal, visitas y el día a día, con una sola credencial.',
 		points: [
 			'La caseta lee el QR y registra la entrada o la salida.',
 			'Ves quién está dentro de la planta en este momento.',
@@ -136,7 +137,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Obras',
 		kicker: 'Ecosistema Paperless',
 		title: 'Obras',
-		phrase: 'El sitio, el personal y la app, en el mismo recorrido.',
+		phrase:
+			'El sitio, el personal y la app, en el mismo recorrido. Es para quien opera la obra: tablero del día, mapa con geocerca y la app para marcar dentro del radio.',
 		points: [
 			'Tablero del día en la obra.',
 			'Mapa de sitios con geocerca.',
@@ -155,7 +157,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Safe Access',
 		kicker: 'Ecosistema Paperless',
 		title: 'Safe Access',
-		phrase: 'La casa invita y se entera cuando llega la visita.',
+		phrase:
+			'La casa invita y se entera cuando llega la visita. Pensado para privadas y residenciales: el anfitrión envía el QR y recibe un aviso cuando la visita está en caseta.',
 		points: [
 			'El anfitrión envía el QR al celular de quien viene.',
 			'Un aviso cuando la visita está en caseta.',
@@ -170,7 +173,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Ruta',
 		kicker: 'Ecosistema Paperless',
 		title: 'Ruta',
-		phrase: 'El recorrido en vivo: tablero, mapa y check-in en el sitio.',
+		phrase:
+			'El recorrido en vivo: tablero, mapa y check-in en el sitio. Sirve para seguir la ruta y las geocercas, y registrar la llegada a cada punto.',
 		points: [
 			'Tablero en vivo del recorrido.',
 			'Mapa con la ruta y las geocercas.',
@@ -189,7 +193,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Integridad',
 		kicker: 'Ecosistema Paperless',
 		title: 'Integridad',
-		phrase: 'Los registros se encadenan y se sellan, para que un cambio se note.',
+		phrase:
+			'Los registros se encadenan y se sellan, para que un cambio se note. Cada registro queda ligado al anterior; si alguien altera uno, la cadena lo hace visible.',
 		points: [
 			'Cada registro queda ligado al anterior.',
 			'Un sello cierra la cadena.',
@@ -204,7 +209,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Anuvé',
 		kicker: 'Anuvé',
 		title: 'Belleza y barbería, en su sitio.',
-		phrase: 'La agenda, la silla, la tienda y los estilos. Para salones y barberías.',
+		phrase:
+			'La agenda, la silla, la tienda y los estilos. Para salones y barberías: la agenda del día, la ficha de quien se atiende y la tienda, en la misma casa.',
 		points: [
 			'La agenda del día, en belleza y en barbería.',
 			'La silla y la ficha de quien se atiende.',
@@ -225,7 +231,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Consola empresarial',
 		kicker: 'Consola empresarial',
 		title: 'Consola empresarial',
-		phrase: 'Cotizaciones y bitácora, en el tablero de la operación.',
+		phrase:
+			'Cotizaciones y bitácora, en el tablero de la operación. Reúne el día, el paso de la lista de cotizaciones a una nueva y la constancia de lo que se hizo.',
 		points: [
 			'El tablero reúne el día de la operación.',
 			'De la lista de cotizaciones a una nueva.',
@@ -245,7 +252,8 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Guardias (módulo, también extra de la Consola)',
 		kicker: 'Consola empresarial',
 		title: 'Guardias',
-		phrase: 'Módulo que se contrata solo o como extra de la Consola. Rondil es su aplicación móvil.',
+		phrase:
+			'Módulo que se contrata solo o como extra de la Consola. Rondil es su aplicación móvil: el guardia recorre los puntos de la ronda y va marcando cada punto en el celular.',
 		points: [
 			'El guardia recorre los puntos de la ronda.',
 			'En el celular, Rondil va marcando cada punto.',
