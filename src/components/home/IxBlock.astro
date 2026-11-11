@@ -1,0 +1,86 @@
+---
+import type { IxItem } from '../../lib/home-solutions';
+
+interface Props {
+	kicker: string;
+	title: string;
+	lede: string;
+	items: IxItem[];
+	ctaHref: string;
+	name: string;
+}
+
+const { kicker, title, lede, items, ctaHref, name } = Astro.props;
+---
+
+<div class="ix" data-ix>
+	<div class="ix-head">
+		<p class="kicker">{kicker}</p>
+		<h2>{title}</h2>
+		<p class="lede">{lede}</p>
+	</div>
+	<div class="ix-layout">
+		<div class="ix-tabs" role="tablist" aria-label={kicker}>
+			{
+				items.map((item, index) => (
+					<button
+						type="button"
+						class:list={['ix-tab', { 'is-on': index === 0 }]}
+						role="tab"
+						data-ix-tab={item.id}
+						aria-selected={index === 0 ? 'true' : 'false'}
+						id={`${name}-${item.id}`}
+						aria-controls={`${name}-${item.id}-panel`}
+					>
+						<span class="ix-ico" set:html={item.icon} />
+						<span class="ix-copy">
+							<strong>{item.title}</strong>
+							<span class="ix-text">{item.text}</span>
+						</span>
+					</button>
+				))
+			}
+		</div>
+		<div class="ix-visual">
+			{
+				items.map((item, index) => (
+					<div
+						class:list={['ix-photo', { 'is-on': index === 0 }]}
+						data-ix-photo={item.id}
+						role="tabpanel"
+						id={`${name}-${item.id}-panel`}
+						aria-labelledby={`${name}-${item.id}`}
+					>
+						{item.video ? (
+							<video
+								class="dron-video"
+								muted
+								loop
+								playsinline
+								preload="none"
+								poster={item.poster}
+								aria-label={item.alt}
+								width={item.width}
+								height={item.height}
+							>
+								<source src={item.video} type="video/mp4" />
+							</video>
+						) : item.src ? (
+							<img
+								src={item.src}
+								alt={item.alt}
+								width={item.width}
+								height={item.height}
+								loading="lazy"
+								decoding="async"
+							/>
+						) : (
+							<div class="ix-mark" aria-hidden="true" set:html={item.icon} />
+						)}
+					</div>
+				))
+			}
+		</div>
+	</div>
+	<a class="btn btn-ghost on-dark mag" href={ctaHref}>Hablar de un proyecto</a>
+</div>

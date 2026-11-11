@@ -1,0 +1,134 @@
+---
+import type { ReelSlide } from '../../lib/home-solutions';
+import CasetaScene from './scenes/CasetaScene.astro';
+import IntegrityScene from './scenes/IntegrityScene.astro';
+import SafeScene from './scenes/SafeScene.astro';
+
+interface Props {
+	slides: ReelSlide[];
+	label: string;
+	mode?: 'story' | 'hero';
+	auto?: number;
+}
+
+const { slides, label, mode = 'story', auto = 4800 } = Astro.props;
+const many = slides.length > 1;
+const first = slides[0];
+---
+
+<div
+	class:list={['reel', mode === 'hero' ? 'reel-hero' : 'reel-story']}
+	data-reel
+	data-auto={auto}
+	role="region"
+	aria-roledescription="carrusel"
+	aria-label={label}
+>
+	<div class="reel-view" data-tone={first?.tone || 'bone'}>
+		{
+			slides.map((slide, index) => (
+				<div
+					class:list={['reel-slide', { 'is-on': index === 0 }]}
+					data-cap={slide.cap}
+					data-tone={slide.tone || 'bone'}
+					aria-hidden={index === 0 ? 'false' : 'true'}
+				>
+					{slide.variant === 'caseta' && (
+						<div class="device device-tablet">
+							<div class="device-shell">
+								<div class="device-cam" />
+								<div class="device-screen">
+									<CasetaScene />
+									<span class="device-glare" />
+								</div>
+							</div>
+						</div>
+					)}
+					{slide.variant === 'safe' && (
+						<div class="device device-phone">
+							<div class="device-shell">
+								<div class="device-island" />
+								<div class="device-screen">
+									<SafeScene />
+									<span class="device-glare" />
+								</div>
+								<span class="device-btn-side" />
+							</div>
+						</div>
+					)}
+					{slide.variant === 'integridad' && <IntegrityScene />}
+					{slide.variant === 'medida' && (
+						<div class="reel-fill reel-medida">
+							<p class="kicker">A la medida</p>
+							<h3>Software para la operación que ya tienes.</h3>
+							<ul>
+								<li>Tienda y app</li>
+								<li>Asistencia en obra</li>
+								<li>Portal y cotizador</li>
+								<li>Inventario y punto de venta</li>
+								<li>Citas</li>
+								<li>Tableros</li>
+							</ul>
+						</div>
+					)}
+					{slide.variant === 'campo' && slide.pair && (
+						<div class="reel-fill reel-campo">
+							{slide.pair.map((image) => (
+							<img
+								src={image.src}
+								alt={image.alt}
+								width={image.width}
+								height={image.height}
+								loading="lazy"
+								decoding="async"
+								draggable="false"
+							/>
+							))}
+						</div>
+					)}
+					{slide.src && (
+						<img
+							src={slide.src}
+							alt={slide.alt}
+							width={slide.width}
+							height={slide.height}
+							loading={slide.eager ? 'eager' : 'lazy'}
+							decoding="async"
+							fetchpriority={slide.eager ? 'high' : 'auto'}
+							draggable="false"
+						/>
+					)}
+				</div>
+			))
+		}
+	</div>
+	{
+		many && (
+			<div class="reel-bar">
+				<button type="button" class="reel-arrow reel-prev" aria-label="Pantalla anterior">
+					<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+						<path d="M14 6 8 12l6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+				</button>
+				<div class="reel-dots">
+					{slides.map((slide, index) => (
+						<button
+							type="button"
+							class:list={['reel-dot', { 'is-on': index === 0 }]}
+							aria-label={slide.cap}
+							aria-current={index === 0 ? 'true' : undefined}
+						>
+							{mode === 'hero' ? <span>{slide.family || slide.cap}</span> : <span class="sr-only">{slide.cap}</span>}
+						</button>
+					))}
+				</div>
+				<button type="button" class="reel-arrow reel-next" aria-label="Pantalla siguiente">
+					<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+						<path d="M10 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+					</svg>
+				</button>
+			</div>
+		)
+	}
+	<p class="cap reel-cap">{first?.cap}</p>
+</div>

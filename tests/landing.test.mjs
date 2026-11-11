@@ -65,11 +65,13 @@ test('Header uses real page paths, not only in-page anchors', () => {
 test('home follows the approved three-block mock', () => {
 	const home = read('src/pages/index.astro');
 	const page = read('src/components/home/HomePage.astro');
+	const data = read('src/lib/home-solutions.ts');
+	const carousel = read('src/components/home/ScreenCarousel.astro');
 	const layout = read('src/layouts/HomeLayout.astro');
 	const motion = read('src/scripts/home-motion.js');
 	const brands = read('src/lib/distributed-brands.ts');
 	const brandsView = read('src/components/home/DistributedBrands.astro');
-	const surface = home + page + layout + motion + brands + brandsView;
+	const surface = home + page + data + carousel + layout + motion + brands + brandsView;
 
 	assert.match(home, /<HomeLayout/);
 	assert.match(home, /<HomePage/);
@@ -78,24 +80,34 @@ test('home follows the approved three-block mock', () => {
 	assert.match(page, /Desarrollamos el software\.<br>Integramos la tecnología\./);
 	assert.match(page, /Pedir demo/);
 	assert.match(page, /Hablar con MERBAL/);
-	assert.match(page, /https:\/\/access\.merbal\.lat/);
+	assert.match(page, /href="\/#contacto"/);
+	assert.match(page, /sol\.cta\.href/);
+	assert.match(data, /https:\/\/access\.merbal\.lat\/access-paperless\//);
+	assert.match(data, /https:\/\/access\.merbal\.lat\/obras-paperless\//);
+	assert.match(data, /https:\/\/access\.merbal\.lat\/safe-access\//);
+	assert.match(data, /https:\/\/access\.merbal\.lat\/#modulos/);
+	assert.match(data, /https:\/\/anuve\.merbal\.lat\//);
+	assert.match(data, /solucion=consola-empresarial/);
+	assert.match(data, /solucion=guardias/);
+	assert.match(data, /Pedir informes/);
 	assert.match(page, /Plataformas propias/);
 	assert.match(page, /Software a la medida/);
 	assert.match(page, /Seguridad y red/);
-	assert.match(page, /id="sol-access"/);
-	assert.match(page, /id="sol-obras"/);
-	assert.match(page, /id="sol-safe"/);
-	assert.match(page, /id="sol-ruta"/);
-	assert.match(page, /id="sol-inte"/);
-	assert.match(page, /id="sol-anuve"/);
-	assert.match(page, /id="sol-consola"/);
-	assert.match(page, /id="sol-guard"/);
-	assert.match(page, /Guardias \(módulo, también extra de la Consola\)/);
+	assert.match(page, /sol-\$\{sol\.id\}/);
+	for (const id of ['access', 'obras', 'safe', 'ruta', 'inte', 'anuve', 'consola', 'guard']) {
+		assert.match(data, new RegExp(`id: '${id}'`));
+	}
+	assert.match(data, /Guardias \(módulo, también extra de la Consola\)/);
 	assert.match(page, /anuve-lockup-vino\.png/);
-	assert.match(page, /anuve-agenda\.webp/);
-	assert.match(page, /anuve-tienda-clienta-390\.webp/);
+	assert.match(data, /anuve-agenda-local\.webp/);
+	assert.match(data, /anuve-tienda-clienta-390\.webp/);
+	assert.match(data, /Por confidencialidad \(NDA\) no mostramos los proyectos de clientes\./);
+	assert.match(page, /NDA_NOTE/);
 	assert.match(page, /\/images\/logo-mark\.png/);
+	assert.match(carousel, /data-reel/);
+	assert.match(motion, /\[data-reel\]/);
 	assert.match(read('src/styles/home/styles.css'), /prefers-reduced-motion/);
+	assert.match(read('src/styles/home/feedback.css'), /prefers-reduced-motion/);
 	assert.match(layout, /instrument-sans\.woff2/);
 	assert.doesNotMatch(layout, /fonts\.googleapis\.com/);
 	assert.match(motion, /prefers-reduced-motion/);
@@ -115,6 +127,9 @@ test('home follows the approved three-block mock', () => {
 	assert.doesNotMatch(surface, /Venta de equipos/i);
 	assert.doesNotMatch(surface, /fonts\.googleapis\.com/);
 	assert.doesNotMatch(surface, /railway/i);
+	assert.doesNotMatch(surface, /Mock de validación/);
+	assert.doesNotMatch(surface, /existe desde 2023/);
+	assert.doesNotMatch(surface, /finales de 2024/);
 });
 
 test('Access Paperless and product names stay out of the header', () => {

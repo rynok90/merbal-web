@@ -1,858 +1,291 @@
 ---
 import DistributedBrands from './DistributedBrands.astro';
+import IxBlock from './IxBlock.astro';
+import ScreenCarousel from './ScreenCarousel.astro';
 import { CONTACT_FUNCTION_PATH } from '../../lib/contact-config';
+import {
+	CONTACT_OPTIONS,
+	CUSTOM_EXAMPLES,
+	HERO_SLIDES,
+	NDA_NOTE,
+	NETWORK_ITEMS,
+	SECURITY_ITEMS,
+	SOLUTIONS,
+} from '../../lib/home-solutions';
+
+const indexed = SOLUTIONS.map((sol, index) => ({
+	...sol,
+	showGroup: index === 0 || SOLUTIONS[index - 1].group !== sol.group,
+}));
 ---
 
 <a class="skip" href="#contenido">Saltar al contenido</a>
 
-  <header class="site-header">
-    <div class="wrap">
-      <a class="brand" href="#inicio">
-        <span class="brand-mark"><img src="/images/logo-mark.png" width="26" height="23" alt="" decoding="async" loading="eager"></span>
-        MERBAL
-      </a>
-      <nav class="nav" id="nav">
-        <div class="nav-item has-dd" id="nav-productos">
-          <button type="button" class="nav-dd-btn" aria-expanded="false" aria-controls="menu-productos" aria-haspopup="true">Productos</button>
-          <div class="nav-dd glass" id="menu-productos">
-            <div class="dd-fam">
-              <p class="dd-fam-t">Plataformas propias</p>
-              <p class="dd-sub">Ecosistema Paperless</p>
-              <a href="#sol-access">Access</a>
-              <a href="#sol-obras">Obras</a>
-              <a href="#sol-safe">Safe Access</a>
-              <a href="#sol-ruta">Ruta</a>
-              <a href="#sol-inte">Integridad</a>
-              <p class="dd-sub">Anuvé</p>
-              <a href="#sol-anuve">Anuvé</a>
-              <p class="dd-sub">Consola empresarial</p>
-              <a href="#sol-consola">Consola empresarial</a>
-              <a href="#sol-guard">Guardias (módulo, también extra de la Consola)</a>
-            </div>
-            <div class="dd-fam">
-              <p class="dd-fam-t"><a href="#medida">Software a la medida</a></p>
-            </div>
-            <div class="dd-fam">
-              <p class="dd-fam-t">Seguridad y red</p>
-              <a href="#seguridad">Seguridad electrónica</a>
-              <a href="#red">Infraestructura de red</a>
-            </div>
-          </div>
-        </div>
-        <a href="#nosotros">Nosotros</a>
-        <a href="#contacto">Contacto</a>
-        <a class="nav-cta mobile-show mag" href="https://access.merbal.lat">Pedir demo</a>
-      </nav>
-      <a class="nav-cta mag" href="https://access.merbal.lat">Pedir demo</a>
-      <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú">☰</button>
-    </div>
-  </header>
+<header class="site-header">
+	<div class="wrap">
+		<a class="brand" href="#inicio">
+			<span class="brand-mark"><img src="/images/logo-mark.png" width="26" height="23" alt="" decoding="async" loading="eager"></span>
+			MERBAL
+		</a>
+		<nav class="nav" id="nav">
+			<div class="nav-item has-dd" id="nav-productos">
+				<button type="button" class="nav-dd-btn" aria-expanded="false" aria-controls="menu-productos" aria-haspopup="true">Productos</button>
+				<div class="nav-dd glass" id="menu-productos">
+					<div class="dd-fam">
+						<p class="dd-fam-t">Plataformas propias</p>
+						<p class="dd-sub">Ecosistema Paperless</p>
+						<a href="#sol-access">Access</a>
+						<a href="#sol-obras">Obras</a>
+						<a href="#sol-safe">Safe Access</a>
+						<a href="#sol-ruta">Ruta</a>
+						<a href="#sol-inte">Integridad</a>
+						<p class="dd-sub">Anuvé</p>
+						<a href="#sol-anuve">Anuvé</a>
+						<p class="dd-sub">Consola empresarial</p>
+						<a href="#sol-consola">Consola empresarial</a>
+						<a href="#sol-guard">Guardias (módulo, también extra de la Consola)</a>
+					</div>
+					<div class="dd-fam">
+						<p class="dd-fam-t"><a href="#medida">Software a la medida</a></p>
+					</div>
+					<div class="dd-fam">
+						<p class="dd-fam-t">Seguridad y red</p>
+						<a href="#seguridad">Seguridad electrónica</a>
+						<a href="#red">Infraestructura de red</a>
+					</div>
+				</div>
+			</div>
+			<a href="#nosotros">Nosotros</a>
+			<a href="#contacto">Contacto</a>
+			<a class="nav-cta mobile-show mag" href="/#contacto">Pedir demo</a>
+		</nav>
+		<a class="nav-cta mag" href="/#contacto">Pedir demo</a>
+		<button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav" aria-label="Abrir menú">☰</button>
+	</div>
+</header>
 
-  <main id="contenido">
-    <section class="hero wrap" id="inicio">
-      <div class="hero-copy">
-        <h1>Desarrollamos el software.<br>Integramos la tecnología.</h1>
-        <p class="sub">Software a la medida y plataformas propias, más seguridad electrónica e infraestructura de red para que tu empresa opere mejor.</p>
-        <div class="btn-row">
-          <a class="btn btn-primary mag" href="https://access.merbal.lat">Pedir demo</a>
-          <a class="btn btn-ghost mag" href="#contacto">Hablar con MERBAL</a>
-        </div>
-      </div>
-      <div class="hero-visual" aria-hidden="false">
-        <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-dash has-fade" data-dur="2600">
-  <aside class="ui-side">
-    <div class="brand-row"><span class="ui-mark">A</span> Access Paperless</div>
-    <div class="item on">Inicio</div>
-    <div class="item">Caseta</div>
-    <div class="item">Pases</div>
-    <div class="item">Visitantes</div>
-  </aside>
-  <div class="ui-main">
-    <p class="ui-kicker-sm">Dashboard Access Paperless</p>
-    <h4 class="ui-title">Planta Norte</h4>
-    <div class="ui-kpis">
-      <div class="ui-kpi"><div class="lbl">Dentro ahora</div><div class="val">2</div></div>
-      <div class="ui-kpi warn"><div class="lbl">Umbral de horas</div><div class="val">2</div></div>
-      <div class="ui-kpi"><div class="lbl">Llegaron hoy</div><div class="val">0</div></div>
-    </div>
-    <div class="ui-rows">
-      <div class="ui-row"><span>12:24</span><span>Daniel Ríos</span><span class="ui-pill out">Salida</span><span>OK</span></div>
-      <div class="ui-row"><span>20:01</span><span>Andrea Ruiz</span><span class="ui-pill">Entrada</span><span>OK</span></div>
-      <div class="ui-row"><span>19:56</span><span>Raúl Medina</span><span class="ui-pill">Entrada</span><span>OK</span></div>
-    </div>
-  </div>
-  <img class="ui-capture" src="/home/capturas/access-inicio.webp" alt="" decoding="async" loading="eager" width="1600" height="900">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-        <div class="device device-tablet">
-  <div class="device-shell">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-access" data-dur="2600">
-  <div class="ui-caseta">
-    <div class="ui-bar"><span class="ui-mark">A</span> Access Paperless <span class="ui-right">Cerrar sesión</span></div>
-    <div class="ui-body">
-      <div class="ui-visit"><p class="lbl">Visita en caseta</p><p class="name">Andrea Ruiz</p><p class="meta">GDL · Lobby</p></div>
-      <div class="ui-qr" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i></div>
-      <div class="ui-actions"><div class="ui-in">ENTRADA</div><div class="ui-out">SALIDA</div></div>
-      <p class="ui-ok">Entrada registrada</p>
-    </div>
-  </div>
-</div><span class="device-glare"></span></div>
-  </div>
-</div>
-        <div class="device device-phone">
-  <div class="device-shell">
-    <div class="device-island"></div>
-    <div class="device-screen"><div class="scene scene-safe" data-dur="2600">
-  <div class="safe-top">
-    <p class="hello">Hola, Laura</p>
-    <p class="where">Privada Los Álamos · Casa 12</p>
-  </div>
-  <div class="safe-invite">
-    <p class="lbl">Invitación enviada</p>
-    <div class="safe-qr" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i></div>
-    <p style="text-align:center;font-size:10px">Roberto Salas · vigencia hasta las 21:00</p>
-  </div>
-  <div class="safe-aviso">
-    <p class="tag">Aviso de hoy</p>
-    <p class="msg">Tu visita llegó</p>
-    <p style="font-size:9px;color:#A8A49C;margin-top:2px">Roberto Salas · Caseta principal · 18:42</p>
-  </div>
-  <div class="safe-nav"><span>Inicio</span><span>Invitaciones</span><span>Ayuda</span></div>
-</div><span class="device-glare"></span></div>
-    <span class="device-btn-side"></span>
-  </div>
-</div>
-      </div>
-      <p class="hero-caption wrap" style="padding-left:0;padding-right:0">
-        <span>Access · Tablero</span>
-        <span>Access · Caseta</span>
-        <span>Safe Access · Aviso <span class="tag">Mock de validación</span></span>
-      </p>
-    </section>
+<main id="contenido">
+	<section class="hero wrap" id="inicio">
+		<div class="hero-copy">
+			<h1>Desarrollamos el software.<br>Integramos la tecnología.</h1>
+			<p class="sub">Software a la medida y plataformas propias, más seguridad electrónica e infraestructura de red para que tu empresa opere mejor.</p>
+			<div class="btn-row">
+				<a class="btn btn-primary mag" href="/#contacto">Pedir demo</a>
+				<a class="btn btn-ghost mag" href="/#contacto">Hablar con MERBAL</a>
+			</div>
+		</div>
+		<div class="hero-visual">
+			<ScreenCarousel slides={HERO_SLIDES} label="MERBAL" mode="hero" auto={5600} />
+		</div>
+	</section>
 
-    <section class="story block-plataformas" id="plataformas">
-      <div class="wrap">
-        <div class="story-head block-head in-up">
-          <h2 class="block-title">Plataformas propias</h2>
-          <p class="lede">Primero el ecosistema Paperless, con sus cinco módulos juntos. Después Anuvé. Luego la Consola empresarial y, aparte, Guardias: un módulo que se contrata solo o como extra, con Rondil en el celular.</p>
-        </div>
+	<section class="story block-plataformas" id="plataformas">
+		<div class="wrap">
+			<div class="story-head block-head in-up">
+				<h2 class="block-title">Plataformas propias</h2>
+				<p class="lede">Primero el ecosistema Paperless, con sus cinco módulos juntos. Después Anuvé. Luego la Consola empresarial y, aparte, Guardias: un módulo que se contrata solo o como extra, con Rondil en el celular.</p>
+			</div>
 
-        <div class="story-grid">
-          <nav class="story-index" aria-label="Índice de plataformas">
-            <p class="group">Ecosistema Paperless</p>
-            <a href="#sol-access" data-target="access" style="--acc:var(--acc-access)">Access</a>
-            <a href="#sol-obras" data-target="obras" style="--acc:var(--acc-obras)">Obras</a>
-            <a href="#sol-safe" data-target="safe" style="--acc:var(--acc-safe)">Safe Access</a>
-            <a href="#sol-ruta" data-target="ruta" style="--acc:var(--acc-ruta)">Ruta</a>
-            <a href="#sol-inte" data-target="inte" style="--acc:var(--acc-inte)">Integridad</a>
-            <p class="group">Anuvé</p>
-            <a href="#sol-anuve" data-target="anuve" style="--acc:var(--acc-anuve)">Anuvé</a>
-            <p class="group">Consola empresarial</p>
-            <a href="#sol-consola" data-target="consola" style="--acc:var(--acc-consola)">Consola empresarial</a>
-            <a href="#sol-guard" data-target="guard" style="--acc:var(--acc-guard)">Guardias (módulo, también extra de la Consola)</a>
-          </nav>
+			<div class="story-grid">
+				<nav class="story-index" aria-label="Índice de plataformas">
+					{
+						indexed.map((sol) => (
+							<>
+								{sol.showGroup && <p class="group">{sol.group}</p>}
+								<a href={`#sol-${sol.id}`} data-target={sol.id} style={`--acc:var(--acc-${sol.id})`}>
+									{sol.indexLabel}
+								</a>
+							</>
+						))
+					}
+				</nav>
 
-          <div class="story-copies">
-            <article class="sol-copy" id="sol-access" data-id="access" style="--acc:var(--acc-access)">
-              <div class="sol-text">
-              <p class="kicker mod-kicker">Ecosistema Paperless</p>
-              <h3>Access</h3>
-              <p class="phrase">Controla quién entra y quién sale, con credencial QR y caseta en el sitio.</p>
-              <ul>
-                <li>La caseta lee el QR y registra la entrada o la salida.</li>
-                <li>Ves quién está dentro de la planta en este momento.</li>
-                <li>Una sola credencial para personal, visitas y el día a día.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="device device-tablet">
-  <div class="device-shell">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-access" data-dur="2600">
-  <div class="ui-caseta">
-    <div class="ui-bar"><span class="ui-mark">A</span> Access Paperless <span class="ui-right">Cerrar sesión</span></div>
-    <div class="ui-body">
-      <div class="ui-visit"><p class="lbl">Visita en caseta</p><p class="name">Andrea Ruiz</p><p class="meta">GDL · Lobby</p></div>
-      <div class="ui-qr" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i></div>
-      <div class="ui-actions"><div class="ui-in">ENTRADA</div><div class="ui-out">SALIDA</div></div>
-      <p class="ui-ok">Entrada registrada</p>
-    </div>
-  </div>
-</div><span class="device-glare"></span></div>
-  </div>
-</div>
-          <p class="cap">Access · Caseta</p>
-        </div>
-            </article>
+				<div class="story-copies">
+					{
+						SOLUTIONS.map((sol) => (
+							<article class="sol-copy" id={`sol-${sol.id}`} data-id={sol.id} style={`--acc:var(--acc-${sol.id})`}>
+								<div class="sol-text">
+									{sol.logo && (
+										<img class="logo-anuve" src="/home/logos/anuve-lockup-vino.png" alt="Anuvé" decoding="async" loading="lazy" width="341" height="187" />
+									)}
+									<p class="kicker mod-kicker">{sol.kicker}</p>
+									<h3>{sol.title}</h3>
+									<p class="phrase">{sol.phrase}</p>
+									<ul>
+										{sol.points.map((point) => (
+											<li>{point}</li>
+										))}
+									</ul>
+									<a class="btn btn-primary mag sol-cta" href={sol.cta.href}>{sol.cta.label}</a>
+								</div>
+								<div class="device-mobile">
+									<ScreenCarousel slides={sol.slides} label={sol.title} />
+								</div>
+							</article>
+						))
+					}
+				</div>
 
-            <article class="sol-copy" id="sol-obras" data-id="obras" style="--acc:var(--acc-obras)">
-              <div class="sol-text">
-              <p class="kicker mod-kicker">Ecosistema Paperless</p>
-              <h3>Obras</h3>
-              <p class="phrase">El personal de contratistas entra con gafete y las horas quedan registradas.</p>
-              <ul>
-                <li>Pases por empresa y por persona.</li>
-                <li>El tiempo en sitio se cuenta, no se estima.</li>
-                <li>Las horas de cada contratista quedan en el registro del sitio.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-obras has-fade" data-dur="2600">
-  <aside class="ui-side">
-    <div class="brand-row"><span class="ui-mark">A</span> Access Paperless</div>
-    <div class="item">Inicio</div>
-    <div class="item on">Pases</div>
-    <div class="item">Caseta</div>
-  </aside>
-  <div class="ui-main">
-    <h4 class="ui-title">Pases</h4>
-    <p class="ui-kicker-sm">Contratistas de Planta Norte</p>
-    <div class="obras-list">
-      <div class="obras-row"><span>Eléctrica Bajio</span><span>(6)</span></div>
-      <div class="obras-row"><span>HVAC Centro</span><span>(4)</span></div>
-      <div class="obras-row"><span>Limpieza Pro</span><span>(4)</span></div>
-      <div class="obras-row"><span>Montajes del Norte</span><span>(12)</span></div>
-    </div>
-    <div class="obras-pass">
-      <div><div class="who">Luis Herrera</div><div style="font-size:10px;color:#6A6762">Eléctrica Bajio · en sitio</div></div>
-      <div class="hours" data-hours="2:14">02:14</div>
-    </div>
-  </div>
-  <img class="ui-capture" src="/home/capturas/obras-pases.webp" alt="" decoding="async" loading="lazy" width="780" height="1180">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-          <p class="cap">Obras · Pases</p>
-        </div>
-            </article>
+				<div class="stage" aria-live="polite">
+					<div class="stage-frame">
+						{
+							SOLUTIONS.map((sol, index) => (
+								<div class:list={['stage-panel', { 'is-on': index === 0 }]} data-id={sol.id}>
+									<ScreenCarousel slides={sol.slides} label={sol.title} />
+								</div>
+							))
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 
-            <article class="sol-copy" id="sol-safe" data-id="safe" style="--acc:var(--acc-safe)">
-              <div class="sol-text">
-              <p class="kicker mod-kicker">Ecosistema Paperless</p>
-              <h3>Safe Access</h3>
-              <p class="phrase">La casa invita y se entera cuando llega la visita.</p>
-              <ul>
-                <li>El anfitrión envía el QR al celular de quien viene.</li>
-                <li>Un aviso cuando la visita está en caseta.</li>
-                <li>Pensado para privadas y residenciales.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="device device-phone">
-  <div class="device-shell">
-    <div class="device-island"></div>
-    <div class="device-screen"><div class="scene scene-safe" data-dur="2600">
-  <div class="safe-top">
-    <p class="hello">Hola, Laura</p>
-    <p class="where">Privada Los Álamos · Casa 12</p>
-  </div>
-  <div class="safe-invite">
-    <p class="lbl">Invitación enviada</p>
-    <div class="safe-qr" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i></div>
-    <p style="text-align:center;font-size:10px">Roberto Salas · vigencia hasta las 21:00</p>
-  </div>
-  <div class="safe-aviso">
-    <p class="tag">Aviso de hoy</p>
-    <p class="msg">Tu visita llegó</p>
-    <p style="font-size:9px;color:#A8A49C;margin-top:2px">Roberto Salas · Caseta principal · 18:42</p>
-  </div>
-  <div class="safe-nav"><span>Inicio</span><span>Invitaciones</span><span>Ayuda</span></div>
-</div><span class="device-glare"></span></div>
-    <span class="device-btn-side"></span>
-  </div>
-</div>
-          <p class="cap">Safe Access · Aviso <span class="tag">Mock de validación</span></p>
-        </div>
-            </article>
+	<section class="medida block-medida" id="medida">
+		<div class="wrap">
+			<div class="block-head in-up">
+				<h2 class="block-title">Software a la medida</h2>
+			</div>
+			<h3 class="medida-lead in-up">Si tu operación no cabe en una plantilla, la construimos contigo.</h3>
+			<p class="lede in-up">Un proceso, una integración, un sistema que te queda. Así lo hacemos.</p>
+			<div class="steps">
+				<article class="step in-up">
+					<span class="n">01</span>
+					<h3>Entender</h3>
+					<p>Nos sentamos con quien opera el día a día y vemos cómo se trabaja hoy, sin adornos.</p>
+				</article>
+				<article class="step in-up">
+					<span class="n">02</span>
+					<h3>Diseñar</h3>
+					<p>Proponemos una forma clara: pantallas, reglas y lo que se conecta con el resto.</p>
+				</article>
+				<article class="step in-up">
+					<span class="n">03</span>
+					<h3>Construir</h3>
+					<p>Desarrollamos el software y lo vamos probando con tu equipo, en el terreno.</p>
+				</article>
+				<article class="step in-up">
+					<span class="n">04</span>
+					<h3>Acompañar</h3>
+					<p>Lo dejamos en marcha y seguimos cerca cuando la operación pide un ajuste.</p>
+				</article>
+			</div>
+			<h3 class="ejemplos-title in-up">Trabajos que nos piden</h3>
+			<p class="lede in-up">Tipos de solución. Sin nombre de cliente.</p>
+			<div class="ejemplos">
+				{
+					CUSTOM_EXAMPLES.map((example) => (
+						<article class="ejemplo in-up">
+							<h3>{example.title}</h3>
+							<p>{example.text}</p>
+						</article>
+					))
+				}
+			</div>
+			<p class="nda in-up">{NDA_NOTE}</p>
+			<a class="btn btn-primary mag sol-cta" href="/?solucion=software-a-la-medida#contacto">Contar un proyecto</a>
+		</div>
+	</section>
 
-            <article class="sol-copy" id="sol-ruta" data-id="ruta" style="--acc:var(--acc-ruta)">
-              <div class="sol-text">
-              <p class="kicker mod-kicker">Ecosistema Paperless</p>
-              <h3>Ruta</h3>
-              <p class="phrase">Sigue recorridos y puntos de control sobre el mapa.</p>
-              <ul>
-                <li>La ruta se arma en la consola.</li>
-                <li>Los puntos de control se van marcando en sitio.</li>
-                <li>Un tablero para ver el recorrido en el momento.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-ruta has-fade" data-dur="2600">
-  <p class="ui-kicker-sm">Access Ruta</p>
-  <h4 class="ui-title">Asistencia en vivo</h4>
-  <div class="ruta-kpis">
-    <div class="ruta-kpi"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">En ruta</div><div class="val">96</div></div>
-    <div class="ruta-kpi"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">En sitio</div><div class="val">71</div></div>
-    <div class="ruta-kpi alert"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">Faltantes</div><div class="val">20</div></div>
-    <div class="ruta-kpi"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">Excepciones</div><div class="val" style="color:#C47A1A">5</div></div>
-  </div>
-  <div class="ruta-line"><span>R-01 Ramos Arizpe Centro</span><div class="ruta-bar"><span style="width:93%"></span></div><span>93%</span></div>
-  <div class="ruta-line"><span>R-02 Arteaga</span><div class="ruta-bar"><span style="width:100%"></span></div><span>100%</span></div>
-  <div class="ruta-line"><span>R-03 Derramadero</span><div class="ruta-bar"><span style="width:71%"></span></div><span>71%</span></div>
-  <img class="ui-capture" src="/home/capturas/ruta-dashboard.webp" alt="" decoding="async" loading="lazy" width="1600" height="900">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-          <p class="cap">Ruta · Tablero <span class="tag">Mock de validación</span></p>
-        </div>
-            </article>
+	<section class="dark block-seguridad" id="seguridad-red">
+		<div class="wrap block-head">
+			<h2 class="block-title">Seguridad y red</h2>
+			<p class="lede">La seguridad electrónica y la red que sostiene al sistema. El mismo equipo que escribe el software las integra en el sitio.</p>
+		</div>
+		<div class="wrap" id="seguridad">
+			<IxBlock
+				name="seg"
+				kicker="Seguridad electrónica"
+				title="El perímetro, cuando el software no basta."
+				lede="Drones, cámaras, detección y aviso. Se integran cuando el sitio lo pide."
+				items={SECURITY_ITEMS}
+				ctaHref="/?solucion=seguridad-electronica#contacto"
+			/>
+		</div>
+		<div class="wrap" id="red">
+			<IxBlock
+				name="redb"
+				kicker="Infraestructura de red"
+				title="La red que sostiene al sistema."
+				lede="Cable, fibra, racks y el enlace inalámbrico. Para que el software y el sitio tengan de dónde apoyarse."
+				items={NETWORK_ITEMS}
+				ctaHref="/?solucion=infraestructura-de-red#contacto"
+			/>
+		</div>
+		<DistributedBrands />
+	</section>
 
-            <article class="sol-copy" id="sol-inte" data-id="inte" style="--acc:var(--acc-inte)">
-              <div class="sol-text">
-              <p class="kicker mod-kicker">Ecosistema Paperless</p>
-              <h3>Integridad</h3>
-              <p class="phrase">Los registros se encadenan y se sellan, para que un cambio se note.</p>
-              <ul>
-                <li>Cada registro queda ligado al anterior.</li>
-                <li>Un sello cierra la cadena.</li>
-                <li>Si alguien altera un registro, la cadena lo hace visible.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="inte-panel js-scene" data-dur="2400">
-            <p class="kicker">Integridad</p>
-            <p class="lead">Registros que no se pueden cambiar sin que se note.</p>
-            <ol class="inte-chain">
-              <li><span class="id">R01</span> <span>El hecho se registra.</span></li>
-              <li><span class="id">R02</span> <span>Se encadena al anterior.</span></li>
-              <li><span class="id">R03</span> <span>El sello cierra la cadena.</span></li>
-            </ol>
-            <div class="inte-seal">Sello</div>
-          </div>
-          <p class="cap">Integridad</p>
-        </div>
-            </article>
+	<section class="nosotros" id="nosotros">
+		<div class="wrap split">
+			<div class="in-up">
+				<p class="kicker">Nosotros</p>
+				<h2>Empresa mexicana. Software primero.</h2>
+			</div>
+			<div class="in-up">
+				<p>Desarrollamos software propio y a la medida. Integramos la seguridad electrónica y la infraestructura de red.</p>
+				<p>Un solo equipo, de punta a punta. Soporte directo.</p>
+			</div>
+		</div>
+	</section>
 
-            <article class="sol-copy" id="sol-anuve" data-id="anuve" style="--acc:var(--acc-anuve)">
-              <div class="sol-text">
-              <img class="logo-anuve" src="/home/logos/anuve-lockup-vino.png" alt="Anuvé" decoding="async" loading="lazy" width="341" height="187">
-              <p class="kicker mod-kicker">Anuvé</p>
-              <h3>La agenda del negocio, en su sitio.</h3>
-              <p class="phrase">Citas y recordatorios en un solo lugar, pensada para equipos de servicio.</p>
-              <ul>
-                <li>La agenda del día, con claridad.</li>
-                <li>El recordatorio llega a tiempo.</li>
-                <li>Para salones de belleza y barberías.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="anuve-split js-scene" data-dur="2800">
-          <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-anuve has-fade" data-dur="2600">
-  <aside class="anuve-side">
-    <div class="brand-row"><img class="anuve-sym" src="/home/logos/anuve-simbolo.svg" alt="" decoding="async" loading="lazy"> Anuvé</div>
-    <div class="item">Inicio</div>
-    <div class="item on">Agenda</div>
-    <div class="item">Clientas</div>
-  </aside>
-  <div class="anuve-main">
-    <h4 class="ui-title">Agenda</h4>
-    <p class="ui-kicker-sm" style="opacity:1">Viernes, 23 de octubre · Salón Aurora</p>
-    <div class="anuve-card"><div><div class="who">Valeria M.</div><div class="svc">Servicio: Tono vivo</div></div><div class="hr">16:00</div></div>
-    <div class="anuve-card"><div><div class="who">Valeria M.</div><div class="svc">Servicio: Champagne</div></div><div class="hr">17:00</div></div>
-    <div class="anuve-card"><div><div class="who">Valeria M.</div><div class="svc">Servicio: Tono vivo</div></div><div class="hr">18:28</div></div>
-    <div class="anuve-toast">Recordatorio · Valeria M. a las 16:00</div>
-  </div>
-  <img class="ui-capture" src="/home/capturas/anuve-agenda.webp" alt="" decoding="async" loading="lazy" width="1600" height="900">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-          <div class="device device-phone">
-  <div class="device-shell">
-    <div class="device-island"></div>
-    <div class="device-screen"><div class="scene scene-tienda has-fade" data-dur="2400">
-  <p class="t-kicker">Salón Aurora</p>
-  <h4 class="t-title">TIENDA</h4>
-  <p class="t-sub">Descubre productos pensados para ti</p>
-  <div class="t-chips"><span class="on">Esmaltes</span><span>Cuidado</span><span>Postizas</span></div>
-  <div class="t-card"><div class="t-pic"></div><div class="t-name">Esmalte</div><div class="t-desc">Tono duradero y cremoso</div></div>
-  <img class="ui-capture" src="/home/capturas/anuve-tienda-clienta-390.webp" alt="" decoding="async" loading="lazy" width="780" height="1688">
-</div><span class="device-glare"></span></div>
-    <span class="device-btn-side"></span>
-  </div>
-</div>
-        </div>
-          <p class="cap">Anuvé · Agenda y tienda</p>
-        </div>
-            </article>
+	<section class="contacto" id="contacto">
+		<div class="wrap split">
+			<div class="in-up">
+				<p class="kicker">Contacto</p>
+				<h2>Cuéntanos qué necesitas.</h2>
+				<p>Si vienes de una solución, ya queda marcada. Si no, elige de qué quieres hablar y te contestamos desde ahí.</p>
+				<div class="btn-row" style="margin-top:22px">
+					<a class="btn btn-ghost mag" href="mailto:soporte@merbal.lat">soporte@merbal.lat</a>
+				</div>
+			</div>
+			<form class="in-up glass glow-card" id="form-contacto" method="post" data-endpoint={CONTACT_FUNCTION_PATH}>
+				<label>Nombre
+					<input name="nombre" autocomplete="name" required>
+				</label>
+				<label>Correo
+					<input type="email" name="email" autocomplete="email" required>
+				</label>
+				<label>Empresa
+					<input name="empresa" autocomplete="organization">
+				</label>
+				<label>Solución
+					<select name="solucion">
+						{
+							CONTACT_OPTIONS.map((option) => (
+								<option value={option.value} data-division={option.division || undefined} selected={option.value === ''}>
+									{option.label}
+								</option>
+							))
+						}
+					</select>
+				</label>
+				<label>De qué quieres hablar
+					<select name="division" required>
+						<option value="" selected disabled>Elige una opción</option>
+						<option>Desarrollo</option>
+						<option>Seguridad electrónica</option>
+						<option>Infraestructura de red</option>
+					</select>
+				</label>
+				<label>Mensaje
+					<textarea name="mensaje" required></textarea>
+				</label>
+				<label class="hp" aria-hidden="true">Sitio web
+					<input type="text" name="website" tabindex="-1" autocomplete="off">
+				</label>
+				<button class="btn btn-primary mag" type="submit">Enviar</button>
+				<p class="form-ok" id="form-ok" role="status"></p>
+			</form>
+		</div>
+	</section>
+</main>
 
-            <article class="sol-copy" id="sol-consola" data-id="consola" style="--acc:var(--acc-consola)">
-              <div class="sol-text">
-              <p class="kicker mod-kicker">Consola empresarial</p>
-              <h3>Consola empresarial</h3>
-              <p class="phrase">El tablero de la operación, en un solo lugar.</p>
-              <ul>
-                <li>Cotizaciones, clientes e inventario, juntos.</li>
-                <li>El trabajo de cada proyecto se sigue desde la misma consola.</li>
-                <li>Guardias se puede sumar como extra; no viene incluido de oficio.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-consola" data-dur="2600">
-  <aside class="con-side">
-    <div class="brand-row">MERBAL · Consola</div>
-    <div class="item on">Tablero</div>
-    <div class="item">Cotizaciones</div>
-    <div class="item">Clientes</div>
-    <div class="item">Catálogo SKU</div>
-    <div class="item">Inventario</div>
-    <div class="item">Proyectos</div>
-  </aside>
-  <div class="con-main">
-    <p class="ui-kicker-sm">Consola empresarial</p>
-    <h4 class="ui-title">Tablero</h4>
-    <div class="con-tiles">
-      <div class="con-tile"><div class="lbl">Cotizaciones</div><div class="hint">Folios y seguimiento</div></div>
-      <div class="con-tile"><div class="lbl">Clientes</div><div class="hint">Fichas del trabajo</div></div>
-      <div class="con-tile"><div class="lbl">Inventario</div><div class="hint">Existencias del proyecto</div></div>
-      <div class="con-tile"><div class="lbl">Proyectos</div><div class="hint">El trabajo en curso</div></div>
-    </div>
-  </div>
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-          <p class="cap">Consola · Tablero <span class="tag">Mock de validación</span></p>
-        </div>
-            </article>
-
-            <article class="sol-copy" id="sol-guard" data-id="guard" style="--acc:var(--acc-guard)">
-              <div class="sol-text">
-              <p class="kicker mod-kicker">Consola empresarial</p>
-              <h3>Guardias</h3>
-              <p class="phrase">Módulo que se contrata solo o como extra de la Consola. Rondil es su aplicación móvil.</p>
-              <ul>
-                <li>El guardia recorre los puntos de la ronda.</li>
-                <li>En el celular, Rondil va marcando cada punto.</li>
-                <li>Se suma cuando la operación lo pide, no viene de oficio.</li>
-              </ul>
-              </div>
-              <div class="device-mobile">
-          <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-guard has-fade" data-dur="2800">
-  <aside class="guard-side">
-    <div class="brand-row">Consola MERBAL</div>
-    <div class="item">Tablero</div>
-    <div class="item on">Rondines</div>
-    <div class="item">Bitácora</div>
-  </aside>
-  <div class="guard-main">
-    <h4 class="ui-title">Rondines</h4>
-    <p class="ui-kicker-sm" style="color:#8aa;opacity:1">Plaza Ejemplo Norte · Rondil en el celular</p>
-    <div class="guard-pts">
-      <div class="guard-pt ok"><span class="pt-dot">OK</span> Punto 1 · Caseta</div>
-      <div class="guard-pt ok"><span class="pt-dot">OK</span> Punto 2 · Escalera A</div>
-      <div class="guard-pt ok"><span class="pt-dot">OK</span> Punto 3 · Azotea</div>
-      <div class="guard-pt now"><span class="pt-dot">AH</span> Punto 4 · Estacionamiento</div>
-      <div class="guard-pt pend"><span class="pt-dot">·</span> Punto 5 · Almacén auxiliar</div>
-      <div class="guard-pt pend"><span class="pt-dot">·</span> Punto 6 · Salida emergencia</div>
-    </div>
-  </div>
-  <img class="ui-capture" src="/home/capturas/guardias-ronda.webp" alt="" decoding="async" loading="lazy" width="1600" height="1000">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-          <p class="cap">Guardias · Rondines <span class="tag">Mock de validación</span></p>
-        </div>
-            </article>
-          </div>
-
-          <div class="stage" aria-live="polite">
-            <div class="stage-frame">
-              <div class="stage-panel is-on" data-id="access">
-                <div class="device device-tablet">
-  <div class="device-shell">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-access" data-dur="2600">
-  <div class="ui-caseta">
-    <div class="ui-bar"><span class="ui-mark">A</span> Access Paperless <span class="ui-right">Cerrar sesión</span></div>
-    <div class="ui-body">
-      <div class="ui-visit"><p class="lbl">Visita en caseta</p><p class="name">Andrea Ruiz</p><p class="meta">GDL · Lobby</p></div>
-      <div class="ui-qr" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i></div>
-      <div class="ui-actions"><div class="ui-in">ENTRADA</div><div class="ui-out">SALIDA</div></div>
-      <p class="ui-ok">Entrada registrada</p>
-    </div>
-  </div>
-</div><span class="device-glare"></span></div>
-  </div>
-</div>
-                <p class="cap">Access · Caseta</p>
-              </div>
-              <div class="stage-panel" data-id="obras">
-                <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-obras has-fade" data-dur="2600">
-  <aside class="ui-side">
-    <div class="brand-row"><span class="ui-mark">A</span> Access Paperless</div>
-    <div class="item">Inicio</div>
-    <div class="item on">Pases</div>
-    <div class="item">Caseta</div>
-  </aside>
-  <div class="ui-main">
-    <h4 class="ui-title">Pases</h4>
-    <p class="ui-kicker-sm">Contratistas de Planta Norte</p>
-    <div class="obras-list">
-      <div class="obras-row"><span>Eléctrica Bajio</span><span>(6)</span></div>
-      <div class="obras-row"><span>HVAC Centro</span><span>(4)</span></div>
-      <div class="obras-row"><span>Limpieza Pro</span><span>(4)</span></div>
-      <div class="obras-row"><span>Montajes del Norte</span><span>(12)</span></div>
-    </div>
-    <div class="obras-pass">
-      <div><div class="who">Luis Herrera</div><div style="font-size:10px;color:#6A6762">Eléctrica Bajio · en sitio</div></div>
-      <div class="hours" data-hours="2:14">02:14</div>
-    </div>
-  </div>
-  <img class="ui-capture" src="/home/capturas/obras-pases.webp" alt="" decoding="async" loading="lazy" width="780" height="1180">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-                <p class="cap">Obras · Pases</p>
-              </div>
-              <div class="stage-panel" data-id="safe">
-                <div class="device device-phone">
-  <div class="device-shell">
-    <div class="device-island"></div>
-    <div class="device-screen"><div class="scene scene-safe" data-dur="2600">
-  <div class="safe-top">
-    <p class="hello">Hola, Laura</p>
-    <p class="where">Privada Los Álamos · Casa 12</p>
-  </div>
-  <div class="safe-invite">
-    <p class="lbl">Invitación enviada</p>
-    <div class="safe-qr" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i><i class="on"></i></div>
-    <p style="text-align:center;font-size:10px">Roberto Salas · vigencia hasta las 21:00</p>
-  </div>
-  <div class="safe-aviso">
-    <p class="tag">Aviso de hoy</p>
-    <p class="msg">Tu visita llegó</p>
-    <p style="font-size:9px;color:#A8A49C;margin-top:2px">Roberto Salas · Caseta principal · 18:42</p>
-  </div>
-  <div class="safe-nav"><span>Inicio</span><span>Invitaciones</span><span>Ayuda</span></div>
-</div><span class="device-glare"></span></div>
-    <span class="device-btn-side"></span>
-  </div>
-</div>
-                <p class="cap">Safe Access · Aviso <span class="tag">Mock de validación</span></p>
-              </div>
-              <div class="stage-panel" data-id="ruta">
-                <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-ruta has-fade" data-dur="2600">
-  <p class="ui-kicker-sm">Access Ruta</p>
-  <h4 class="ui-title">Asistencia en vivo</h4>
-  <div class="ruta-kpis">
-    <div class="ruta-kpi"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">En ruta</div><div class="val">96</div></div>
-    <div class="ruta-kpi"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">En sitio</div><div class="val">71</div></div>
-    <div class="ruta-kpi alert"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">Faltantes</div><div class="val">20</div></div>
-    <div class="ruta-kpi"><div class="lbl" style="font-size:7.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a8680">Excepciones</div><div class="val" style="color:#C47A1A">5</div></div>
-  </div>
-  <div class="ruta-line"><span>R-01 Ramos Arizpe Centro</span><div class="ruta-bar"><span style="width:93%"></span></div><span>93%</span></div>
-  <div class="ruta-line"><span>R-02 Arteaga</span><div class="ruta-bar"><span style="width:100%"></span></div><span>100%</span></div>
-  <div class="ruta-line"><span>R-03 Derramadero</span><div class="ruta-bar"><span style="width:71%"></span></div><span>71%</span></div>
-  <img class="ui-capture" src="/home/capturas/ruta-dashboard.webp" alt="" decoding="async" loading="lazy" width="1600" height="900">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-                <p class="cap">Ruta · Tablero <span class="tag">Mock de validación</span></p>
-              </div>
-              <div class="stage-panel" data-id="inte">
-                <div class="inte-panel js-scene" data-dur="2400">
-            <p class="kicker">Integridad</p>
-            <p class="lead">Registros que no se pueden cambiar sin que se note.</p>
-            <ol class="inte-chain">
-              <li><span class="id">R01</span> <span>El hecho se registra.</span></li>
-              <li><span class="id">R02</span> <span>Se encadena al anterior.</span></li>
-              <li><span class="id">R03</span> <span>El sello cierra la cadena.</span></li>
-            </ol>
-            <div class="inte-seal">Sello</div>
-          </div>
-                <p class="cap">Integridad</p>
-              </div>
-              <div class="stage-panel" data-id="anuve">
-                <div class="anuve-split js-scene" data-dur="2800">
-          <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-anuve has-fade" data-dur="2600">
-  <aside class="anuve-side">
-    <div class="brand-row"><img class="anuve-sym" src="/home/logos/anuve-simbolo.svg" alt="" decoding="async" loading="lazy"> Anuvé</div>
-    <div class="item">Inicio</div>
-    <div class="item on">Agenda</div>
-    <div class="item">Clientas</div>
-  </aside>
-  <div class="anuve-main">
-    <h4 class="ui-title">Agenda</h4>
-    <p class="ui-kicker-sm" style="opacity:1">Viernes, 23 de octubre · Salón Aurora</p>
-    <div class="anuve-card"><div><div class="who">Valeria M.</div><div class="svc">Servicio: Tono vivo</div></div><div class="hr">16:00</div></div>
-    <div class="anuve-card"><div><div class="who">Valeria M.</div><div class="svc">Servicio: Champagne</div></div><div class="hr">17:00</div></div>
-    <div class="anuve-card"><div><div class="who">Valeria M.</div><div class="svc">Servicio: Tono vivo</div></div><div class="hr">18:28</div></div>
-    <div class="anuve-toast">Recordatorio · Valeria M. a las 16:00</div>
-  </div>
-  <img class="ui-capture" src="/home/capturas/anuve-agenda.webp" alt="" decoding="async" loading="lazy" width="1600" height="900">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-          <div class="device device-phone">
-  <div class="device-shell">
-    <div class="device-island"></div>
-    <div class="device-screen"><div class="scene scene-tienda has-fade" data-dur="2400">
-  <p class="t-kicker">Salón Aurora</p>
-  <h4 class="t-title">TIENDA</h4>
-  <p class="t-sub">Descubre productos pensados para ti</p>
-  <div class="t-chips"><span class="on">Esmaltes</span><span>Cuidado</span><span>Postizas</span></div>
-  <div class="t-card"><div class="t-pic"></div><div class="t-name">Esmalte</div><div class="t-desc">Tono duradero y cremoso</div></div>
-  <img class="ui-capture" src="/home/capturas/anuve-tienda-clienta-390.webp" alt="" decoding="async" loading="lazy" width="780" height="1688">
-</div><span class="device-glare"></span></div>
-    <span class="device-btn-side"></span>
-  </div>
-</div>
-        </div>
-          <p class="cap">Anuvé · Agenda y tienda</p>
-              </div>
-              <div class="stage-panel" data-id="consola">
-          <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-consola" data-dur="2600">
-  <aside class="con-side">
-    <div class="brand-row">MERBAL · Consola</div>
-    <div class="item on">Tablero</div>
-    <div class="item">Cotizaciones</div>
-    <div class="item">Clientes</div>
-    <div class="item">Catálogo SKU</div>
-    <div class="item">Inventario</div>
-    <div class="item">Proyectos</div>
-  </aside>
-  <div class="con-main">
-    <p class="ui-kicker-sm">Consola empresarial</p>
-    <h4 class="ui-title">Tablero</h4>
-    <div class="con-tiles">
-      <div class="con-tile"><div class="lbl">Cotizaciones</div><div class="hint">Folios y seguimiento</div></div>
-      <div class="con-tile"><div class="lbl">Clientes</div><div class="hint">Fichas del trabajo</div></div>
-      <div class="con-tile"><div class="lbl">Inventario</div><div class="hint">Existencias del proyecto</div></div>
-      <div class="con-tile"><div class="lbl">Proyectos</div><div class="hint">El trabajo en curso</div></div>
-    </div>
-  </div>
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-          <p class="cap">Consola · Tablero <span class="tag">Mock de validación</span></p>
-              </div>
-              <div class="stage-panel" data-id="guard">
-                <div class="device device-laptop">
-  <div class="device-lid">
-    <div class="device-cam"></div>
-    <div class="device-screen"><div class="scene scene-guard has-fade" data-dur="2800">
-  <aside class="guard-side">
-    <div class="brand-row">Consola MERBAL</div>
-    <div class="item">Tablero</div>
-    <div class="item on">Rondines</div>
-    <div class="item">Bitácora</div>
-  </aside>
-  <div class="guard-main">
-    <h4 class="ui-title">Rondines</h4>
-    <p class="ui-kicker-sm" style="color:#8aa;opacity:1">Plaza Ejemplo Norte · Rondil en el celular</p>
-    <div class="guard-pts">
-      <div class="guard-pt ok"><span class="pt-dot">OK</span> Punto 1 · Caseta</div>
-      <div class="guard-pt ok"><span class="pt-dot">OK</span> Punto 2 · Escalera A</div>
-      <div class="guard-pt ok"><span class="pt-dot">OK</span> Punto 3 · Azotea</div>
-      <div class="guard-pt now"><span class="pt-dot">AH</span> Punto 4 · Estacionamiento</div>
-      <div class="guard-pt pend"><span class="pt-dot">·</span> Punto 5 · Almacén auxiliar</div>
-      <div class="guard-pt pend"><span class="pt-dot">·</span> Punto 6 · Salida emergencia</div>
-    </div>
-  </div>
-  <img class="ui-capture" src="/home/capturas/guardias-ronda.webp" alt="" decoding="async" loading="lazy" width="1600" height="1000">
-</div><span class="device-glare"></span></div>
-  </div>
-  <div class="device-base"></div>
-</div>
-                <p class="cap">Guardias · Rondines <span class="tag">Mock de validación</span></p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <section class="medida block-medida" id="medida">
-      <div class="wrap">
-        <div class="block-head in-up">
-        <h2 class="block-title">Software a la medida</h2>
-        </div>
-        <h3 class="medida-lead in-up">Si tu operación no cabe en una plantilla, la construimos contigo.</h3>
-        <p class="lede in-up">Un proceso, una integración, un sistema que te queda. Así lo hacemos.</p>
-        <div class="steps">
-          <article class="step in-up">
-            <span class="n">01</span>
-            <h3>Entender</h3>
-            <p>Nos sentamos con quien opera el día a día y vemos cómo se trabaja hoy, sin adornos.</p>
-          </article>
-          <article class="step in-up">
-            <span class="n">02</span>
-            <h3>Diseñar</h3>
-            <p>Proponemos una forma clara: pantallas, reglas y lo que se conecta con el resto.</p>
-          </article>
-          <article class="step in-up">
-            <span class="n">03</span>
-            <h3>Construir</h3>
-            <p>Desarrollamos el software y lo vamos probando con tu equipo, en el terreno.</p>
-          </article>
-          <article class="step in-up">
-            <span class="n">04</span>
-            <h3>Acompañar</h3>
-            <p>Lo dejamos en marcha y seguimos cerca cuando la operación pide un ajuste.</p>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="dark block-seguridad" id="seguridad-red">
-      <div class="wrap block-head">
-        <h2 class="block-title">Seguridad y red</h2>
-        <p class="lede">Cámaras, detección y la red que sostiene al sistema. Las marcas que distribuimos van en este bloque, no mezcladas con las plataformas propias.</p>
-      </div>
-      <div class="photo-block" id="seguridad">
-        <div class="photo-frame has-video">
-          <video class="dron-video" muted loop playsinline preload="none" poster="/home/fotos/dron-pexels-4446463-poster.jpg" aria-label="Dron en vuelo">
-            <source src="/home/fotos/dron-pexels-4446463.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="photo-copy">
-          <p class="kicker">Seguridad electrónica</p>
-          <h2>El perímetro, cuando el software no basta.</h2>
-          <p class="lede">Drones, cámaras y detección, pensados para convivir con tus sistemas. Lo integramos cuando el sitio lo pide, no como un catálogo aparte.</p>
-          <div class="btn-row">
-            <a class="btn btn-ghost on-dark mag" href="#contacto">Hablar de un proyecto</a>
-          </div>
-        </div>
-      </div>
-      <div class="photo-block reverse">
-        <div class="photo-frame">
-          <img src="/home/fotos/camaras-pexels-430208.webp" alt="Cámaras de seguridad sobre un muro" decoding="async" loading="lazy" width="1600" height="1066">
-        </div>
-        <div class="photo-copy">
-          <p class="kicker">Cámaras y detección</p>
-          <h3>Ver, registrar, avisar.</h3>
-          <p>La cámara en el punto correcto, el sensor donde hay que detectar, y el aviso donde alguien puede actuar. Sin marcas de terceros en esta página: el equipo se elige en el proyecto.</p>
-        </div>
-      </div>
-      <div class="photo-block" id="red">
-        <div class="photo-frame">
-          <img src="/home/fotos/fibra-brett-sayles.webp" alt="Cables de red conectados a un switch" decoding="async" loading="lazy" width="1600" height="1065">
-        </div>
-        <div class="photo-copy">
-          <p class="kicker">Infraestructura de red</p>
-          <h2>La red que sostiene al sistema.</h2>
-          <p class="lede">Fibra, racks y puntos WiFi. Para que el software y el sitio tengan de dónde apoyarse, con la misma rigurosidad que ponemos en el desarrollo.</p>
-          <div class="btn-row">
-            <a class="btn btn-ghost on-dark mag" href="#contacto">Hablar de un proyecto</a>
-          </div>
-        </div>
-      </div>
-      <div class="photo-block reverse">
-        <div class="photo-frame">
-          <img src="/home/fotos/racks-pexels-325229.webp" alt="Pasillo de racks en un cuarto de servidores" decoding="async" loading="lazy" width="1600" height="560">
-        </div>
-        <div class="photo-copy">
-          <p class="kicker">Racks y WiFi</p>
-          <h3>El cuarto de comunicaciones, en orden.</h3>
-          <p>Una infraestructura sobria, dimensionada para lo que realmente opera, lista para crecer cuando tú lo decidas.</p>
-        </div>
-      </div>
-      <DistributedBrands />
-    </section>
-
-    <section class="nosotros" id="nosotros">
-      <div class="wrap split">
-        <div class="in-up">
-          <p class="kicker">Nosotros</p>
-          <h2>Empresa mexicana. Software primero.</h2>
-        </div>
-        <div class="in-up">
-          <p>MERBAL Technologies existe desde 2023. Operamos con proyectos reales desde finales de 2024. Desarrollamos el software e integramos la tecnología que lo rodea, en ese orden.</p>
-          <p>Si una plataforma es nuestra, lo decimos. Si una marca se distribuye, va en su franja, con su nombre.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="contacto" id="contacto">
-      <div class="wrap split">
-        <div class="in-up">
-          <p class="kicker">Contacto</p>
-          <h2>Cuéntanos qué necesitas.</h2>
-          <p>Elige el tramo —desarrollo, seguridad electrónica o red— y te contestamos desde ahí. Si quieres ver Access en marcha, pide la demo.</p>
-          <div class="btn-row" style="margin-top:22px">
-            <a class="btn btn-primary mag" href="https://access.merbal.lat">Pedir demo</a>
-            <a class="btn btn-ghost mag" href="mailto:soporte@merbal.lat">soporte@merbal.lat</a>
-          </div>
-        </div>
-        <form class="in-up glass glow-card" id="form-contacto" method="post" data-endpoint={CONTACT_FUNCTION_PATH}>
-          <label>Nombre
-            <input name="nombre" autocomplete="name" required>
-          </label>
-          <label>Correo
-            <input type="email" name="email" autocomplete="email" required>
-          </label>
-          <label>Empresa
-            <input name="empresa" autocomplete="organization">
-          </label>
-          <label>De qué quieres hablar
-            <select name="division" required>
-              <option value="" selected disabled>Elige una opción</option>
-              <option>Desarrollo</option>
-              <option>Seguridad electrónica</option>
-              <option>Infraestructura de red</option>
-            </select>
-          </label>
-          <label>Mensaje
-            <textarea name="mensaje" required></textarea>
-          </label>
-          <label class="hp" aria-hidden="true">Sitio web
-            <input type="text" name="website" tabindex="-1" autocomplete="off">
-          </label>
-          <button class="btn btn-ink mag" type="submit">Enviar</button>
-          <p class="form-ok" id="form-ok" role="status"></p>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="wrap">
-      <span class="brand">
-        <span class="brand-mark"><img src="/images/logo-mark.png" width="22" height="19" alt="" decoding="async" loading="eager"></span>
-        MERBAL Technologies · merbal.lat
-      </span>
-      <span>© 2026 · <a href="/privacidad">Aviso de privacidad</a></span>
-    </div>
-  </footer>
+<footer class="site-footer">
+	<div class="wrap">
+		<span class="brand">
+			<span class="brand-mark"><img src="/images/logo-mark.png" width="22" height="19" alt="" decoding="async" loading="eager"></span>
+			MERBAL Technologies · merbal.lat
+		</span>
+		<span>© 2026 · <a href="/privacidad">Aviso de privacidad</a></span>
+	</div>
+</footer>
