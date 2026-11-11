@@ -1,10 +1,22 @@
-<div class="inte-panel js-scene" data-dur="2400">
-	<p class="kicker">Integridad</p>
-	<p class="lead">Registros que no se pueden cambiar sin que se note.</p>
-	<ol class="inte-chain">
-		<li><span class="id">R01</span> <span>El hecho se registra.</span></li>
-		<li><span class="id">R02</span> <span>Se encadena al anterior.</span></li>
-		<li><span class="id">R03</span> <span>El sello cierra la cadena.</span></li>
+<div class="inte-panel inte-live js-scene" data-dur="2400" aria-label="Los registros se encadenan, un sello los cierra y una alteración se marca">
+	<ol class="inte-live-list">
+		<li class="c1">
+			<span class="id">R01</span>
+			<span>El hecho se registra.</span>
+		</li>
+		<li class="c2">
+			<span class="id">R02</span>
+			<span>Se ata al anterior.</span>
+			<em class="mark">Alterado</em>
+		</li>
+		<li class="c3">
+			<span class="id">R03</span>
+			<span>El sello cierra la cadena.</span>
+		</li>
 	</ol>
-	<div class="inte-seal">Sello</div>
+	<div class="seal" aria-hidden="true">Sello</div>
+	<p class="status">
+		<span class="s-ok">Cadena cerrada. El sello sale por correo.</span>
+		<span class="s-bad">Alguien cambió R02. La cadena lo marca.</span>
+	</p>
 </div>
