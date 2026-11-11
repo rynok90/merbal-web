@@ -149,7 +149,7 @@ export function showcaseProducts(): Product[] {
 
 export function productStatusLabel(product: Product): string {
 	if (product.status === 'live') return 'En operación';
-	if (product.status === 'soon') return 'Próximamente';
+	if (product.status === 'soon') return '';
 	return 'En pausa';
 }
 

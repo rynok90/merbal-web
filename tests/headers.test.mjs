@@ -27,8 +27,11 @@ test('public/_headers ships the MERBAL security header set for /*', () => {
 	assert.match(headers, /Content-Security-Policy:/);
 	assert.match(headers, /default-src 'self'/);
 	assert.match(headers, /script-src 'self' 'unsafe-inline'/);
-	assert.match(headers, /style-src 'self' 'unsafe-inline' https:\/\/fonts\.googleapis\.com/);
-	assert.match(headers, /font-src 'self' https:\/\/fonts\.gstatic\.com/);
+	assert.match(headers, /style-src 'self' 'unsafe-inline'/);
+	assert.doesNotMatch(headers, /fonts\.googleapis\.com/);
+	assert.match(headers, /font-src 'self'/);
+	assert.doesNotMatch(headers, /fonts\.gstatic\.com/);
+	assert.match(headers, /media-src 'self'/);
 	assert.match(headers, /img-src 'self' data:/);
 	assert.match(headers, /connect-src 'self'/);
 	assert.match(headers, /frame-ancestors 'none'/);

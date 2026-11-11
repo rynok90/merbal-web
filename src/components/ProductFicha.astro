@@ -29,11 +29,7 @@ const paused = product.status === 'paused';
 				<span class="rounded-full border border-accent/30 bg-navy-950 px-3 py-1 font-display text-[0.7rem] font-medium uppercase tracking-[0.16em] text-accent">
 					En operación
 				</span>
-			) : product.status === 'soon' ? (
-				<span class="rounded-full border border-white/10 bg-navy-950 px-3 py-1 font-display text-[0.7rem] font-medium uppercase tracking-[0.16em] text-muted">
-					Próximamente
-				</span>
-			) : product.status === 'paused' ? (
+			) : product.status === 'soon' ? null : product.status === 'paused' ? (
 				<span class="rounded-full border border-white/10 bg-navy-950 px-3 py-1 font-display text-[0.7rem] font-medium uppercase tracking-[0.16em] text-muted">
 					En pausa
 				</span>

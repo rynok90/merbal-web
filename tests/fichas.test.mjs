@@ -31,7 +31,7 @@ test('product fichas ship problema, para quién, cómo opera and a live CTA help
 	assert.match(ficha, /product\.status === 'soon'/);
 	assert.match(ficha, /product\.status === 'paused'/);
 	assert.match(ficha, /En operación/);
-	assert.match(ficha, /Próximamente/);
+	assert.doesNotMatch(ficha, /Próximamente/);
 	assert.match(ficha, /En pausa/);
 	assert.match(ficha, /href="\/mantenimiento"/);
 	assert.match(ficha, /Avisarme/);

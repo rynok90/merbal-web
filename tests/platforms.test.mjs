@@ -82,7 +82,7 @@ test('operacion-de-sitios lists Access first and Safe Access soon', () => {
 	assert.match(ficha, /productCtaLabel/);
 	assert.match(ficha, /liveProductHref/);
 	assert.match(ficha, /En pausa/);
-	assert.match(ficha, /Próximamente/);
+	assert.doesNotMatch(ficha, /Próximamente/);
 	assert.match(ficha, /En operación/);
 
 	const names = siteOpsProducts.map((product) => product.name);

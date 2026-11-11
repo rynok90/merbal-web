@@ -163,7 +163,7 @@ test('showcase order, live hrefs, and Avisarme come from the shipped catalog', (
 		const product = showcase.find((item) => item.name === name);
 		assert.ok(product);
 		assert.equal(product.status, 'soon');
-		assert.match(productStatusLabel(product), /Próximamente/);
+		assert.equal(productStatusLabel(product), '');
 		assert.equal(showcaseCta(product).label, 'Avisarme');
 		assert.equal(showcaseCta(product).external, false);
 	}
