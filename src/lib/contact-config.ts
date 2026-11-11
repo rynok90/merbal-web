@@ -1,6 +1,11 @@
 export const CONTACT_FUNCTION_PATH = '/.netlify/functions/contact';
 
-export const DIVISIONS = ['Plataformas'] as const;
+export const DIVISIONS = [
+	'Plataformas',
+	'Desarrollo',
+	'Seguridad electrónica',
+	'Infraestructura de red',
+] as const;
 
 export const VERTICALS = ['Operación de sitios', 'Negocios de servicio'] as const;
 

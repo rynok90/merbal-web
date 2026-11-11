@@ -1,18 +1,12 @@
 ---
-import CtaBand from '../components/CtaBand.astro';
-import Hero from '../components/Hero.astro';
-import Layout from '../layouts/Layout.astro';
-import Pillars from '../components/Pillars.astro';
+import HomePage from '../components/home/HomePage.astro';
+import HomeLayout from '../layouts/HomeLayout.astro';
 
-const title = 'MERBAL Technologies — Desarrollamos el software. Integramos la tecnología.';
+const title = 'MERBAL — Desarrollamos el software. Integramos la tecnología.';
 const description =
-	'División de software, Seguridad electrónica e Infraestructura de red. Productos propios y desarrollo a la medida.';
+	'Software a la medida y plataformas propias, más seguridad electrónica e infraestructura de red para que tu empresa opere mejor.';
 ---
 
-<Layout title={title} description={description}>
-	<main>
-		<Hero />
-		<Pillars />
-		<CtaBand title="¿Por dónde empezamos?" lead="Un diagnóstico corto. Una arquitectura que se puede defender." />
-	</main>
-</Layout>
+<HomeLayout title={title} description={description}>
+	<HomePage />
+</HomeLayout>

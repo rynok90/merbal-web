@@ -1,0 +1,28 @@
+---
+import { DISTRIBUTED_BRANDS } from '../../lib/distributed-brands';
+
+const brands = DISTRIBUTED_BRANDS.filter((brand) => brand.name && brand.src);
+---
+
+{
+	brands.length > 0 && (
+		<div class="dist in-up wrap">
+			<p class="kicker">Marcas distribuidas</p>
+			<h3>Equipo y sistemas que integramos</h3>
+			<p class="lede">El equipo se elige en el proyecto, con su logo oficial.</p>
+			<div class="dist-logos" aria-label="Marcas distribuidas">
+				{brands.map((brand) =>
+					brand.href ? (
+						<a class="dist-logo" href={brand.href}>
+							<img src={brand.src} alt={brand.name} loading="lazy" decoding="async" />
+						</a>
+					) : (
+						<div class="dist-logo">
+							<img src={brand.src} alt={brand.name} loading="lazy" decoding="async" />
+						</div>
+					),
+				)}
+			</div>
+		</div>
+	)
+}

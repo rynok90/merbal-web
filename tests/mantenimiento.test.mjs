@@ -66,11 +66,11 @@ test('/mantenimiento is reachable and is not nav or home', () => {
 	assert.doesNotMatch(nav, /\/mantenimiento/);
 
 	const home = read('src/pages/index.astro');
-	const hero = read('src/components/Hero.astro');
-	assert.match(home, /<Hero/);
-	assert.match(hero, /Desarrollamos el software\. Integramos la tecnología\./);
-	assert.doesNotMatch(hero, /que operan/);
-	assert.doesNotMatch(hero, /Expertise en campo/);
+	const page = read('src/components/home/HomePage.astro');
+	assert.match(home, /<HomePage/);
+	assert.match(page, /Desarrollamos el software\.<br>Integramos la tecnología\./);
+	assert.doesNotMatch(page, /que operan/);
+	assert.doesNotMatch(page, /Expertise en campo/);
 	assert.doesNotMatch(home, /mantenimiento/i);
-	assert.doesNotMatch(home, /Volvemos en un momento/);
+	assert.doesNotMatch(home + page, /Volvemos en un momento/);
 });

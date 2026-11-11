@@ -57,15 +57,18 @@ test('contact form posts JSON to the function and has division, vertical and hon
 	assert.match(contact, /name="website"/);
 	assert.match(contact, /DIVISIONS\.map/);
 	assert.match(contact, /VERTICALS\.map/);
-	assert.deepEqual([...DIVISIONS], ['Plataformas']);
+	assert.deepEqual(
+		[...DIVISIONS],
+		['Plataformas', 'Desarrollo', 'Seguridad electrónica', 'Infraestructura de red'],
+	);
 	assert.deepEqual([...VERTICALS], ['Operación de sitios', 'Negocios de servicio']);
-	assert.doesNotMatch(config, /Seguridad electrónica/);
-	assert.doesNotMatch(config, /Infraestructura de red/);
+	assert.match(config, /Desarrollo/);
+	assert.match(config, /Seguridad electrónica/);
+	assert.match(config, /Infraestructura de red/);
 	assert.match(config, /Plataformas/);
 	assert.match(config, /Operación de sitios/);
 	assert.match(config, /Negocios de servicio/);
-	assert.doesNotMatch(contact, /Seguridad electrónica/);
-	assert.doesNotMatch(contact, /Infraestructura de red/);
+	assert.doesNotMatch(contact, /WhatsApp/i);
 	assert.match(contact, /Pide una demo o una asesoría/);
 	assert.match(contact, /Inténtalo de nuevo/);
 	assert.doesNotMatch(contact, /WhatsApp/i);
@@ -105,13 +108,21 @@ test('invalid body is 4xx not 500', async () => {
 		nombre: 'Ana Pérez',
 		email: 'ana@empresa.mx',
 		mensaje: 'Hola',
-		division: 'Seguridad electrónica',
+		division: 'Venta de equipos',
 	});
 	assert.equal(campo.ok, false);
 	if (!campo.ok) {
 		assert.equal(campo.status, 400);
 		assert.notEqual(campo.status, 500);
 	}
+
+	const desarrollo = parseContactPayload({
+		nombre: 'Ana Pérez',
+		email: 'ana@empresa.mx',
+		mensaje: 'Quiero un sistema a la medida',
+		division: 'Desarrollo',
+	});
+	assert.equal(desarrollo.ok, true);
 });
 
 test('rate limiter blocks a second immediate call', async () => {

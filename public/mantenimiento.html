@@ -9,13 +9,21 @@
       content="Esta plataforma no está disponible por ahora."
     />
     <title>MERBAL · En pausa</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
     <style>
+      @font-face {
+        font-family: "Instrument Sans";
+        src: url("/fonts/instrument-sans.woff2") format("woff2");
+        font-weight: 400 700;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: Inter;
+        src: url("/fonts/inter.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: swap;
+      }
       :root {
         --bg: #09090b;
         --surface: #121214;
@@ -29,9 +37,9 @@
         --border: color-mix(in oklab, var(--fg) 12%, transparent);
         --shadow-border: 0 0 0 1px color-mix(in oklab, var(--fg) 10%, transparent);
         --shadow-border-hover: 0 0 0 1px color-mix(in oklab, var(--fg) 18%, transparent);
-        --font-display: "Fraunces", "Iowan Old Style", Palatino, serif;
-        --font-sans: "Manrope", "Segoe UI", system-ui, sans-serif;
-        --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+        --font-display: "Instrument Sans", Palatino, serif;
+        --font-sans: Inter, "Segoe UI", system-ui, sans-serif;
+        --font-mono: ui-monospace, Menlo, Consolas, monospace;
         --radius-sm: 8px;
         --radius-md: 12px;
         --radius-lg: 16px;

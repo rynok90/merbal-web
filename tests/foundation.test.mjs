@@ -45,10 +45,8 @@ test('Layout.astro is a reusable MERBAL shell with SEO, fonts, favicon, and slot
 	assert.match(layout, /<meta\s+name="description"/);
 	assert.match(layout, /property="og:title"/);
 	assert.match(layout, /property="og:description"/);
-	assert.match(layout, /fonts\.googleapis\.com/);
-	assert.match(layout, /Outfit/);
-	assert.match(layout, /Inter/);
-	assert.match(layout, /\/images\/logo-mark\.png/);
+	assert.doesNotMatch(layout, /fonts\.googleapis\.com/);
+	assert.match(layout, /favicon\.png/);
 	assert.match(layout, /global\.css/);
 	assert.match(layout, /<slot\s*\/>/);
 });
@@ -56,8 +54,9 @@ test('Layout.astro is a reusable MERBAL shell with SEO, fonts, favicon, and slot
 test('index.astro uses Layout and MERBAL branding without the stub homepage', () => {
 	const page = read('src/pages/index.astro');
 
-	assert.match(page, /layouts\/Layout\.astro/);
-	assert.match(page, /<Layout/);
+	assert.match(page, /layouts\/HomeLayout\.astro/);
+	assert.match(page, /<HomeLayout/);
+	assert.doesNotMatch(page, /fonts\.googleapis\.com/);
 	assert.match(page, /MERBAL/);
 	assert.doesNotMatch(page, /Base lista/);
 });
