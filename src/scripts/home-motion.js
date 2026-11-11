@@ -158,7 +158,10 @@
   const panels = [...document.querySelectorAll(".stage-panel")];
   const indexLinks = [...document.querySelectorAll(".story-index a")];
 
+  let activeId = "";
   function setActive(id) {
+    if (!id || id === activeId) return;
+    activeId = id;
     panels.forEach((p) => {
       const on = p.dataset.id === id;
       p.classList.toggle("is-on", on);
@@ -205,6 +208,37 @@
       }, { threshold: 0.35 });
       document.querySelectorAll(".device-mobile").forEach((el) => io3.observe(el));
     }
+
+    // Si el observer no dispara, el scroll igual cambia de módulo y arma la pantalla.
+    const armMobile = (el) => {
+      scenesIn(el).forEach((s) => {
+        if (s.dataset.armed === "1") return;
+        s.dataset.armed = "1";
+        armScene(s, s.dataset.played === "1" ? "done" : "play");
+      });
+    };
+    const syncFromScroll = () => {
+      if (!copies.length || shot) return;
+      const line = window.innerHeight * 0.42;
+      let best = null;
+      let bestDist = Infinity;
+      copies.forEach((copy) => {
+        const rect = copy.getBoundingClientRect();
+        if (rect.bottom < 64 || rect.top > window.innerHeight - 48) return;
+        const dist = Math.abs(rect.top + Math.min(rect.height, window.innerHeight) * 0.35 - line);
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = copy;
+        }
+      });
+      if (best) setActive(best.dataset.id);
+      document.querySelectorAll(".device-mobile").forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) armMobile(el);
+      });
+    };
+    syncFromScroll();
+    window.addEventListener("scroll", syncFromScroll, { passive: true });
   }
 
   if (shot === "access" || shot === "access-final" || shot === "access-mid") {

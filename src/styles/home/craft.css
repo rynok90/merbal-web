@@ -207,20 +207,24 @@
 }
 .stage .device-phone {
   width: auto;
-  max-width: min(440px, 52%);
-  height: calc(100% - 28px);
+  height: calc(100% - 40px);
+  max-height: calc(100% - 40px);
+  max-width: min(420px, 48%);
+  aspect-ratio: 9 / 19.2;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
 }
 .stage .device-phone .device-shell {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 .stage .device-phone .device-screen {
   flex: 1 1 auto;
+  width: 100%;
   aspect-ratio: auto;
   min-height: 0;
 }
@@ -834,3 +838,26 @@ body.shot-full .scene.has-fade .ui-capture {
 .scene-consola.is-done .ui-kicker-sm,
 .scene-consola.is-done .ui-title,
 .scene-consola.is-done .con-tile { opacity: 1; animation: none; }
+
+/* Estado final visible sin observer. .is-play vuelve a armar la pantalla. */
+.scene:not(.is-play):not(.is-mid) :is(
+  .ui-bar, .ui-visit, .ui-qr, .ui-actions, .ui-ok,
+  .ui-side, .ui-kicker-sm, .ui-title, .ui-kpi, .ui-row,
+  .obras-row, .obras-pass,
+  .safe-top, .safe-invite, .safe-aviso, .safe-nav,
+  .ruta-kpi, .ruta-line,
+  .anuve-side, .anuve-card, .anuve-toast,
+  .guard-side, .guard-pt,
+  .con-side, .con-tile,
+  .t-title, .t-sub, .t-chips, .t-card
+),
+.scene:not(.is-play):not(.is-mid) .ui-qr i.on,
+.scene:not(.is-play):not(.is-mid) .safe-qr i.on,
+.inte-panel:not(.is-play) .inte-chain li,
+.inte-panel:not(.is-play) .inte-seal,
+.anuve-split:not(.is-play) .device-phone {
+  opacity: 1;
+  transform: none;
+}
+.scene:not(.is-play) .ui-capture { opacity: 1; }
+.scene:not(.is-play) .ruta-bar span { transform: scaleX(1); }
