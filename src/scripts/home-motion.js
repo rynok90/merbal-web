@@ -385,7 +385,7 @@
       if (slides.length < 2) return;
       let index = Math.max(0, slides.findIndex((slide) => slide.classList.contains("is-on")));
       let timer = 0;
-      const autoMs = Number(reel.dataset.auto) || 4800;
+      const autoMs = Number(reel.dataset.auto) || 3800;
       const canAuto = !reduced && !shot;
       const show = (next) => {
         index = (next + slides.length) % slides.length;

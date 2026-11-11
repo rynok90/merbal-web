@@ -1,5 +1,7 @@
 ---
 import type { ReelSlide } from '../../lib/home-solutions';
+import AccessCalendarScene from './scenes/AccessCalendarScene.astro';
+import AccessUmbralScene from './scenes/AccessUmbralScene.astro';
 import CasetaScene from './scenes/CasetaScene.astro';
 import IntegrityScene from './scenes/IntegrityScene.astro';
 import SafeScene from './scenes/SafeScene.astro';
@@ -11,7 +13,7 @@ interface Props {
 	auto?: number;
 }
 
-const { slides, label, mode = 'story', auto = 4800 } = Astro.props;
+const { slides, label, mode = 'story', auto = 3800 } = Astro.props;
 const many = slides.length > 1;
 const first = slides[0];
 ---
@@ -57,33 +59,45 @@ const first = slides[0];
 						</div>
 					)}
 					{slide.variant === 'integridad' && <IntegrityScene />}
+					{slide.variant === 'calendario' && <AccessCalendarScene />}
+					{slide.variant === 'umbral' && <AccessUmbralScene />}
 					{slide.variant === 'medida' && (
 						<div class="reel-fill reel-medida">
 							<p class="kicker">A la medida</p>
 							<h3>Software para la operación que ya tienes.</h3>
 							<ul>
-								<li>Tienda y app</li>
-								<li>Asistencia en obra</li>
-								<li>Portal y cotizador</li>
+								<li>Tienda en línea</li>
 								<li>Inventario y punto de venta</li>
-								<li>Citas</li>
-								<li>Tableros</li>
+								<li>Pedidos de restaurante</li>
+								<li>Portal de escuela</li>
+								<li>Expediente de consultorio</li>
+								<li>App interna de RH</li>
 							</ul>
 						</div>
 					)}
-					{slide.variant === 'campo' && slide.pair && (
-						<div class="reel-fill reel-campo">
-							{slide.pair.map((image) => (
+					{slide.variant === 'campo' && slide.pair && slide.pair.length > 1 && (
+						<div class="reel-fill campo-stage">
 							<img
-								src={image.src}
-								alt={image.alt}
-								width={image.width}
-								height={image.height}
+								class="campo-bg"
+								src={slide.pair[1].src}
+								alt=""
+								width={slide.pair[1].width}
+								height={slide.pair[1].height}
 								loading="lazy"
 								decoding="async"
 								draggable="false"
 							/>
-							))}
+							<figure class="campo-inset">
+								<img
+									src={slide.pair[0].src}
+									alt={slide.alt}
+									width={slide.pair[0].width}
+									height={slide.pair[0].height}
+									loading="lazy"
+									decoding="async"
+									draggable="false"
+								/>
+							</figure>
 						</div>
 					)}
 					{slide.src && (

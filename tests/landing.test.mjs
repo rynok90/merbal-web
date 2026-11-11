@@ -102,6 +102,16 @@ test('home follows the approved three-block mock', () => {
 	assert.match(data, /anuve-agenda-local\.webp/);
 	assert.match(data, /anuve-tienda-clienta-390\.webp/);
 	assert.match(data, /Por confidencialidad \(NDA\) no mostramos los proyectos de clientes\./);
+	assert.match(data, /Pedidos de restaurante/);
+	assert.match(data, /Expediente de consultorio/);
+	assert.match(data, /App interna de RH/);
+	assert.doesNotMatch(data, /Asistencia en obra/);
+	assert.doesNotMatch(data, /App de citas/);
+	assert.doesNotMatch(data, /Tableros de operación/);
+	assert.match(data, /Un sello cierra la cadena y llega por correo/);
+	assert.match(carousel, /auto = 3800/);
+	assert.match(page, /auto=\{3800\}/);
+	assert.match(read('src/styles/home/feedback.css'), /site-header\.is-dark \.nav-dd a/);
 	assert.match(page, /NDA_NOTE/);
 	assert.match(page, /\/images\/logo-mark\.png/);
 	assert.match(carousel, /data-reel/);

@@ -14,7 +14,7 @@ export type ReelSlide = {
 	width?: number;
 	height?: number;
 	eager?: boolean;
-	variant?: 'caseta' | 'safe' | 'integridad' | 'medida' | 'campo';
+	variant?: 'caseta' | 'safe' | 'integridad' | 'medida' | 'campo' | 'calendario' | 'umbral';
 	pair?: ReelImage[];
 };
 
@@ -90,7 +90,7 @@ export const HERO_SLIDES: ReelSlide[] = [
 	},
 	{
 		cap: 'Seguridad y red',
-		alt: 'Seguridad electrónica e infraestructura de red',
+		alt: 'Cámaras frente a un pasillo de racks',
 		family: 'Seguridad y red',
 		tone: 'ink',
 		variant: 'campo',
@@ -128,6 +128,9 @@ export const SOLUTIONS: Solution[] = [
 		slides: [
 			shot('Access · Tablero', '/home/capturas/access-inicio.webp', 1600, 900),
 			{ cap: 'Access · Caseta', alt: 'Access · Caseta', variant: 'caseta', tone: 'ink' },
+			shot('Access · Reporte', '/home/capturas/access-reporte.webp', 1600, 1080),
+			{ cap: 'Access · Calendario', alt: 'Access · Calendario', variant: 'calendario', tone: 'bone' },
+			{ cap: 'Access · Umbral de horas', alt: 'Access · Umbral de horas', variant: 'umbral', tone: 'bone' },
 		],
 	},
 	{
@@ -162,7 +165,12 @@ export const SOLUTIONS: Solution[] = [
 			'Pensado para privadas y residenciales.',
 		],
 		cta: { label: 'Ver Safe Access', href: 'https://access.merbal.lat/safe-access/' },
-		slides: [{ cap: 'Safe Access · Aviso', alt: 'Safe Access · Aviso', variant: 'safe', tone: 'bone' }],
+		slides: [
+			shot('Safe Access · Invitar visita', '/home/capturas/safe-invitar.webp', 1600, 900),
+			shot('Safe Access · Caseta', '/home/capturas/safe-caseta.webp', 1600, 900, 'ink'),
+			shot('Safe Access · Aviso', '/home/capturas/safe-aviso.webp', 1600, 900),
+			shot('Safe Access · Áreas comunes', '/home/capturas/safe-areas.webp', 1600, 900, 'ink'),
+		],
 	},
 	{
 		id: 'ruta',
@@ -189,11 +197,11 @@ export const SOLUTIONS: Solution[] = [
 		indexLabel: 'Integridad',
 		kicker: 'Ecosistema Paperless',
 		title: 'Integridad',
-		phrase: 'Los registros se encadenan y se sellan, para que un cambio se note.',
+		phrase: 'Un plus del ecosistema. El registro queda cerrado: si alguien lo cambia después, se nota.',
 		points: [
-			'Cada registro queda ligado al anterior.',
-			'Un sello cierra la cadena.',
-			'Si alguien altera un registro, la cadena lo hace visible.',
+			'Cada hecho queda atado al anterior. Nadie lo reescribe en silencio.',
+			'Un sello cierra la cadena y llega por correo.',
+			'Si un registro se altera, ese eslabón se marca. Sirve de evidencia en una auditoría o una disputa.',
 		],
 		cta: { label: 'Ver Integridad', href: MODULOS },
 		slides: [{ cap: 'Integridad', alt: 'Integridad', variant: 'integridad', tone: 'bone' }],
@@ -252,7 +260,11 @@ export const SOLUTIONS: Solution[] = [
 			'Se suma cuando la operación lo pide, no viene de oficio.',
 		],
 		cta: { label: 'Pedir informes', href: '/?solucion=guardias#contacto' },
-		slides: [shot('Guardias · Rondines', '/home/capturas/guardias-ronda.webp', 1600, 1000, 'ink')],
+		slides: [
+			shot('Guardias · Rondines', '/home/capturas/guardias-ronda.webp', 1600, 1000, 'ink'),
+			shot('Guardias · Asistencia', '/home/capturas/guardias-asistencia.webp', 1600, 1000, 'ink'),
+			shot('Guardias · Bitácora', '/home/capturas/guardias-bitacora.webp', 1600, 1000, 'ink'),
+		],
 	},
 ];
 
@@ -262,24 +274,24 @@ export const CUSTOM_EXAMPLES = [
 		text: 'Catálogo y app para una marca de ropa: ver, elegir y pedir.',
 	},
 	{
-		title: 'Asistencia en obra',
-		text: 'Quién llegó al sitio y cuánto tiempo permanece.',
-	},
-	{
-		title: 'Portal y cotizador',
-		text: 'El cliente consulta, pide y recibe su cotización en el mismo lugar.',
-	},
-	{
 		title: 'Inventario y punto de venta',
 		text: 'Existencias y venta en mostrador, en un solo sistema.',
 	},
 	{
-		title: 'App de citas',
-		text: 'Agenda, recordatorio y la ficha de quien atiende.',
+		title: 'Pedidos de restaurante',
+		text: 'Comandas, cocina y reparto para un restaurante o una distribuidora.',
 	},
 	{
-		title: 'Tableros de operación',
-		text: 'Lo que el equipo necesita ver para decidir el día.',
+		title: 'Portal de escuela',
+		text: 'Alumnos, tareas y avisos para una escuela, en un solo lugar.',
+	},
+	{
+		title: 'Expediente de consultorio',
+		text: 'Historia y agenda de un consultorio. No es un salón ni una barbería.',
+	},
+	{
+		title: 'App interna de RH',
+		text: 'Vacaciones, documentos y el día a día del equipo, dentro de la empresa.',
 	},
 ];
 
