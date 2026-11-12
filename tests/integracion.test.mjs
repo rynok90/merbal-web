@@ -54,7 +54,7 @@ const pages = {
 test('integración routes are pages, not redirects to mantenimiento', () => {
 	const redirects = read('public/_redirects');
 	assert.match(redirects, /\/mantenimiento\s+\/mantenimiento\.html/);
-	assert.match(redirects, /\/software\s+\/plataformas\s+301/);
+	assert.match(redirects, /\/software\s+\/plataformas\/\s+301/);
 	assert.doesNotMatch(redirects, /\/seguridad-electronica\s+\/mantenimiento/);
 	assert.doesNotMatch(redirects, /\/infraestructura-de-red\s+\/mantenimiento/);
 	assert.doesNotMatch(read('netlify.toml'), /seguridad-electronica|infraestructura-de-red/);
@@ -64,8 +64,8 @@ test('integración routes are pages, not redirects to mantenimiento', () => {
 	assert.deepEqual(
 		integracion.children.map((child) => [child.label, child.href]),
 		[
-			['Seguridad electrónica', '/seguridad-electronica'],
-			['Infraestructura de red', '/infraestructura-de-red'],
+			['Seguridad electrónica', '/seguridad-electronica/'],
+			['Infraestructura de red', '/infraestructura-de-red/'],
 		],
 	);
 });
@@ -81,7 +81,7 @@ test('both integración pages ship the specified copy and the contact CTA', () =
 	assert.match(cta, /Solicitar asesoría/);
 	assert.match(cta, /href=\{CONTACT_PATH\}/);
 	assert.equal(HEADER_CTA_LABEL, 'Solicitar asesoría');
-	assert.equal(CONTACT_PATH, '/contacto');
+	assert.equal(CONTACT_PATH, '/contacto/');
 
 	for (const [href, page] of Object.entries(pages)) {
 		const source = read(page.file);

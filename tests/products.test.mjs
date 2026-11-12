@@ -172,5 +172,5 @@ test('showcase order, live hrefs, and Avisarme come from the shipped catalog', (
 test('custom software is a first-class option in the shipped catalog', () => {
 	assert.equal(customSoftware.name, 'Desarrollo de software a la medida');
 	assert.match(customSoftware.description, /plataforma/i);
-	assert.equal(customSoftware.href, '/contacto');
+	assert.equal(customSoftware.href, '/contacto/');
 });

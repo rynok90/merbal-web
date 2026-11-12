@@ -50,7 +50,7 @@ test('plataformas surface renders showcase cards with a detail panel', () => {
 	assert.doesNotMatch(tree, /HayStock/);
 	assert.doesNotMatch(tree, /RutaSegura/);
 	assert.doesNotMatch(tree, /Fochi/);
-	assert.equal(customSoftware.href, '/contacto');
+	assert.equal(customSoftware.href, '/contacto/');
 
 	const showcase = showcaseProducts();
 	assert.deepEqual(
@@ -66,7 +66,9 @@ test('plataformas surface renders showcase cards with a detail panel', () => {
 		if (product.status === 'soon') assert.equal(showcaseCta(product).label, 'Avisarme');
 	}
 	assert.equal(SITE_OPS_VERTICAL.name, 'Operación de sitios');
+	assert.equal(SITE_OPS_VERTICAL.href, '/plataformas/operacion-de-sitios/');
 	assert.equal(SERVICE_VERTICAL.name, 'Negocios de servicio');
+	assert.equal(SERVICE_VERTICAL.href, '/plataformas/negocios-de-servicio/');
 });
 
 test('operacion-de-sitios lists Access first and Safe Access soon', () => {
@@ -125,7 +127,8 @@ test('negocios-de-servicio lists ANUVÉ and Arco Care, never site-ops products',
 	assert.doesNotMatch(page, /Fochi/);
 });
 
-test('/software 301 redirects to /plataformas', () => {
+test('/software 301 redirects to /plataformas/', () => {
 	const redirects = read('public/_redirects');
-	assert.match(redirects, /\/software\s+\/plataformas\s+301/);
+	assert.match(redirects, /\/software\s+\/plataformas\/\s+301/);
+	assert.match(redirects, /\/software\/\s+\/plataformas\/\s+301/);
 });

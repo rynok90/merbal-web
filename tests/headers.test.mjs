@@ -44,7 +44,7 @@ test('headers live only in public/_headers; redirects keep /mantenimiento', () =
 	assert.doesNotMatch(toml, /\[\[headers\]\]/);
 	const redirects = read('public/_redirects');
 	assert.match(redirects, /\/mantenimiento\s+\/mantenimiento\.html/);
-	assert.match(redirects, /\/software\s+\/plataformas\s+301/);
+	assert.match(redirects, /\/software\s+\/plataformas\/\s+301/);
 });
 
 test('CSP script-src allows only the Astro inline-module exception', () => {

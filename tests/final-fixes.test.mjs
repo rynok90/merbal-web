@@ -68,7 +68,7 @@ test('privacy notice page exists and Footer links Aviso de privacidad', () => {
 	assert.match(page, /México/);
 	assert.match(page, /CONTACT_EMAIL/);
 	assert.match(footer, /Aviso de privacidad/);
-	assert.match(footer, /href="\/privacidad"/);
+	assert.match(footer, /href="\/privacidad\/"/);
 });
 
 test('ambient background is CSS-only and reduced-motion safe', () => {

@@ -31,12 +31,12 @@ test('header nav keeps Plataformas and Contacto and adds Integración', () => {
 
 	const plataformas = HEADER_NAV.find((link) => link.label === 'Plataformas');
 	assert.ok(plataformas?.children);
-	assert.equal(plataformas.href, '/plataformas');
+	assert.equal(plataformas.href, '/plataformas/');
 	assert.deepEqual(
 		plataformas.children.map((child) => [child.label, child.href]),
 		[
-			['Operación de sitios', '/plataformas/operacion-de-sitios'],
-			['Negocios de servicio', '/plataformas/negocios-de-servicio'],
+			['Operación de sitios', '/plataformas/operacion-de-sitios/'],
+			['Negocios de servicio', '/plataformas/negocios-de-servicio/'],
 		],
 	);
 
@@ -45,15 +45,15 @@ test('header nav keeps Plataformas and Contacto and adds Integración', () => {
 	assert.deepEqual(
 		integracion.children.map((child) => [child.label, child.href]),
 		[
-			['Seguridad electrónica', '/seguridad-electronica'],
-			['Infraestructura de red', '/infraestructura-de-red'],
+			['Seguridad electrónica', '/seguridad-electronica/'],
+			['Infraestructura de red', '/infraestructura-de-red/'],
 		],
 	);
 	assert.equal(labels.includes('Seguridad electrónica'), true);
 	assert.equal(labels.includes('Infraestructura de red'), true);
 	assert.equal(HEADER_NAV.some((link) => link.label === 'Contacto'), true);
-	assert.equal(HEADER_NAV.find((link) => link.label === 'Contacto')?.href, '/contacto');
-	assert.equal(CONTACT_PATH, '/contacto');
+	assert.equal(HEADER_NAV.find((link) => link.label === 'Contacto')?.href, '/contacto/');
+	assert.equal(CONTACT_PATH, '/contacto/');
 	assert.equal(HEADER_CTA_LABEL, 'Solicitar asesoría');
 
 	const header = read('src/components/Header.astro');
@@ -74,9 +74,9 @@ test('footer keeps Nosotros and drops campo links', () => {
 	assert.deepEqual(
 		FOOTER_LINKS.map((link) => [link.label, link.href]),
 		[
-			['Plataformas', '/plataformas'],
-			['Nosotros', '/nosotros'],
-			['Contacto', '/contacto'],
+			['Plataformas', '/plataformas/'],
+			['Nosotros', '/nosotros/'],
+			['Contacto', '/contacto/'],
 		],
 	);
 	const footerHrefs = FOOTER_LINKS.map((link) => link.href);
@@ -86,18 +86,18 @@ test('footer keeps Nosotros and drops campo links', () => {
 	const nav = read('src/lib/nav.ts');
 	const footerBlock = nav.slice(nav.indexOf('FOOTER_LINKS'));
 	assert.match(footer, /FOOTER_LINKS/);
-	assert.match(footerBlock, /href: '\/nosotros'/);
+	assert.match(footerBlock, /href: '\/nosotros\/'/);
 	assert.doesNotMatch(footerBlock, /\/seguridad-electronica/);
 	assert.doesNotMatch(footerBlock, /\/infraestructura-de-red/);
 	assert.doesNotMatch(footerBlock, /Campo/);
 });
 
 test('ROUTES include plataformas verticals and not campo or /software', () => {
-	assert.equal(ROUTES.includes('/plataformas'), true);
-	assert.equal(ROUTES.includes('/plataformas/operacion-de-sitios'), true);
-	assert.equal(ROUTES.includes('/plataformas/negocios-de-servicio'), true);
+	assert.equal(ROUTES.includes('/plataformas/'), true);
+	assert.equal(ROUTES.includes('/plataformas/operacion-de-sitios/'), true);
+	assert.equal(ROUTES.includes('/plataformas/negocios-de-servicio/'), true);
 	assert.equal(ROUTES.includes('/software'), false);
-	assert.equal(ROUTES.includes('/nosotros'), true);
+	assert.equal(ROUTES.includes('/nosotros/'), true);
 	assert.equal(ROUTES.includes('/seguridad-electronica'), false);
 	assert.equal(ROUTES.includes('/infraestructura-de-red'), false);
 });
@@ -109,4 +109,9 @@ test('isActivePath matches current route without treating home as a prefix', () 
 	assert.equal(isActivePath('/plataformas/operacion-de-sitios', '/plataformas'), true);
 	assert.equal(isActivePath('/nosotros', '/plataformas'), false);
 	assert.equal(isActivePath('/contacto', '/contacto'), true);
+	assert.equal(isActivePath('/plataformas/', '/plataformas/'), true);
+	assert.equal(isActivePath('/plataformas/operacion-de-sitios/', '/plataformas/'), true);
+	assert.equal(isActivePath('/contacto/', '/contacto/'), true);
+	assert.equal(isActivePath('/', '/plataformas/'), false);
+	assert.equal(isActivePath('/contacto/', '#'), false);
 });

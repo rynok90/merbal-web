@@ -15,14 +15,14 @@ export type Product = {
 
 export const SITE_OPS_VERTICAL = {
 	slug: 'operacion-de-sitios' as const,
-	href: '/plataformas/operacion-de-sitios',
+	href: '/plataformas/operacion-de-sitios/',
 	name: 'Operación de sitios',
 	audience: 'Si operas un sitio físico — planta, retail, hospital, escuela, corporativo u otro.',
 };
 
 export const SERVICE_VERTICAL = {
 	slug: 'negocios-de-servicio' as const,
-	href: '/plataformas/negocios-de-servicio',
+	href: '/plataformas/negocios-de-servicio/',
 	name: 'Negocios de servicio',
 	audience: 'Si atiendes clientes de a pie — clínica, salón u otro negocio de servicio.',
 };
@@ -125,7 +125,7 @@ export const customSoftware = {
 	name: 'Desarrollo de software a la medida',
 	description:
 		'Cuando el producto no cubre el proceso: diseñamos, construimos y operamos la plataforma que tu operación necesita.',
-	href: '/contacto',
+	href: '/contacto/',
 } as const;
 
 export function liveProductHref(product: Product): string | null {
@@ -156,5 +156,5 @@ export function productStatusLabel(product: Product): string {
 export function showcaseCta(product: Product): { label: string; href: string; external: boolean } {
 	const href = liveProductHref(product);
 	if (href) return { label: productCtaLabel(product), href, external: true };
-	return { label: 'Avisarme', href: '/contacto', external: false };
+	return { label: 'Avisarme', href: '/contacto/', external: false };
 }

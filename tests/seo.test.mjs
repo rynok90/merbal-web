@@ -37,6 +37,11 @@ test('each page has a unique Spanish title and description within the snippet le
 	}
 	assert.equal(PAGE_SEO['/'].description, SUBTITLE);
 	assert.equal(canonicalFor('/contacto'), 'https://merbal.lat/contacto/');
+	assert.equal(canonicalFor('/contacto/'), 'https://merbal.lat/contacto/');
+	assert.equal(canonicalFor('/plataformas/negocios-de-servicio'), 'https://merbal.lat/plataformas/negocios-de-servicio/');
+	assert.equal(canonicalFor('/privacidad/'), 'https://merbal.lat/privacidad/');
+	assert.equal(canonicalFor('/seguridad-electronica'), 'https://merbal.lat/seguridad-electronica/');
+	assert.equal(canonicalFor('/infraestructura-de-red/'), 'https://merbal.lat/infraestructura-de-red/');
 	assert.equal(canonicalFor('/'), 'https://merbal.lat/');
 });
 
@@ -91,4 +96,5 @@ test('astro config publishes the sitemap for merbal.lat', () => {
 	const config = read('astro.config.mjs');
 	assert.match(config, /@astrojs\/sitemap/);
 	assert.match(config, /site:\s*'https:\/\/merbal\.lat'/);
+	assert.match(config, /trailingSlash:\s*'always'/);
 });
