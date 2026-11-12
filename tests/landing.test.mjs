@@ -44,10 +44,10 @@ test('Header uses real page paths, not only in-page anchors', () => {
 	assert.doesNotMatch(header, /href="#contacto"/);
 
 	for (const href of [
-		"'/plataformas'",
-		"'/plataformas/operacion-de-sitios'",
-		"'/plataformas/negocios-de-servicio'",
-		"'/contacto'",
+		"'/plataformas/'",
+		"'/plataformas/operacion-de-sitios/'",
+		"'/plataformas/negocios-de-servicio/'",
+		"'/contacto/'",
 	]) {
 		assert.ok(nav.includes(href), `nav missing ${href}`);
 	}

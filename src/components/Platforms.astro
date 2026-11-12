@@ -136,7 +136,7 @@ const catalog = showcaseProducts();
 		</div>
 		<a
 			data-panel-cta
-			href="/contacto"
+			href="/contacto/"
 			class="btn-primary mt-6 inline-flex items-center justify-center rounded-full bg-accent px-5 py-2.5 font-display text-sm font-semibold text-navy-950"
 		>
 			Avisarme
@@ -162,7 +162,7 @@ const catalog = showcaseProducts();
 		if (how) how.textContent = button.dataset.how ?? '';
 		if (cta instanceof HTMLAnchorElement) {
 			cta.textContent = button.dataset.ctaLabel ?? 'Avisarme';
-			cta.href = button.dataset.ctaHref ?? '/contacto';
+			cta.href = button.dataset.ctaHref ?? '/contacto/';
 			if (button.dataset.ctaExternal === 'true') {
 				cta.target = '_blank';
 				cta.rel = 'noopener noreferrer';
